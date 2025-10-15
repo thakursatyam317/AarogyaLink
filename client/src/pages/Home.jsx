@@ -1,9 +1,20 @@
-import React from 'react'
+import React from "react";
+import homeImg from "../assets/loginImg/homeImg.png";
+import Footer from "../components/Footer";
 
 const Home = () => {
   return (
-    <div>Home</div>
-  )
-}
+    <>
+      <div>
+        <div>
+          <div className="mt-16">
+            <img src={homeImg} alt="" />
+          </div>
+        </div>
+        <Footer />
+      </div>
+    </>
+  );
+};
 
-export default Home
+export default Home;

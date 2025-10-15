@@ -4,13 +4,13 @@ import { NavLink } from "react-router-dom";
 const Register = () => {
   return (
     <>
-      <div className="flex justify-center ">
-        <div className="border-2 rounded-2xl mt-48 h-[480px] w-[60%]">
+      <div className="flex justify-center bg-blue-50 h-[834px]">
+        <div className=" mt-48 h-[480px] w-[60%] shadow-[0_0_25px_rgba(59,130,246,0.25)] border border-blue-100 rounded-2xl bg-white p-6">
           <div className="">
             <div>
               <img src="" alt="" />
             </div>
-            <div className="mt-5 ml-8 ">
+            <div className="mt-0 ml-8 ">
               <form action="" className="grid justify-center  ml-96">
                 <div className="mb-7">
                   <h1 className="text-4xl mt-3 font-bold ml-28">Register</h1>
