@@ -73,7 +73,7 @@ const userLogin = async (req,res) =>{
         if(!ispasswordMatch){
             throw new ApiError(400, 'Invalid credentials');
         }
-        genAuthToken(existingUser.userID, res);
+        genAuthToken(existingUser._id, res);
 
         console.log('after password match');
         res.status(200).json(
