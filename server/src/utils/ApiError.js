@@ -1,17 +1,27 @@
-class ApiError extends Error {
-  constructor(statusCode, message, success = false, error = [], stack = "") {
-    super(message);
-    this.statusCode = statusCode;
-    sucess = false,
-    error = [],
-    this.stack = stack;
+class ApiError extends Error{
+    constructor(
+        statusCode,
+        message = 'Something went wrong',
+        sucess = false,
+        error = [],
+        stack = null
 
-    if (stack) {
-      stack = this.stack;
-    } else {
-      Error.captureStackTrace(this, this.constructor);
+    ){
+        super(message);
+        this.statusCode =statusCode;
+        this.error = error;
+        this.stack = null;
+        this.success = false;
+
+        if(stack){
+        this.stack = stack;
     }
-  }
-}
+    else{
+        Error.captureStackTrace(this, this.constructor);
+    }
 
+
+    }
+    
+}
 export default ApiError;

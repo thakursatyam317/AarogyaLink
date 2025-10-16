@@ -1,46 +1,23 @@
-# Node modules
+# dependencies
 node_modules/
 
-# Environment variables
+# build output
+dist/
+build/
+
+# environment files
 .env
 .env.local
-.env.*.local
 
-# Logs
-logs
-*.log
+# system files
+.DS_Store
+Thumbs.db
+
+# logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# OS files
-.DS_Store
-Thumbs.db
-
-# Coverage directory (from testing)
-coverage/
-
-# Build outputs
-dist/
-build/
-
-# Temporary files
-*.tmp
-*.swp
-*.swo
-*.bak
-
-# IDE / Editor specific
+# editor settings
 .vscode/
 .idea/
-*.iml
-
-# TypeScript cache (if used)
-*.tsbuildinfo
-
-# Local database files (if using local MongoDB dumps)
-dump/
-data/
-
-# Optional: Ignore uploads (if you store user uploads locally)
-uploads/
