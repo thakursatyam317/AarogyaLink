@@ -9,8 +9,9 @@ const genAuthToken = (user_id, res) =>{
     res.cookie('token',token, {
         httpOnly : true,
         secure : process.env.NODE_ENV === 'production',
-        sameSite : 'strict',
+        sameSite : "strict",
         maxAge : 21 * 24 * 60 * 60 * 1000, 
     });
+    return token; 
 }
 export default genAuthToken;

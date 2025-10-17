@@ -37,6 +37,16 @@ const getUserProfile = async (req, res, next) => {
 };
 
 
+const updateUserProfile = async (req, res, next)=>{
+    try {
+       
+    } catch (error) {
+        next(new ApiError(500, "Server error updating user profile", false, error.message));
+    }
+}
+
+
+
 
 
 

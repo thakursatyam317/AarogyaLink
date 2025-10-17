@@ -57,28 +57,31 @@ const userRegister = async (req, res) => {
 const userLogin = async (req,res) =>{
     try {
         const {email, password} = req.body;
+         console.log(email);
         if(!email || !password ){
             throw new ApiError(400, 'All fields are required');
         }
         console.log(email);
       
         
-        const existingUser = await User.findOne({email} );
+        const user = await User.findOne({email} );
 
-        if(!existingUser){
+        if(!user){
             throw new ApiError(404, 'User is not registered');
         }
         console.log('after existing user');
-        const ispasswordMatch = await bcrypt.compare(password, existingUser.password);
+        const ispasswordMatch = await bcrypt.compare(password, user.password);
         if(!ispasswordMatch){
             throw new ApiError(400, 'Invalid credentials');
         }
-        genAuthToken(existingUser._id, res);
-
+        const token = genAuthToken(user._id, res);
+        console.log(token);
         console.log('after password match');
-        res.status(200).json(
-            new ApiResponse(200, 'User login sucessfully', existingUser)
-        );
+        res.status(200).json({
+      message: "Login successful",
+      user,
+      token,
+    });
     } catch (error) {
         throw new ApiError(500, 'Server error', false, error.message);
     }

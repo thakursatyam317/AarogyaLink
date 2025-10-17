@@ -4,10 +4,17 @@ import cookieParser from 'cookie-parser';
 import  connectDB from './src/configs/db.js'
 import authRoute from './src/routes/auth.route.js'
 import userRoute from './src/routes/user.route.js'
+import cors from 'cors';
 
 
 dotenv.config();
 const app = express();
+app.use(express.urlencoded({ extended: true })); 
+
+app.use(cors({
+  origin: "http://localhost:5173",  
+  credentials: true
+}));
 
 app.use(express.json());
 app.use(cookieParser());
