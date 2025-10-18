@@ -3,7 +3,7 @@ import axios from "axios";
 
 const AuthContext = createContext();
 
-export const authProvider = ({ children }) => {
+export const AuthProvider = ({ children }) => {
   const [authUser, setAuthUser] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem("user")) || null;
@@ -20,11 +20,12 @@ export const authProvider = ({ children }) => {
     setLoading(true);
 
     try {
-      const res = await axios.get("http://localhost:4500/user/profile", {
+      const res = await axios.get("http://localhost:4500/api/user/profile", {
         withCredentials: true,
       });
 
       const user = res.data?.user || res.data || null;
+      console.log(user);
       if (user) {
         setAuthUser(user);
         setIsLogin(true);

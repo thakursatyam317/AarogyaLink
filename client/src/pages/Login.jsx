@@ -146,8 +146,8 @@ const Login = () => {
                     <NavLink
                       className={({ isActive }) =>
                         isActive
-                          ? "text-blue-500 font-semibold text-[14px] mx-2"
-                          : "text-blue-500 text-[14px] mx-2"
+                          ? "text-blue-500 font-semibold text-[14px] mx-2 hover:text-blue-800"
+                          : "text-blue-500 text-[14px] mx-2 hover:text-blue-800"
                       }
                     >
                       Forgot password
@@ -156,11 +156,11 @@ const Login = () => {
                       to="/register"
                       className={({ isActive }) =>
                         isActive
-                          ? "text-blue-500 font-semibold ml-40 text-[14px] mx-2"
-                          : "text-blue-500 ml-40 text-[14px] mx-2"
+                          ? "text-blue-500 font-semibold ml-40 text-[14px] mx-2 hover:text-blue-800"
+                          : "text-blue-500 ml-40 text-[14px] mx-2 hover:text-blue-800"
                       }
                     >
-                      Sign In?
+                      Sign Up?
                     </NavLink>
                   </div>
                   <button

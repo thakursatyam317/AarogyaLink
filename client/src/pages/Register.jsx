@@ -36,7 +36,6 @@ const Register = () => {
           userName: "",
           email: "",
           phoneNumber: "",
-
           createPassword: "",
           password: "",
         });
@@ -122,8 +121,8 @@ const Register = () => {
                     to="/login"
                     className={({ isActive }) =>
                       isActive
-                        ? "text-blue-500 font-semibold  text-[14px] mx-2"
-                        : "text-blue-500  text-[14px] mx-2"
+                        ? "text-blue-500 font-semibold  text-[14px] mx-2 hover:text-blue-800"
+                        : "text-blue-500  text-[14px] mx-2 hover:text-blue-800"
                     }
                   >
                     Sign In?
