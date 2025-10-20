@@ -2,19 +2,53 @@ import React, { useEffect, useState } from "react";
 import { FaCamera } from "react-icons/fa";
 import authAxios from "../utils/authAxios";
 import toast, { Toaster } from "react-hot-toast";
+import { useAuth } from "../contexts/authContext";
 
 const Profile = () => {
+  const { authUser, fetchProfile } = useAuth();
   const [userData, setUserData] = useState({});
   const [isEditing, setIsEditing] = useState(false);
   const [photoFile, setPhotoFile] = useState(null);
   const [preview, setPreview] = useState("");
+  const [authLoading, setAuthLoading] = useState(true);
 
+  // Initialize user data from authUser
+  useEffect(() => {
+    if (authUser) {
+      setUserData({
+        userName: authUser.userName || "",
+        email: authUser.email || "",
+        phoneNumber: authUser.phoneNumber || "",
+        dob: authUser.dob?.slice(0, 10) || "",
+        gender: authUser.gender || "",
+        bloodGroup: authUser.bloodGroup || "",
+        address: authUser.address || {},
+        profilePic: authUser.profilePic || "",
+        userID: authUser._id || authUser.userID || "",
+      });
+
+      // Set preview from profilePic
+      if (authUser.profilePic) {
+        setPreview(authUser.profilePic);
+      }
+    }
+    setAuthLoading(false);
+  }, [authUser]);
+
+  // Fetch profile from backend
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
         const res = await authAxios.get("/user/profile");
-        console.log(res);
-        setUserData(res.data?.data || {});
+        if (res.data?.data) {
+          setUserData((prev) => ({
+            ...prev,
+            ...res.data.data,
+          }));
+          if (res.data.data.profilePic) {
+            setPreview(res.data.data.profilePic);
+          }
+        }
       } catch (error) {
         console.error("Error fetching profile:", error);
       }
@@ -28,52 +62,66 @@ const Profile = () => {
   };
 
   const handlePhotoChange = (e) => {
-  if (!isEditing) return;
-  const file = e.target.files[0];
-  if (!file) return;
-  setPhotoFile(file);
-  const reader = new FileReader();
-  reader.onloadend = () => {
-    setPreview(reader.result);
+    if (!isEditing) return;
+    const file = e.target.files[0];
+    if (!file) return;
+    setPhotoFile(file);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreview(reader.result); // show preview immediately
+    };
+    reader.readAsDataURL(file);
   };
-  reader.readAsDataURL(file);
-};
 
   const handleSave = async () => {
-  try {
-    const formData = new FormData();
+    try {
+      const formData = new FormData();
 
-    // Append all user data
-    Object.keys(userData).forEach((key) => {
-      if (key === "address") {
-        formData.append("address", JSON.stringify(userData.address));
-      } else {
-        formData.append(key, userData[key]);
+      // Append all user fields
+      formData.append("userName", userData.userName);
+      formData.append("email", userData.email);
+      formData.append("phoneNumber", userData.phoneNumber);
+      formData.append("dob", userData.dob);
+      formData.append("gender", userData.gender);
+      formData.append("bloodGroup", userData.bloodGroup);
+
+      // Append address fields if exist
+      if (userData.address) {
+        Object.keys(userData.address).forEach((key) => {
+          formData.append(`address[${key}]`, userData.address[key]);
+        });
       }
-    });
 
-    // Append profile pic file if selected
-    if (photoFile) {
-      formData.append("profilePic", photoFile);
+      // Append profile picture if selected
+      if (photoFile) {
+        formData.append("profilePic", photoFile);
+      }
+
+      const res = await authAxios.put("/user/profile/update", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      if (res.data?.updatedUser) {
+        setUserData(res.data.updatedUser);
+        setPreview(res.data.updatedUser.profilePic);
+        setPhotoFile(null);
+        setIsEditing(false);
+
+        // Refresh context
+        await fetchProfile();
+
+        toast.success("✅ Profile updated successfully", {
+          duration: 1500,
+          position: "top-center",
+        });
+      }
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      toast.error("❌ Error updating profile");
     }
+  };
 
-    const res = await authAxios.put("/user/profile/update", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
 
-    setUserData(res.data?.data || {});
-    setPreview(""); // reset preview
-    setPhotoFile(null);
-    setIsEditing(false);
-    toast.success("✅ Profile updated successfully", {
-      duration: 1500,
-      position: "top-center",
-    });
-  } catch (error) {
-    console.error("Error updating profile:", error);
-    toast.error("❌ Error updating profile");
-  }
-};
 
   return (
     <>
