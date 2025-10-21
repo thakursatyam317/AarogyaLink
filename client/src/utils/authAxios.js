@@ -2,7 +2,7 @@ import axios from "axios";
 
 const authAxios = axios.create({
     baseURL : "http://localhost:4500/api",
-    withCredentials : true
+    withCredentials : false
 });
 
 
@@ -24,7 +24,7 @@ authAxios.interceptors.response.use(
     (error)=>{
         if(error.response?.status === 401){
             localStorage.removeItem("token");
-            window.location.href = "/login"
+            window.location.href = "/login";
         }      
         return Promise.reject(error);                     
     }

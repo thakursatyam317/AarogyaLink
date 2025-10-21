@@ -38,10 +38,22 @@ const getUserProfile = async (req, res, next) => {
 
 const updateUserProfile = async (req, res, next) => {
   try {
-    const { userName, email, phoneNumber, dob, gender } = req.body;
-    const photo = req.file;
+    const { userName, email, phoneNumber, dob, gender, bloodGroup } = req.body;
+    let address = req.body.address;
 
+    // If address comes as a JSON string (from FormData)
+    if (typeof address === "string") {
+      try {
+        address = JSON.parse(address);
+      } catch (err) {
+        address = {};
+      }
+    }
+    console.log("address",address)
+
+    const photo = req.file;
     const userId = req.user?._id || req.user?.id;
+
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized user" });
     }
@@ -55,7 +67,6 @@ const updateUserProfile = async (req, res, next) => {
     let profilePicUrl = req.user.profilePic;
 
     if (photo) {
-      // convert file to data URI
       const base64Image = photo.buffer.toString("base64");
       const dataUri = `data:${photo.mimetype};base64,${base64Image}`;
 
@@ -66,7 +77,6 @@ const updateUserProfile = async (req, res, next) => {
           height: 300,
           crop: "fill",
         });
-        console.log("result :== ",result);
         if (!result?.secure_url) {
           return res.status(500).json({ message: "Failed to upload image" });
         }
@@ -86,20 +96,24 @@ const updateUserProfile = async (req, res, next) => {
         phoneNumber,
         dob,
         gender,
+        bloodGroup,
         profilePic: profilePicUrl,
+        address, // <-- now address is saved
       },
       { new: true }
     ).select("-password");
 
+    console.log("user== : ",updatedUser)
+
     return res.status(200).json({
       message: "User updated successfully",
       updatedUser,
-      profilePic: updatedUser.profilePic,
     });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Server error updating profile" });
   }
 };
+
 
 export { getUserProfile, updateUserProfile };

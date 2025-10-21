@@ -72,7 +72,12 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ["user", "doctor", "admin"],
       default: "user",
-    }
+    },
+    address: { 
+      type: addressSchema,
+       default: {}
+       },
+
     
   },
   { timestamps: true }

@@ -12,7 +12,6 @@ const Profile = () => {
   const [preview, setPreview] = useState("");
   const [authLoading, setAuthLoading] = useState(true);
 
-  // Initialize user data from authUser
   useEffect(() => {
     if (authUser) {
       setUserData({
@@ -22,12 +21,18 @@ const Profile = () => {
         dob: authUser.dob?.slice(0, 10) || "",
         gender: authUser.gender || "",
         bloodGroup: authUser.bloodGroup || "",
-        address: authUser.address || {},
+        address: authUser.address || {
+          houseNumber: "",
+          street: "",
+          city: "",
+          state: "",
+          pincode: "",
+          country: "",
+        },
         profilePic: authUser.profilePic || "",
         userID: authUser._id || authUser.userID || "",
       });
 
-      // Set preview from profilePic
       if (authUser.profilePic) {
         setPreview(authUser.profilePic);
       }
@@ -35,7 +40,6 @@ const Profile = () => {
     setAuthLoading(false);
   }, [authUser]);
 
-  // Fetch profile from backend
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
@@ -44,13 +48,27 @@ const Profile = () => {
           setUserData((prev) => ({
             ...prev,
             ...res.data.data,
+            address: res.data.data.address || {
+              houseNumber: "",
+              street: "",
+              city: "",
+              state: "",
+              pincode: "",
+              country: "",
+            },
           }));
+
           if (res.data.data.profilePic) {
             setPreview(res.data.data.profilePic);
           }
         }
       } catch (error) {
         console.error("Error fetching profile:", error);
+        if (error.response?.status === 401) {
+          console.log("Token expired or missing");
+          localStorage.removeItem("token");
+          window.location.href = "/login";
+        }
       }
     };
     fetchUserProfile();
@@ -68,7 +86,7 @@ const Profile = () => {
     setPhotoFile(file);
     const reader = new FileReader();
     reader.onloadend = () => {
-      setPreview(reader.result); // show preview immediately
+      setPreview(reader.result);
     };
     reader.readAsDataURL(file);
   };
@@ -76,23 +94,14 @@ const Profile = () => {
   const handleSave = async () => {
     try {
       const formData = new FormData();
-
-      // Append all user fields
       formData.append("userName", userData.userName);
       formData.append("email", userData.email);
       formData.append("phoneNumber", userData.phoneNumber);
       formData.append("dob", userData.dob);
       formData.append("gender", userData.gender);
       formData.append("bloodGroup", userData.bloodGroup);
+      formData.append("address", JSON.stringify(userData.address));
 
-      // Append address fields if exist
-      if (userData.address) {
-        Object.keys(userData.address).forEach((key) => {
-          formData.append(`address[${key}]`, userData.address[key]);
-        });
-      }
-
-      // Append profile picture if selected
       if (photoFile) {
         formData.append("profilePic", photoFile);
       }
@@ -103,13 +112,10 @@ const Profile = () => {
 
       if (res.data?.updatedUser) {
         setUserData(res.data.updatedUser);
-        setPreview(res.data.updatedUser.profilePic);
+        setPreview(res.data.updatedUser.profilePic || "");
         setPhotoFile(null);
         setIsEditing(false);
-
-        // Refresh context
         await fetchProfile();
-
         toast.success("✅ Profile updated successfully", {
           duration: 1500,
           position: "top-center",
@@ -120,8 +126,6 @@ const Profile = () => {
       toast.error("❌ Error updating profile");
     }
   };
-
-
 
   return (
     <>
@@ -178,7 +182,6 @@ const Profile = () => {
               </div>
             </div>
 
-            {/* Personal Details and Address Sections unchanged */}
             <div className="flex ms-20">
               <div className="mx-10">
                 <h1 className="mt-9 text-2xl">Personal Detail :</h1>
@@ -193,7 +196,6 @@ const Profile = () => {
                     className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
                   />
                 </div>
-
                 <div className="grid my-5">
                   <label htmlFor="">Email :- </label>
                   <input
@@ -205,7 +207,6 @@ const Profile = () => {
                     className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
                   />
                 </div>
-
                 <div className="grid my-5">
                   <label htmlFor="">Phone Number :-</label>
                   <input
@@ -217,19 +218,17 @@ const Profile = () => {
                     className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
                   />
                 </div>
-
                 <div className="grid my-5">
                   <label htmlFor="">Date of Birth :-</label>
                   <input
                     type="date"
                     name="dob"
-                    value={userData?.dob ? userData.dob.split("T")[0] : ""}
+                    value={userData?.dob || ""}
                     onChange={handleChange}
                     disabled={!isEditing}
                     className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
                   />
                 </div>
-
                 <div className="grid my-5">
                   <label htmlFor="">Gender :-</label>
                   <input
@@ -241,7 +240,6 @@ const Profile = () => {
                     className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
                   />
                 </div>
-
                 <div className="grid my-5">
                   <label htmlFor="">Blood Group :-</label>
                   <input

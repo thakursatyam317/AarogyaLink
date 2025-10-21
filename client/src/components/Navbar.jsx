@@ -15,6 +15,8 @@ const Navbar = () => {
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem("user"));
     setAuthUser(userData);
+    console.log("authUser", authUser);
+    // console.log("authUser.role", authUser.role);
   }, []);
 
   const handleEnterTheMouse = () => {
@@ -55,22 +57,77 @@ const Navbar = () => {
         </div>
 
         <div className="mt-5 flex gap-8 text-white">
-          {["/", "/doctorlist", "/contact", "/about"].map((path, i) => {
-            const names = ["Home", "Doctors", "Contact", "About"];
-            return (
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              isActive
+                ? "text-amber-500 font-semibold text-[18px]"
+                : "text-white text-[18px]"
+            }
+          >
+            Home
+          </NavLink>
+          
+            <NavLink
+            to="/doctor/dashboard"
+            className={({ isActive }) =>
+              isActive
+                ? "text-amber-500 font-semibold text-[18px]"
+                : "text-white text-[18px]"
+            }
+          >
+            Dashboard
+          </NavLink>
+          
+         
+         
+          
+          {/* {
+            authUser.data.role === "admin" &&(
               <NavLink
-                key={path}
-                to={path}
-                className={({ isActive }) =>
-                  isActive
-                    ? "text-amber-500 font-semibold text-[18px]"
-                    : "text-white text-[18px]"
-                }
-              >
-                {names[i]}
-              </NavLink>
-            );
-          })}
+            to="/admin/dashboard"
+            className={({ isActive }) =>
+              isActive
+                ? "text-amber-500 font-semibold text-[18px]"
+                : "text-white text-[18px]"
+            }
+          >
+            Dashboard
+          </NavLink>
+            )
+
+
+          } */}
+          <NavLink
+            to="/doctorlist"
+            className={({ isActive }) =>
+              isActive
+                ? "text-amber-500 font-semibold text-[18px]"
+                : "text-white text-[18px]"
+            }
+          >
+            Doctors
+          </NavLink>
+          <NavLink
+            to="/contact"
+            className={({ isActive }) =>
+              isActive
+                ? "text-amber-500 font-semibold text-[18px]"
+                : "text-white text-[18px]"
+            }
+          >
+            Contact
+          </NavLink>
+          <NavLink
+            to="/about"
+            className={({ isActive }) =>
+              isActive
+                ? "text-amber-500 font-semibold text-[18px]"
+                : "text-white text-[18px]"
+            }
+          >
+            About
+          </NavLink>
         </div>
 
         <div className="mt-4 mr-32 flex gap-8 text-white items-center">
@@ -117,9 +174,9 @@ const Navbar = () => {
                 onMouseLeave={handleLeaveTheMouse}
               >
                 <img
-                  src={userImage}
-                  alt="user"
-                  className="w-10 h-10 rounded-full border-2 border-white object-cover cursor-pointer"
+                  src={authUser.profilePic || userImage} // fallback if no profilePic
+                  alt={authUser?.userName || "User"} // fallback alt text
+                  className="w-10 h-10 rounded-full border-2 border-white object-cover cursor-pointer hover:ring-2 hover:ring-blue-300 transition-all duration-200"
                 />
 
                 <AnimatePresence>

@@ -8,7 +8,7 @@ export const AuthProvider = ({ children }) => {
     try {
       return JSON.parse(localStorage.getItem("user")) || null;
     } catch (error) {
-      console.log(`Failed to parser user from localStorage ${error}`);
+      console.log(`Failed to parse user from localStorage: ${error}`);
       return null;
     }
   });
@@ -18,14 +18,22 @@ export const AuthProvider = ({ children }) => {
 
   const fetchProfile = async () => {
     setLoading(true);
-
     try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setAuthUser(null);
+        setIsLogin(false);
+        setLoading(false);
+        return;
+      }
+
       const res = await axios.get("http://localhost:4500/api/user/profile", {
-        withCredentials: true,
+        headers: { Authorization: `Bearer ${token}` },
       });
 
-      const user = res.data?.user || res.data || null;
-      console.log(user);
+      const user = res.data?.user || res.data?.data || res.data || null;
+      console.log("Fetched user:", user);
+
       if (user) {
         setAuthUser(user);
         setIsLogin(true);
@@ -37,25 +45,29 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.error("Fetch Profile failed:", error);
-
       setAuthUser(null);
       setIsLogin(false);
       localStorage.removeItem("user");
+      localStorage.removeItem("token");
     } finally {
       setLoading(false);
     }
   };
 
-  //update the profile
-
+  // update profile
   const updateProfile = async (updatedData) => {
     try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("No token found");
+
       const res = await axios.put(
-        "http://localhost:4500/user/update",
+        "http://localhost:4500/api/user/profile/update",
         updatedData,
         {
-          withCredentials: true,
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         }
       );
 
@@ -67,7 +79,6 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("user", JSON.stringify(updatedUser));
 
       window.dispatchEvent(new Event("authChange"));
-
       return updatedUser;
     } catch (error) {
       console.error("Update profile failed:", error);
@@ -79,14 +90,12 @@ export const AuthProvider = ({ children }) => {
     setAuthUser(null);
     setIsLogin(false);
     localStorage.removeItem("user");
-
+    localStorage.removeItem("token");
     window.dispatchEvent(new Event("authChange"));
   };
 
-
-  useEffect(()=>{
-     if (!authUser) {
-      
+  useEffect(() => {
+    if (!authUser) {
       fetchProfile();
     } else {
       setLoading(false);
@@ -109,11 +118,7 @@ export const AuthProvider = ({ children }) => {
       }
     };
 
-
-    const storageListener = (e) => {
-    
-      handleStorageChange();
-    };
+    const storageListener = () => handleStorageChange();
     const authChangeListener = () => handleStorageChange();
 
     window.addEventListener("storage", storageListener);
@@ -123,12 +128,8 @@ export const AuthProvider = ({ children }) => {
       window.removeEventListener("storage", storageListener);
       window.removeEventListener("authChange", authChangeListener);
     };
-    
-  }, []); 
+  }, []);
 
-
-
-  
   return (
     <AuthContext.Provider
       value={{
@@ -145,12 +146,7 @@ export const AuthProvider = ({ children }) => {
       {!loading && children}
     </AuthContext.Provider>
   );
-
-  
-
-
 };
-
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
