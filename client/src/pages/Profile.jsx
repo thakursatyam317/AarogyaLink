@@ -11,6 +11,7 @@ const Profile = () => {
   const [photoFile, setPhotoFile] = useState(null);
   const [preview, setPreview] = useState("");
   const [authLoading, setAuthLoading] = useState(true);
+  const [selectedHospital, setSelectedHospital] = useState("");
 
   useEffect(() => {
     if (authUser) {
@@ -31,11 +32,10 @@ const Profile = () => {
         },
         profilePic: authUser.profilePic || "",
         userID: authUser._id || authUser.userID || "",
+        hospitalID: authUser.hospitalID || "",
       });
 
-      if (authUser.profilePic) {
-        setPreview(authUser.profilePic);
-      }
+      if (authUser.profilePic) setPreview(authUser.profilePic);
     }
     setAuthLoading(false);
   }, [authUser]);
@@ -65,7 +65,6 @@ const Profile = () => {
       } catch (error) {
         console.error("Error fetching profile:", error);
         if (error.response?.status === 401) {
-          console.log("Token expired or missing");
           localStorage.removeItem("token");
           window.location.href = "/login";
         }
@@ -85,9 +84,7 @@ const Profile = () => {
     if (!file) return;
     setPhotoFile(file);
     const reader = new FileReader();
-    reader.onloadend = () => {
-      setPreview(reader.result);
-    };
+    reader.onloadend = () => setPreview(reader.result);
     reader.readAsDataURL(file);
   };
 
@@ -100,11 +97,13 @@ const Profile = () => {
       formData.append("dob", userData.dob);
       formData.append("gender", userData.gender);
       formData.append("bloodGroup", userData.bloodGroup);
+      formData.append(
+        "hospitalID",
+        userData.hospitalID || selectedHospital || ""
+      );
       formData.append("address", JSON.stringify(userData.address));
 
-      if (photoFile) {
-        formData.append("profilePic", photoFile);
-      }
+      if (photoFile) formData.append("profilePic", photoFile);
 
       const res = await authAxios.put("/user/profile/update", formData, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -116,6 +115,7 @@ const Profile = () => {
         setPhotoFile(null);
         setIsEditing(false);
         await fetchProfile();
+
         toast.success("✅ Profile updated successfully", {
           duration: 1500,
           position: "top-center",
@@ -133,19 +133,53 @@ const Profile = () => {
         <Toaster position="top-center" reverseOrder={false} />
         <div className="h-[700px] grid rounded-2xl justify-center ms-15 mt-24 shadow-[0_0_25px_rgba(59,130,246,0.25)] w-[1400px]">
           <div className="flex justify-between relative">
-            <h1 className="text-5xl font-semibold absolute mt-14 ms-16">Profile</h1>
-            <div className="ms-[35%] mt-14">
-              <label htmlFor="" className="text-xl">User ID :- </label>
+            <h1 className="text-5xl font-semibold absolute mt-14 ms-3">
+              Profile
+            </h1>
+            <div className="ms-[35%] mt-14 grid">
+            <div>
+              <label htmlFor="" className="text-xl">
+                Hospital ID :-{" "}
+              </label>
+              {userData.hospitalID ? (
+                <span className="text-xl hover:text-blue-600 hover:shadow-blue-500">
+                  {userData.hospitalID}
+                </span>
+              ) : (
+                <select
+                  value={selectedHospital}
+                  onChange={(e) => setSelectedHospital(e.target.value)}
+                  className="border border-gray-300 rounded-md p-2 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">---Select Hospital---</option>
+                  <option value="Hos-AarogyaLink-0112">
+                    Hos-AarogyaLink-0112
+                  </option>
+                  <option value="Hos-AarogyaLink-0113">
+                    Hos-AarogyaLink-0113
+                  </option>
+                  <option value="Hos-AarogyaLink-0114">
+                    Hos-AarogyaLink-0114
+                  </option>
+                </select>
+              )}
+            </div>
+
+            <div>
+              <label htmlFor="" className="text-xl">
+                User ID :-{" "}
+              </label>
               <span className="text-xl hover:text-blue-600 hover:shadow-blue-500">
                 {userData.userID}
               </span>
             </div>
+          </div>
 
             <div>
               {!isEditing ? (
                 <button
                   onClick={() => setIsEditing(true)}
-                  className=" ms-[95%] mt-10 h-11 w-40  rounded-xl bg-blue-500 hover:bg-amber-500 hover:text-white text-2xl"
+                  className=" ms-[15%] mt-10 h-11 w-40  rounded-xl bg-blue-500 hover:bg-amber-500 hover:text-white text-2xl"
                 >
                   Edit
                 </button>
@@ -186,7 +220,9 @@ const Profile = () => {
               <div className="mx-10">
                 <h1 className="mt-9 text-2xl">Personal Detail :</h1>
                 <div className="grid my-5 w-80">
-                  <label htmlFor="" className="my-1">User Name :-</label>
+                  <label htmlFor="" className="my-1">
+                    User Name :-
+                  </label>
                   <input
                     type="text"
                     name="userName"
@@ -264,7 +300,10 @@ const Profile = () => {
                     onChange={(e) =>
                       setUserData((prev) => ({
                         ...prev,
-                        address: { ...prev.address, houseNumber: e.target.value },
+                        address: {
+                          ...prev.address,
+                          houseNumber: e.target.value,
+                        },
                       }))
                     }
                     disabled={!isEditing}

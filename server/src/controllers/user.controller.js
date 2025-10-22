@@ -38,7 +38,7 @@ const getUserProfile = async (req, res, next) => {
 
 const updateUserProfile = async (req, res, next) => {
   try {
-    const { userName, email, phoneNumber, dob, gender, bloodGroup } = req.body;
+    const { userName, email, phoneNumber, dob, gender, bloodGroup , hospitalID} = req.body;
     let address = req.body.address;
 
     // If address comes as a JSON string (from FormData)
@@ -98,10 +98,12 @@ const updateUserProfile = async (req, res, next) => {
         gender,
         bloodGroup,
         profilePic: profilePicUrl,
+        hospitalID,
         address, // <-- now address is saved
       },
       { new: true }
     ).select("-password");
+    
 
     console.log("user== : ",updatedUser)
 

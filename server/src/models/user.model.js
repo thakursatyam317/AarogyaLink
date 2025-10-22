@@ -46,6 +46,9 @@ const userSchema = new mongoose.Schema(
       type: String,
       unique: true
     },
+    hospitalID :{
+      type: String,
+    },
     phoneNumber: {
       type: String,
       required: true,
