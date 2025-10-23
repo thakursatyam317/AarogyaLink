@@ -10,7 +10,7 @@ import Profile from "./pages/profile"
 import { Toaster } from "react-hot-toast";
 import Dashboard from "./pages/dashboard/doctor/Dashboard"
 import Doctors from "./pages/Doctors"
-
+import DoctorDetails from './pages/dashboard/doctor/Details'
 
 function App() {
   
@@ -29,6 +29,8 @@ function App() {
         <Route path="/doctorlist" element={<Doctors/>}/>
 
         <Route path="/doctor/dashboard" element={<Dashboard/>}/>
+        <Route path="/doctor/dashboard/details" element={<DoctorDetails/>}/>
+
 
 
       </Routes>

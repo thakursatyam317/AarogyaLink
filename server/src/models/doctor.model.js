@@ -9,7 +9,7 @@ const doctorSchema = new mongoose.Schema(
       type: String,
       unique: true,
     },
-    userId: {
+    user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
@@ -18,11 +18,11 @@ const doctorSchema = new mongoose.Schema(
     },
     specialization: {
       type: String,
-      required: true,
+      
     },
     experience: {
       type: Number,
-      default: 0, // years of experience
+      default: 0, 
     },
     consultationFee: {
       type: Number,
@@ -31,6 +31,10 @@ const doctorSchema = new mongoose.Schema(
     verified: {
       type: Boolean,
       default: false,
+    },
+    description : {
+      type: String,
+      
     },
   },
   { timestamps: true }
