@@ -38,7 +38,15 @@ const getUserProfile = async (req, res, next) => {
 
 const updateUserProfile = async (req, res, next) => {
   try {
-    const { userName, email, phoneNumber, dob, gender, bloodGroup , hospitalID} = req.body;
+    const {
+      userName,
+      email,
+      phoneNumber,
+      dob,
+      gender,
+      bloodGroup,
+      hospitalID,
+    } = req.body;
     let address = req.body.address;
 
     // If address comes as a JSON string (from FormData)
@@ -49,7 +57,7 @@ const updateUserProfile = async (req, res, next) => {
         address = {};
       }
     }
-    console.log("address",address)
+    console.log("address", address);
 
     const photo = req.file;
     const userId = req.user?._id || req.user?.id;
@@ -103,9 +111,8 @@ const updateUserProfile = async (req, res, next) => {
       },
       { new: true }
     ).select("-password");
-    
 
-    console.log("user== : ",updatedUser)
+    console.log("user== : ", updatedUser);
 
     return res.status(200).json({
       message: "User updated successfully",
@@ -116,6 +123,5 @@ const updateUserProfile = async (req, res, next) => {
     return res.status(500).json({ message: "Server error updating profile" });
   }
 };
-
 
 export { getUserProfile, updateUserProfile };

@@ -21,11 +21,11 @@ const doctorSchema = new mongoose.Schema(
       
     },
     experience: {
-      type: Number,
+      type: String,
       default: 0, 
     },
     consultationFee: {
-      type: Number,
+      type: String,
       default: 0,
     },
     verified: {
