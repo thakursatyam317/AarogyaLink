@@ -1,9 +1,19 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { useNavigate, NavLink } from "react-router-dom";
 import { FaCamera } from "react-icons/fa";
+import { useAuth } from "../contexts/authContext";
+import authAxios from "../utils/authAxios";
+import toast, { Toaster } from "react-hot-toast";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const {authUser, fetchProfile} =  useAuth();
+  const [userData, setUserData] = useState();
+  const [isEditing, setIsEditing] = useState(false);
+  const [photoFile, setPhotoFile] = useState(null);
+  const [preview, setPreview] = useState("");
+  const [authLoading, setAuthLoading] = useState(true);
+  const [selectedHospital, setSelectedHospital] = useState("");
 
   const doctorPic = `https://placehold.co/600x400?text=S`;
 

@@ -1,10 +1,11 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import  connectDB from './src/configs/db.js'
 import authRoute from './src/routes/auth.route.js'
 import userRoute from './src/routes/user.route.js'
-import cors from 'cors';
+import doctorAuth from './src/routes/doctor.route.js'
 
 
 dotenv.config();
@@ -24,7 +25,8 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use('/api/auth',authRoute);
-app.use('/api/user', userRoute)
+app.use('/api/user', userRoute);
+app.use('/api/doctor',doctorAuth);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, ()=>{

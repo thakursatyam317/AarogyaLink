@@ -31,8 +31,6 @@ const updateDoctorProfile = async () => {
       throw new ApiError(401, "Unauthorized User");
     }
 
-    
-
     if (!userName || !email || !phoneNumber) {
       throw new ApiError(400, "Please filled all the required Field");
     }
@@ -60,13 +58,39 @@ const updateDoctorProfile = async () => {
       }
     }
 
+    const doctor = await Doctor.find({ email });
+    const doctor_id = doctor?._id;
+
     const updatedDoctorProfile = await Doctor.findByIdAndUpdate(
+      doctor_id,
+      {
+        userName,
+        email,
+        phoneNumber,
+        dob,
+        gender,
+        timingStartToEnd,
+        hospitalID,
+        doctorID,
+        specialization,
+        experience,
+        consultationFee,
+        description,
+        profilePic: profilePicUrl,
+      },
+      { new: true }
+    );
+    console.log("updatedDoctorProfile :- ", updatedDoctorProfile);
 
-    )
-
-
+    return res.status(200).json({
+      message: "User updated successfully",
+      updatedDoctorProfile,
+    });
   } catch (error) {
     console.error(error);
     throw new ApiError(500, "Server Error for Updating Profile");
   }
 };
+
+
+export {updateDoctorProfile}
