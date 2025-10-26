@@ -11,6 +11,7 @@ import { Toaster } from "react-hot-toast";
 import Dashboard from "./pages/dashboard/doctor/Dashboard"
 import Doctors from "./pages/Doctors"
 import DoctorDetails from './pages/dashboard/doctor/Details'
+import Appointment from "./pages/dashboard/doctor/Appointment"
 
 function App() {
   
@@ -30,6 +31,7 @@ function App() {
 
         <Route path="/doctor/dashboard" element={<Dashboard/>}/>
         <Route path="/doctor/dashboard/details" element={<DoctorDetails/>}/>
+         <Route path="/doctor/dashboard/appointment" element={<Appointment/>}/>
 
 
 
