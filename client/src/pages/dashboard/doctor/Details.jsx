@@ -1,13 +1,13 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
 import { FaCamera } from "react-icons/fa";
-import { useAuth } from "../contexts/authContext";
-import authAxios from "../utils/authAxios";
+import { useAuth } from "../../../contexts/authContext";
+import authAxios from "../../../utils/authAxios";
 import toast, { Toaster } from "react-hot-toast";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const {authUser, fetchProfile} =  useAuth();
+  const { authUser, fetchProfile } = useAuth();
   const [userData, setUserData] = useState();
   const [isEditing, setIsEditing] = useState(false);
   const [photoFile, setPhotoFile] = useState(null);
@@ -17,6 +17,99 @@ const Dashboard = () => {
 
   const doctorPic = `https://placehold.co/600x400?text=S`;
 
+  useEffect(() => {
+    if (authUser) {
+      setUserData({
+        userName: authUser.userName || "",
+        email: authUser.email || "",
+        phoneNumber: authUser.phoneNumber || "",
+        dob: authUser.dob?.slice(0, 10) || "",
+        gender: authUser.gender || "",
+      });
+      if (authUser.profilePic) setPreview(authUser.profilePic);
+    }
+    setAuthLoading(false);
+  }, [authUser]);
+
+  useEffect(() => {
+    const fetchDoctorProfile = async () => {
+      try {
+        const res = await authAxios.get("/doctor/details");
+        if (res.data?.data) {
+          setPreview((prev) => ({
+            ...prev,
+            ...res.data.data,
+          }));
+
+          if (res.data.data.profilePic) {
+            setPreview(res.data.data.profilePic);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+        if (error.response?.status === 401) {
+          localStorage.removeItem("token");
+          window.location.href = "/login";
+        }
+      }
+    };
+    fetchDoctorProfile();
+  });
+
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setUserData((prev) => ({ ...prev, [name]: value }));
+  // };
+
+  // const handlePhotoChange = (e) => {
+  //   if (!isEditing) return;
+  //   const file = e.target.files[0];
+  //   if (!file) return;
+  //   setPhotoFile(file);
+  //   const reader = new FileReader();
+  //   reader.onloadend = () => setPreview(reader.result);
+  //   reader.readAsDataURL(file);
+  // };
+
+  // const handleSave = async () => {
+  //   try {
+  //     const formData = new FormData();
+  //     formData.append("userName", userData.userName);
+  //     formData.append("email", userData.email);
+  //     formData.append("phoneNumber", userData.phoneNumber);
+  //     formData.append("dob", userData.dob);
+  //     formData.append("gender", userData.gender);
+      
+  //     formData.append(
+  //       "hospitalID",
+  //       userData.hospitalID || selectedHospital || ""
+  //     );
+      
+
+  //     if (photoFile) formData.append("profilePic", photoFile);
+
+  //     const res = await authAxios.put("/user/profile/update", formData, {
+  //       headers: { "Content-Type": "multipart/form-data" },
+  //     });
+
+  //     if (res.data?.updatedUser) {
+  //       setUserData(res.data.updatedUser);
+  //       setPreview(res.data.updatedUser.profilePic || "");
+  //       setPhotoFile(null);
+  //       setIsEditing(false);
+  //       await fetchProfile();
+
+  //       toast.success("✅ Profile updated successfully", {
+  //         duration: 1500,
+  //         position: "top-center",
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.error("Error updating profile:", error);
+  //     toast.error("❌ Error updating profile");
+  //   }
+  // };
+
   const handleClick = () => {
     navigate("/dashboard");
   };
@@ -24,6 +117,7 @@ const Dashboard = () => {
   return (
     <>
       <div>
+         <Toaster position="top-center" reverseOrder={false} />
         <div className="flex">
           <div className="w-[20%] h-screen bg-gray-600 fixed ">
             <div className="mt-20">
@@ -103,10 +197,11 @@ const Dashboard = () => {
                     </div>
                     <div className="ms-11 ">
                       <div className="grid   my-5">
-                        <label htmlFor="">User Name :-</label>
+                        <label htmlFor="" className="my-1">User Name :-</label>
                         <input
                           type="text"
                           name="userName"
+                          value={userData?.userName || ""}
                           className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
                         />
                       </div>
@@ -115,6 +210,7 @@ const Dashboard = () => {
                         <input
                           type="email"
                           name="email"
+                          value={userData?.email || ""}
                           className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
                         />
                       </div>
@@ -123,6 +219,7 @@ const Dashboard = () => {
                         <input
                           type="text"
                           name="phoneNumber"
+                          value={userData?.phoneNumber || ""}
                           className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
                         />
                       </div>
@@ -135,6 +232,7 @@ const Dashboard = () => {
                         <input
                           type="date"
                           name="dob"
+                          value={userData?.dob || ""}
                           className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
                         />
                       </div>
@@ -143,6 +241,7 @@ const Dashboard = () => {
                         <input
                           type="text"
                           name="gender"
+                          value={userData?.gender || ""}
                           className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
                         />
                       </div>
