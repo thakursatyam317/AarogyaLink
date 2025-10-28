@@ -18,11 +18,10 @@ const doctorSchema = new mongoose.Schema(
     },
     specialization: {
       type: String,
-      
     },
     experience: {
       type: String,
-      default: 0, 
+      default: 0,
     },
     consultationFee: {
       type: String,
@@ -32,22 +31,27 @@ const doctorSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    description : {
+    description: {
       type: String,
-      
+    },
+    startingTiming: {
+      type: String,
+    },
+    endingTiming: {
+      type: String,
     },
   },
   { timestamps: true }
 );
 
-doctorSchema.pre("save",(next)=>{
-    if(!this.doctorID){
-        const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, "");
-        const randomCode = uid.rnd().toUpperCase();
-        this.doctorID = `DOC-${dateStr}-${randomCode}`;
-    }
-    next();
-})
+doctorSchema.pre("save", (next) => {
+  if (!this.doctorID) {
+    const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+    const randomCode = uid.rnd().toUpperCase();
+    this.doctorID = `DOC-${dateStr}-${randomCode}`;
+  }
+  next();
+});
 
 const Doctor = mongoose.model("Doctor", doctorSchema);
 
