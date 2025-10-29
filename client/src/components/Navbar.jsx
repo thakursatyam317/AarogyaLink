@@ -226,10 +226,10 @@ const Navbar = () => {
                         </li>
                         <li>
                           <Link
-                            to="/disease"
+                            to="/doctorregisteration"
                             className="block hover:text-blue-600"
                           >
-                            🦠 Disease
+                            Doctor Registeration
                           </Link>
                         </li>
                         <li>

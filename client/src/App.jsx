@@ -1,44 +1,40 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom"
-import React from 'react'
-import Navbar from "./components/Navbar"
-import Home from "./pages/Home"
-import Contact from "./pages/Contact"
-import About from "./pages/About"
-import Login from "./pages/Login"
-import Register from "./pages/Register"
-import Profile from "./pages/profile"
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import React from "react";
+import Navbar from "./components/Navbar";
+import Home from "./pages/Home";
+import Contact from "./pages/Contact";
+import About from "./pages/About";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Profile from "./pages/profile";
 import { Toaster } from "react-hot-toast";
-import Dashboard from "./pages/dashboard/doctor/Dashboard"
-import Doctors from "./pages/Doctors"
-import DoctorDetails from './pages/dashboard/doctor/Details'
-import Appointment from "./pages/dashboard/doctor/Appointment"
+import Dashboard from "./pages/dashboard/doctor/Dashboard";
+import Doctors from "./pages/Doctors";
+import DoctorDetails from "./pages/dashboard/doctor/Details";
+import Appointment from "./pages/dashboard/doctor/Appointment";
+import CreateDoctor from "./pages/CreateDoctor";
 
 function App() {
-  
-
   return (
     <BrowserRouter>
-    <Toaster position="top-center" reverseOrder={false} />
-    <Navbar/>
+      <Toaster position="top-center" reverseOrder={false} />
+      <Navbar />
       <Routes>
-        <Route path="/" element={<Home/>}/>
-        <Route path="/contact" element={<Contact/>}/>
-        <Route path="/about" element={<About/>}/>
-        <Route path="/login" element={<Login/>}/>
-        <Route path="/register" element={<Register/>}/>
-        <Route path="/profile" element={<Profile/>}/>
-        <Route path="/doctorlist" element={<Doctors/>}/>
+        <Route path="/" element={<Home />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/doctorlist" element={<Doctors />} />
+        <Route path="/doctorregisteration" element={<CreateDoctor />} />
 
-        <Route path="/doctor/dashboard" element={<Dashboard/>}/>
-        <Route path="/doctor/dashboard/details" element={<DoctorDetails/>}/>
-         <Route path="/doctor/dashboard/appointment" element={<Appointment/>}/>
-
-
-
+        <Route path="/doctor/dashboard" element={<Dashboard />} />
+        <Route path="/doctor/dashboard/details" element={<DoctorDetails />} />
+        <Route path="/doctor/dashboard/appointment" element={<Appointment />} />
       </Routes>
     </BrowserRouter>
-   
-  )
+  );
 }
 
-export default App
+export default App;
