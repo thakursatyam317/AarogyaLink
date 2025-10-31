@@ -40,10 +40,10 @@ const CreateDoctor = () => {
 
 
 
-      const response = await authAxios.post("/doctors/createdoctor", formData);
+      const response = await authAxios.post("/doctor/createdoctor", formData);
       if (response.status === 201) {
         toast.success("Doctor registered successfully");
-        navigate("/home");
+        navigate("/");
       }
     } catch (error) {
       console.log("Error for Register the Doctor", error);

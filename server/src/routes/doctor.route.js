@@ -1,11 +1,13 @@
 import express from "express";
-import { updateDoctorProfile, getDoctorDetails } from "../controllers/doctor.controller.js";
+import { createDoctor, updateDoctorProfile, getDoctorDetails } from "../controllers/doctor.controller.js";
 import { userProtection } from "../middlewares/user.middleware.js";
 import multer from "multer";
 
 const upload = multer();
 
 const router = express.Router();
+
+router.post("/createdoctor", userProtection, createDoctor);
 
 router.get("/details", userProtection, getDoctorDetails);
 router.put(

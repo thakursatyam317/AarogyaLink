@@ -9,23 +9,24 @@ const doctorSchema = new mongoose.Schema(
       type: String,
       unique: true,
     },
-    user: {
+    userID: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
     hospitalID: {
       type: String,
+      
     },
     specialization: {
       type: String,
     },
     experience: {
       type: String,
-      default: 0,
+      default: "0",
     },
     consultationFee: {
       type: String,
-      default: 0,
+      default: "0",
     },
     verified: {
       type: Boolean,
@@ -44,7 +45,8 @@ const doctorSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-doctorSchema.pre("save", (next) => {
+
+doctorSchema.pre("save", function (next) {
   if (!this.doctorID) {
     const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, "");
     const randomCode = uid.rnd().toUpperCase();
@@ -54,5 +56,4 @@ doctorSchema.pre("save", (next) => {
 });
 
 const Doctor = mongoose.model("Doctor", doctorSchema);
-
 export default Doctor;
