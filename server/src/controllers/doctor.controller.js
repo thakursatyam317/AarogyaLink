@@ -4,17 +4,13 @@ import User from "../models/user.model.js";
 import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
 
-
-
 export const createDoctor = async (req, res) => {
   try {
-    const userId = req.user?._id || req.user?.id;
-    console.log("Logged-in userId:", userId);
+    const user_id = req.user?._id || req.user?.id;
+    console.log("Logged-in userId:", user_id);
 
-    
     const newDoctor = await Doctor.create({
-      
-      userID: userId,
+      user_id: user_id,
     });
 
     return res
@@ -36,27 +32,29 @@ export const createDoctor = async (req, res) => {
 // ✅ Get Doctor Details by ID
 export const getDoctorDetails = async (req, res) => {
   try {
-    const userId = req.user?._id || req.user?.id;
+    const user_id = req.user?._id || req.user?.id;
 
-    if (!userId) {
+    if (!user_id) {
       return res.status(400).json({
         success: false,
         message: "User ID is required",
       });
     }
-
+    const doctor = await Doctor.findOne({ user_id: user_id });
+    console.log("Found doctor:", doctor);
+    //it is not working
     const doctorDetails = await Doctor.aggregate([
       // Match doctor by user ID
       {
         $match: {
-         user: new mongoose.Types.ObjectId(userId)
+          _id: new mongoose.Types.ObjectId(doctor._id),
         },
       },
       // Join with User collection
       {
         $lookup: {
           from: "users", // Collection name in MongoDB
-          localField: "userID",
+          localField: "user_id",
           foreignField: "_id",
           as: "userDetails",
         },
@@ -89,6 +87,7 @@ export const getDoctorDetails = async (req, res) => {
         },
       },
     ]);
+    console.log("Aggregated doctor details:", doctorDetails);
 
     if (!doctorDetails.length) {
       return res.status(404).json({
@@ -111,9 +110,6 @@ export const getDoctorDetails = async (req, res) => {
   }
 };
 
-
-
-
 // ✅ Update Doctor Profile
 export const updateDoctorProfile = async (req, res) => {
   try {
@@ -134,11 +130,10 @@ export const updateDoctorProfile = async (req, res) => {
     } = req.body;
     console.log("Request body:", req.body);
 
-    const photo = req.file;
-    const userId = req.user?._id || req.user?.id;
-    console.log("Logged-in userId:", userId);
-    console.log("Uploaded photo:", photo);
-    if (!userId) {
+    const user_id = req.user?._id || req.user?.id;
+    console.log("Logged-in userId:", user_id);
+
+    if (!user_id) {
       throw new ApiError(401, "Unauthorized User");
     }
 
@@ -146,68 +141,57 @@ export const updateDoctorProfile = async (req, res) => {
       throw new ApiError(400, "Please fill all required fields");
     }
 
-    // ✅ Find doctor linked to logged-in user
-    const doctor = await Doctor.findOne({ userId });
+    const doctor = await Doctor.findOne({ user_id: user_id });
     if (!doctor) {
       throw new ApiError(404, "Doctor not found");
     }
 
-    let profilePicUrl = doctor.profilePic;
+    const user = await User.findById(user_id);
+    console.log("Found user:", user);
 
-    // ✅ If new photo uploaded → upload to Cloudinary
-    if (photo) {
-      const base64Image = photo.buffer.toString("base64");
-      const dataUri = `data:${photo.mimetype};base64,${base64Image}`;
-
-      try {
-        const result = await cloudinary.uploader.upload(dataUri, {
-          folder: "aarogyalinkTwo",
-          width: 300,
-          height: 300,
-          crop: "fill",
-        });
-        if (!result?.secure_url) {
-          throw new ApiError(500, "Failed to upload image");
-        }
-
-        profilePicUrl = result.secure_url;
-      } catch (cloudErr) {
-        console.error("❌ Cloudinary Upload Error:", cloudErr);
-        throw new ApiError(500, "Image upload failed");
-      }
-    }
-
-    // ✅ Update doctor details
-    const updatedDoctorProfile = await Doctor.findByIdAndUpdate(
-      doctor._id,
+    // Update Doctor details
+    const updatedDoctorProfile = await Doctor.findOneAndUpdate(
+      { user_id: user_id },
       {
-        userName,
-        email,
-        phoneNumber,
-        dob,
-        gender,
+        userDetails: {
+          userName,
+          email,
+          phoneNumber,
+          dob,
+          gender,
+          profilePic: user.profilePic,
+          userID: user.userID,
+        },
         startingTiming,
         endingTiming,
         hospitalID,
-        doctorID,
         specialization,
         experience,
         consultationFee,
         description,
-        profilePic: profilePicUrl,
+        
       },
       { new: true }
     );
 
     return res
       .status(200)
-      .json(new ApiResponse(true, "Doctor profile updated successfully", updatedDoctorProfile));
-
+      .json(
+        new ApiResponse(
+          true,
+          "Doctor profile updated successfully",
+          updatedDoctorProfile
+        )
+      );
   } catch (error) {
     console.error("❌ Update Doctor Profile Error:", error);
     if (error instanceof ApiError) {
-      return res.status(error.statusCode).json(new ApiResponse(false, error.message));
+      return res
+        .status(error.statusCode)
+        .json(new ApiResponse(false, error.message));
     }
-    return res.status(500).json(new ApiResponse(false, "Server error while updating profile"));
+    return res
+      .status(500)
+      .json(new ApiResponse(false, "Server error while updating profile"));
   }
 };

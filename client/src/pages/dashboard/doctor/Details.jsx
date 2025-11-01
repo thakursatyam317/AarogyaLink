@@ -17,6 +17,7 @@ const Dashboard = () => {
 
   const doctorPic = preview || `https://placehold.co/600x400?text=S`;
 
+  // ✅ Load Auth User Data Initially
   useEffect(() => {
     if (authUser) {
       setUserData({
@@ -39,6 +40,7 @@ const Dashboard = () => {
     setAuthLoading(false);
   }, [authUser]);
 
+  // ✅ Fetch Doctor Profile From Backend
   useEffect(() => {
     const fetchDoctorProfile = async () => {
       try {
@@ -63,6 +65,7 @@ const Dashboard = () => {
     fetchDoctorProfile();
   }, []);
 
+  // ✅ Handle Input Change
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     if (type === "checkbox") {
@@ -78,6 +81,7 @@ const Dashboard = () => {
     }
   };
 
+  // ✅ Handle Save Button (Update Doctor Details + Image)
   const handleSave = async () => {
     try {
       const formData = new FormData();
@@ -99,8 +103,12 @@ const Dashboard = () => {
       formData.append("startTime", userData.startTime || "");
       formData.append("endTime", userData.endTime || "");
 
-      if (photoFile) formData.append("profilePic", photoFile);
+      // ✅ Attach Image File (if selected)
+      if (photoFile) {
+        formData.append("profilePic", photoFile);
+      }
 
+      // ✅ Send Request to Backend
       const res = await authAxios.put("/doctor/details/update", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
@@ -117,8 +125,8 @@ const Dashboard = () => {
         });
       }
     } catch (error) {
-      console.error("Error updating Doctor Detail :", error);
-      toast.error("❌ Error updating Doctor Detail ");
+      console.error("Error updating Doctor Detail:", error);
+      toast.error("❌ Error updating Doctor Detail");
     }
   };
 
@@ -131,10 +139,11 @@ const Dashboard = () => {
       <div>
         <Toaster position="top-center" reverseOrder={false} />
         <div className="flex">
+          {/* 🔹 Sidebar */}
           <div className="w-[20%] h-screen bg-gray-600 fixed ">
             <div className="mt-20">
               <h1 className="text-white text-2xl font-bold ms-3">
-                Welcome Satyam Thakur
+                Welcome {authUser?.userName || "Doctor"}
               </h1>
               <div className="grid">
                 <NavLink
@@ -161,42 +170,47 @@ const Dashboard = () => {
               </div>
             </div>
           </div>
+
+          {/* 🔹 Main Section */}
           <div className="ms-[20%] w-[80%]">
             <div className="mt-20 w-84">
               <h1 className="text-3xl ms-10 font-bold">Doctor Dashboard</h1>
-              <div className="flex justify-between items-center -mb-2 w-full mt-5">
-                <div className="flex justify-center w-96 ">
-                  <div>
-                    <span className="text-2xl font-semibold flex  mx-30 text-gray-600 hover:text-blue-500">
-                      Doctor ID :
+              <div className="flex justify-between items-center w-full -mb-14 mt-1 relative">
+                <div className="flex -ms-15 mt-5  w-[100%] absolute z-20">
+                  <div className="flex ">
+                    <span className="text-2xl font-semibold flex mx-30 text-gray-600 hover:text-blue-500 whitespace-nowrap">
+                      Doctor ID : {userData?.hospitalID || ""}
                     </span>
                   </div>
-                  <span className="text-2xl font-semibold text-gray-600 hover:text-blue-500">
-                    Hospital ID :
+                  <div className="-ms-5">
+                    <span className="text-2xl font-semibold text-gray-600 hover:text-blue-500 whitespace-nowrap">
+                    Hospital ID : {userData?.hospitalID || ""}
                   </span>
+                  </div>
                 </div>
-                <div className="ms-[600px]">
+                <div className="ms-[950px] -mt-7">
                   {!isEditing ? (
                     <button
                       onClick={() => setIsEditing(true)}
-                      className=" ms-[15%] mt-10 h-11 w-40  rounded-xl bg-blue-500 hover:bg-amber-500 hover:text-white text-2xl"
+                      className="ms-[15%] mt-10 h-11 w-40 rounded-xl bg-blue-500 hover:bg-amber-500 hover:text-white text-2xl"
                     >
                       Edit
                     </button>
                   ) : (
                     <button
                       onClick={handleSave}
-                      className=" ms-[95%] mt-10 h-11 w-40  rounded-xl bg-green-500 hover:bg-amber-500 hover:text-white text-2xl"
+                      className="ms-[15%] mt-10 h-11 w-40 rounded-xl bg-green-500 hover:bg-amber-500 hover:text-white text-2xl"
                     >
                       Save
                     </button>
                   )}
                 </div>
               </div>
-              <div>
+
+              <div className=" mt-15 ">
                 <div className="flex">
                   <div className="grid w-84">
-                    {/* 🔹 Profile Pic Section */}
+                    {/* 🔹 Profile Picture */}
                     <div className="h-[300px] w-[300px] border rounded-full mt-20 ms-10 object-fill relative">
                       <img
                         src={preview || doctorPic}
@@ -208,13 +222,8 @@ const Dashboard = () => {
                         id="profilePicInput"
                         accept="image/*"
                         className="hidden"
-                        onChange={(e) => {
-                          const file = e.target.files[0];
-                          if (file) {
-                            setPhotoFile(file);
-                            setPreview(URL.createObjectURL(file));
-                          }
-                        }}
+                        disabled={true}
+                        
                       />
                       <label
                         htmlFor="profilePicInput"
@@ -224,12 +233,10 @@ const Dashboard = () => {
                       </label>
                     </div>
 
-                    {/* 🔹 User Info Fields */}
+                    {/* 🔹 Basic Info */}
                     <div className="ms-11 ">
-                      <div className="grid   my-5">
-                        <label htmlFor="" className="my-1">
-                          User Name :-
-                        </label>
+                      <div className="grid my-5">
+                        <label>User Name :-</label>
                         <input
                           type="text"
                           name="userName"
@@ -239,7 +246,7 @@ const Dashboard = () => {
                         />
                       </div>
                       <div className="grid my-5">
-                        <label htmlFor="">Email :-</label>
+                        <label>Email :-</label>
                         <input
                           type="email"
                           name="email"
@@ -249,7 +256,7 @@ const Dashboard = () => {
                         />
                       </div>
                       <div className="grid my-5">
-                        <label htmlFor="">Phone Number :-</label>
+                        <label>Phone Number :-</label>
                         <input
                           type="text"
                           name="phoneNumber"
@@ -261,32 +268,33 @@ const Dashboard = () => {
                     </div>
                   </div>
 
-                  {/* 🔹 Other Details */}
+                  {/* 🔹 Additional Details */}
                   <div className="flex mt-16 ">
                     <div className="ms-20 w-84 mt-5">
                       <div className="grid my-5">
-                        <label htmlFor="">Date of Birth :-</label>
+                        <label>Date of Birth :-</label>
                         <input
                           type="date"
                           name="dob"
                           value={userData?.dob || ""}
-                          disabled={!isEditing}
+                          disabled={true}
                           onChange={handleChange}
                           className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
                         />
                       </div>
                       <div className="grid my-5">
-                        <label htmlFor="">Gender :-</label>
+                        <label>Gender :-</label>
                         <input
                           type="text"
                           name="gender"
                           value={userData?.gender || ""}
-                          disabled={!isEditing}
+                          disabled={true}
                           onChange={handleChange}
                           className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
                         />
                       </div>
 
+                      {/* 🔹 Holidays */}
                       <div className="w-full mb-6">
                         <label>Select Holidays :- </label>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3 ">
@@ -301,7 +309,7 @@ const Dashboard = () => {
                           ].map((day) => (
                             <label
                               key={day}
-                              className="flex items-center gap-2 border border-gray-300 rounded-2xl p-3 cursor-pointer hover:bg-gray-50 transition "
+                              className="flex items-center gap-2 border border-gray-300 rounded-2xl p-3 cursor-pointer hover:bg-gray-50 transition"
                             >
                               <input
                                 type="checkbox"
@@ -314,9 +322,9 @@ const Dashboard = () => {
                                 }
                                 disabled={!isEditing}
                                 onChange={handleChange}
-                                className="accent-amber-500 w-4 h-4 "
+                                className="accent-amber-500 w-4 h-4"
                               />
-                              <span className="text-gray-700 font-medium ">
+                              <span className="text-gray-700 font-medium">
                                 {day}
                               </span>
                             </label>
@@ -324,6 +332,7 @@ const Dashboard = () => {
                         </div>
                       </div>
 
+                      {/* 🔹 Doctor Timings */}
                       <div className="w-full mb-4">
                         <label>Doctor Timing :- </label>
                         <div className="flex flex-col md:flex-row gap-3">
@@ -350,9 +359,10 @@ const Dashboard = () => {
                       </div>
                     </div>
 
+                    {/* 🔹 Right Column */}
                     <div className="ms-20 mt-5 w-84">
                       <div className="grid my-5">
-                        <label htmlFor="">Specialization :-</label>
+                        <label>Specialization :-</label>
                         <input
                           type="text"
                           name="specialization"
@@ -363,7 +373,7 @@ const Dashboard = () => {
                         />
                       </div>
                       <div className="grid my-5">
-                        <label htmlFor="">Experience :-</label>
+                        <label>Experience :-</label>
                         <input
                           type="text"
                           name="experience"
@@ -375,7 +385,7 @@ const Dashboard = () => {
                       </div>
 
                       <div className="grid my-5">
-                        <label htmlFor="">Consultation Fee :-</label>
+                        <label>Consultation Fee :-</label>
                         <input
                           type="text"
                           name="consultationFee"
@@ -394,7 +404,7 @@ const Dashboard = () => {
                           value={userData?.description || ""}
                           disabled={!isEditing}
                           onChange={handleChange}
-                          className="w-full p-3 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent  transition duration-200"
+                          className="w-full p-3 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200"
                         ></textarea>
                       </div>
                     </div>
