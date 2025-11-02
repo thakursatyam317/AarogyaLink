@@ -45,6 +45,7 @@ const Dashboard = () => {
     const fetchDoctorProfile = async () => {
       try {
         const res = await authAxios.get("/doctor/details");
+        console.log("Fetched doctor details:", res.data.data);
         if (res.data?.data) {
           setUserData((prev) => ({
             ...prev,
@@ -171,7 +172,7 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* 🔹 Main Section */}
+          
           <div className="ms-[20%] w-[80%]">
             <div className="mt-20 w-84">
               <h1 className="text-3xl ms-10 font-bold">Doctor Dashboard</h1>
@@ -179,7 +180,7 @@ const Dashboard = () => {
                 <div className="flex -ms-15 mt-5  w-[100%] absolute z-20">
                   <div className="flex ">
                     <span className="text-2xl font-semibold flex mx-30 text-gray-600 hover:text-blue-500 whitespace-nowrap">
-                      Doctor ID : {userData?.hospitalID || ""}
+                      Doctor ID : {userData?.doctorID || ""}
                     </span>
                   </div>
                   <div className="-ms-5">

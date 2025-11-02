@@ -42,65 +42,24 @@ export const getDoctorDetails = async (req, res) => {
     }
     const doctor = await Doctor.findOne({ user_id: user_id });
     console.log("Found doctor:", doctor);
-    //it is not working
-    const doctorDetails = await Doctor.aggregate([
-      // Match doctor by user ID
-      {
-        $match: {
-          _id: new mongoose.Types.ObjectId(doctor._id),
-        },
-      },
-      // Join with User collection
-      {
-        $lookup: {
-          from: "users", // Collection name in MongoDB
-          localField: "user_id",
-          foreignField: "_id",
-          as: "userDetails",
-        },
-      },
-      {
-        $unwind: "$userDetails",
-      },
-      // Join with Hospital collection
-      {
-        $lookup: {
-          from: "hospitals",
-          localField: "hospitalID",
-          foreignField: "_id",
-          as: "hospitalDetails",
-        },
-      },
-      {
-        $unwind: {
-          path: "$hospitalDetails",
-          preserveNullAndEmptyArrays: true, // If doctor not yet assigned hospital
-        },
-      },
-      // Optional: remove sensitive fields
-      {
-        $project: {
-          "userDetails.password": 0,
-          "userDetails.__v": 0,
-          "hospitalDetails.__v": 0,
-          __v: 0,
-        },
-      },
-    ]);
-    console.log("Aggregated doctor details:", doctorDetails);
-
-    if (!doctorDetails.length) {
-      return res.status(404).json({
-        success: false,
-        message: "Doctor not found for this user ID",
-      });
+    if(!doctor){
+      throw new ApiError(404, "Doctor not found")
     }
+    //it is not working
 
-    return res.status(200).json({
-      success: true,
-      message: "Doctor details fetched successfully",
-      data: doctorDetails[0],
-    });
+    res.status(200).json(
+      new ApiResponse(
+          true,
+          "Doctor profile Get sucessfully",
+          doctor
+        )
+    )
+    
+    
+
+    
+
+    
   } catch (error) {
     console.error("Error fetching doctor details by user ID:", error);
     return res.status(500).json({
@@ -119,10 +78,10 @@ export const updateDoctorProfile = async (req, res) => {
       phoneNumber,
       dob,
       gender,
-      startingTiming,
-      endingTiming,
+      startTime,
+      endTime,
       hospitalID,
-      doctorID,
+      holidays ,
       specialization,
       experience,
       consultationFee,
@@ -132,7 +91,7 @@ export const updateDoctorProfile = async (req, res) => {
 
     const user_id = req.user?._id || req.user?.id;
     console.log("Logged-in userId:", user_id);
-
+    console.log("Holidays:", typeof holidays, holidays);
     if (!user_id) {
       throw new ApiError(401, "Unauthorized User");
     }
@@ -162,8 +121,9 @@ export const updateDoctorProfile = async (req, res) => {
           profilePic: user.profilePic,
           userID: user.userID,
         },
-        startingTiming,
-        endingTiming,
+        startTime,
+        endTime,
+        holidays,
         hospitalID,
         specialization,
         experience,

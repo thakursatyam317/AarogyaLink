@@ -60,11 +60,15 @@ const doctorSchema = new mongoose.Schema(
     description: {
       type: String,
     },
-    startingTiming: {
+    startTime: {
       type: String,
     },
-    endingTiming: {
+    endTime: {
       type: String,
+    },
+    holidays: {
+      type: String,
+      default: "",
     },
   },
   { timestamps: true }
