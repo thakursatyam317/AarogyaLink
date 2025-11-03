@@ -155,3 +155,45 @@ export const updateDoctorProfile = async (req, res) => {
       .json(new ApiResponse(false, "Server error while updating profile"));
   }
 };
+
+
+
+export const getDoctorList = async (req, res) => {
+  try {
+    const user_id = req.user?._id || req.user?.id;
+
+
+    const user = await User.findById(user_id);
+    console.log("Found user:-- ", user);
+
+    if (!user_id) {
+      return res.status(400).json({
+        success: false,
+        message: "User ID is required",
+      });
+    }
+    const doctors = await Doctor.aggregate([
+      {
+        
+
+      }
+    ]);
+
+    res.status(200).json(
+      new ApiResponse(
+          true, 
+          "Doctor list fetched successfully",
+          doctors
+        )
+    );
+
+  } catch (error) {
+    console.error("Error fetching doctor list:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error while fetching doctor list",
+    });
+  }
+
+
+} 
