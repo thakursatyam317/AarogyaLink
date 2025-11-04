@@ -165,6 +165,7 @@ export const getDoctorList = async (req, res) => {
 
     const user = await User.findById(user_id);
     console.log("Found user:-- ", user);
+    
 
     if (!user_id) {
       return res.status(400).json({
@@ -172,16 +173,19 @@ export const getDoctorList = async (req, res) => {
         message: "User ID is required",
       });
     }
-    const doctors = await Doctor.aggregate([
-      {
+    const doctors = await Doctor.find();
+    
+    // const doctors = await Doctor.aggregate([
+    //   {
         
 
-      }
-    ]);
+    //   }
+    // ]);
+    console.log("Found doctors:", doctors);
 
     res.status(200).json(
       new ApiResponse(
-          true, 
+          200, 
           "Doctor list fetched successfully",
           doctors
         )

@@ -13,4 +13,6 @@ const router = express.Router();
 router.get('/profile', userProtection, getUserProfile);
 router.put("/profile/update", userProtection, upload.single("profilePic"), updateUserProfile);
 
+
+
 export default router;

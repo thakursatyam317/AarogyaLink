@@ -1,5 +1,5 @@
 import express from "express";
-import { createDoctor, updateDoctorProfile, getDoctorDetails } from "../controllers/doctor.controller.js";
+import { createDoctor, updateDoctorProfile, getDoctorDetails , getDoctorList} from "../controllers/doctor.controller.js";
 import { userProtection } from "../middlewares/user.middleware.js";
 import multer from "multer";
 
@@ -16,5 +16,7 @@ router.put(
   upload.single("profilePic"),
   updateDoctorProfile
 );
+router.get("/list", userProtection, getDoctorList);
+
 
 export default router;
