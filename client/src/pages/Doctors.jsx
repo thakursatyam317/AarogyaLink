@@ -49,7 +49,7 @@ const Doctors = () => {
                 </div>
                 <div className="p-4">
                   <h1 className="font-semibold text-2xl text-blue-500 hover:text-amber-500">
-                    {doc.userDetails.userName}
+                    Dr. {doc.userDetails.userName}
                   </h1>
                   <p className="text-gray-700 mt-1">{doc.specialization}</p>
                   <h3 className="text-gray-700 mt-1">{doc.doctorID}</h3>

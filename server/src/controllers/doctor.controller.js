@@ -173,6 +173,9 @@ export const getDoctorList = async (req, res) => {
         message: "User ID is required",
       });
     }
+
+
+    //there was use a pipeline for 2-3 days after
     const doctors = await Doctor.find();
     
     // const doctors = await Doctor.aggregate([
