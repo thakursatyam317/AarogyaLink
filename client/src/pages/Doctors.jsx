@@ -3,6 +3,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import authAxios from "../utils/authAxios";
 
+
 const Doctors = () => {
   const [doctors, setDoctors] = useState([]);
 
@@ -24,7 +25,7 @@ const Doctors = () => {
 
     fetchDoctors();
   }, []);
-
+ 
   const doctorPic = `https://placehold.co/600x400?text=S`;
   return (
     <>
@@ -59,6 +60,7 @@ const Doctors = () => {
                 <div className="flex justify-end">
                   <Link
                     to={`/doctor/${doc.doctorID}`}
+                    
                     className="mt-3 me-3 mb-3 inline-block bg-blue-500 hover:bg-amber-500 text-white px-4 py-2 rounded transition-colors"
                   >
                     View Details

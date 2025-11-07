@@ -6,13 +6,15 @@ import Contact from "./pages/Contact";
 import About from "./pages/About";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Profile from "./pages/profile";
+import Profile from "./pages/Profile";
 import { Toaster } from "react-hot-toast";
 import Dashboard from "./pages/dashboard/doctor/Dashboard";
 import Doctors from "./pages/Doctors";
 import DoctorDetails from "./pages/dashboard/doctor/Details";
 import Appointment from "./pages/dashboard/doctor/Appointment";
 import CreateDoctor from "./pages/CreateDoctor";
+import DoctorDetailComplete from "./pages/DoctorDetailComplete";
+
 
 function App() {
   return (
@@ -28,6 +30,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/doctorlist" element={<Doctors />} />
         <Route path="/doctorregisteration" element={<CreateDoctor />} />
+        <Route path="/doctor/:id" element={<DoctorDetailComplete />} />
 
         <Route path="/doctor/dashboard" element={<Dashboard />} />
         <Route path="/doctor/dashboard/details" element={<DoctorDetails />} />

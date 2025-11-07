@@ -204,3 +204,35 @@ export const getDoctorList = async (req, res) => {
 
 
 } 
+
+
+export const getDoctorDetailsByID = async (req, res) => {
+  try {
+    // ✅ Get doctor ID from route params
+    const doctorID = req.params.id;
+    console.log("Fetching details for Doctor ID:", doctorID);
+
+    if (!doctorID) {
+      throw new ApiError(400, "Doctor ID is required");
+    }
+
+    // ✅ Fetch doctor details by _id or doctorUni queId
+    const doctor = await Doctor.findOne({doctorID : doctorID})
+      .select("-password"); // hide password
+      console.log(doctor);
+    if (!doctor) {
+      throw new ApiError(404, "Doctor not found");
+    }
+
+    // ✅ Send successful response
+    return res.status(200).json(
+      new ApiResponse(200, "Doctor details fetched successfully", doctor)
+    );
+
+  } catch (error) {
+    console.error("Error fetching doctor details by ID:", error);
+    return res
+      .status(500)
+      .json(new ApiError(500, "Server error while fetching doctor details by ID"));
+  }
+};
