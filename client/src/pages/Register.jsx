@@ -24,14 +24,14 @@ const Register = () => {
     e.preventDefault();
 
     if (data.createPassword !== data.password) {
-      toast.error("❌ Passwords do not match");
+      toast.error("Passwords do not match");
       return;
     }
 
     try {
       const res = await axios.post("http://localhost:4500/api/auth/register", data);
       if (res.status === 200 || res.status === 201) {
-        toast.success("✅ User Registered Successfully");
+        toast.success("User Registered Successfully");
         setData({
           userName: "",
           email: "",
@@ -44,11 +44,11 @@ const Register = () => {
           navigate("/login");
         }, 2000);
       } else {
-        toast.error("❌ Registration failed. Please try again.");
+        toast.error("Registration failed. Please try again.");
       }
     } catch (error) {
       console.error(error);
-      toast.error("❌ Something went wrong.");
+      toast.error("Something went wrong.");
     }
   };
 

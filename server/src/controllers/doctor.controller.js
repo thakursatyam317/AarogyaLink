@@ -29,7 +29,7 @@ export const createDoctor = async (req, res) => {
   }
 };
 
-// ✅ Get Doctor Details by ID
+//  Get Doctor Details by ID
 export const getDoctorDetails = async (req, res) => {
   try {
     const user_id = req.user?._id || req.user?.id;
@@ -69,7 +69,7 @@ export const getDoctorDetails = async (req, res) => {
   }
 };
 
-// ✅ Update Doctor Profile
+// Update Doctor Profile
 export const updateDoctorProfile = async (req, res) => {
   try {
     const {
@@ -208,7 +208,7 @@ export const getDoctorList = async (req, res) => {
 
 export const getDoctorDetailsByID = async (req, res) => {
   try {
-    // ✅ Get doctor ID from route params
+    //  Get doctor ID from route params
     const doctorID = req.params.id;
     console.log("Fetching details for Doctor ID:", doctorID);
 
@@ -216,7 +216,7 @@ export const getDoctorDetailsByID = async (req, res) => {
       throw new ApiError(400, "Doctor ID is required");
     }
 
-    // ✅ Fetch doctor details by _id or doctorUni queId
+    //  Fetch doctor details by _id or doctorUni queId
     const doctor = await Doctor.findOne({doctorID : doctorID})
       .select("-password"); // hide password
       console.log(doctor);
@@ -224,7 +224,7 @@ export const getDoctorDetailsByID = async (req, res) => {
       throw new ApiError(404, "Doctor not found");
     }
 
-    // ✅ Send successful response
+    //  Send successful response
     return res.status(200).json(
       new ApiResponse(200, "Doctor details fetched successfully", doctor)
     );

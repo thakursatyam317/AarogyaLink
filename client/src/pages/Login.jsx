@@ -33,12 +33,12 @@ const Login = () => {
       }
 
       if (role === "admin" && user.role !== "admin") {
-        toast.error("❌ You are not authorized as Admin");
+        toast.error("You are not authorized as Admin");
         localStorage.clear();
         return;
       }
       if (role === "doctor" && user.role !== "doctor") {
-        toast.error("❌ You are not authorized as Doctor");
+        toast.error("You are not authorized as Doctor");
         localStorage.clear();
         return;
       }
@@ -49,7 +49,7 @@ const Login = () => {
 
       window.dispatchEvent(new Event("authChange"));
 
-      toast.success("✅ Login Successful!", {
+      toast.success("Login Successful!", {
         duration: 1500,
         position: "top-center",
       });
@@ -63,9 +63,9 @@ const Login = () => {
       console.error("Login error:", error);
 
       if (error.response?.data?.message) {
-        toast.error(`❌ ${error.response.data.message}`);
+        toast.error(`${error.response.data.message}`);
       } else {
-        toast.error("❌ Something went wrong. Try again.");
+        toast.error(" Something went wrong. Try again.");
       }
     }
   };

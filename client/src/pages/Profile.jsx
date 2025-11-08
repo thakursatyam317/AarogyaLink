@@ -109,6 +109,8 @@ const Profile = () => {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
+      console.log("res.data.updatedUser ",res.data.updatedUser);
+      console.log("res.data.updatedUser ",res.data.data);
       if (res.data?.updatedUser) {
         setUserData(res.data.updatedUser);
         setPreview(res.data.updatedUser.profilePic || "");
@@ -116,14 +118,14 @@ const Profile = () => {
         setIsEditing(false);
         await fetchProfile();
 
-        toast.success("✅ Profile updated successfully", {
+        toast.success("Profile updated successfully", {
           duration: 1500,
           position: "top-center",
         });
       }
     } catch (error) {
       console.error("Error updating profile:", error);
-      toast.error("❌ Error updating profile");
+      toast.error("Error updating profile");
     }
   };
 

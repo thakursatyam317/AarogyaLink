@@ -17,7 +17,7 @@ const Dashboard = () => {
 
   const doctorPic = preview || `https://placehold.co/600x400?text=S`;
 
-  // ✅ Load Auth User Data Initially
+  // Load Auth User Data Initially
   useEffect(() => {
     if (authUser) {
       setUserData({
@@ -40,7 +40,7 @@ const Dashboard = () => {
     setAuthLoading(false);
   }, [authUser]);
 
-  // ✅ Fetch Doctor Profile From Backend
+  // Fetch Doctor Profile From Backend
   useEffect(() => {
     const fetchDoctorProfile = async () => {
       try {
@@ -66,7 +66,7 @@ const Dashboard = () => {
     fetchDoctorProfile();
   }, []);
 
-  // ✅ Handle Input Change
+  // Handle Input Change
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     if (type === "checkbox") {
@@ -82,7 +82,7 @@ const Dashboard = () => {
     }
   };
 
-  // ✅ Handle Save Button (Update Doctor Details + Image)
+  // Handle Save Button (Update Doctor Details + Image)
   const handleSave = async () => {
     try {
       const formData = new FormData();
@@ -104,30 +104,32 @@ const Dashboard = () => {
       formData.append("startTime", userData.startTime || "");
       formData.append("endTime", userData.endTime || "");
 
-      // ✅ Attach Image File (if selected)
+      // Attach Image File (if selected)
       if (photoFile) {
         formData.append("profilePic", photoFile);
       }
 
-      // ✅ Send Request to Backend
+      // Send Request to Backend
       const res = await authAxios.put("/doctor/details/update", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
+      console.log("res.data.updatedUser ",res.data.data);
 
-      if (res.data?.updatedUser) {
-        setUserData(res.data.updatedUser);
-        setPreview(res.data.updatedUser.profilePic || "");
+      if (res.data?.data) {
+        setUserData(res.data?.data);
+        setPreview(res.data?.data.profilePic || "");
         setPhotoFile(null);
         setIsEditing(false);
+        console.log(isEditing);
         await fetchProfile();
-        toast.success("✅ Doctor Detail updated successfully", {
+        toast.success("Doctor Detail updated successfully", {
           duration: 1500,
           position: "top-center",
         });
       }
     } catch (error) {
       console.error("Error updating Doctor Detail:", error);
-      toast.error("❌ Error updating Doctor Detail");
+      toast.error("Error updating Doctor Detail");
     }
   };
 
