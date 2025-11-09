@@ -14,7 +14,7 @@ import DoctorDetails from "./pages/dashboard/doctor/Details";
 import Appointment from "./pages/dashboard/doctor/Appointment";
 import CreateDoctor from "./pages/CreateDoctor";
 import DoctorDetailComplete from "./pages/DoctorDetailComplete";
-
+import HospitalDashboard from './pages/dashboard/admin/Dashboard'
 
 function App() {
   return (
@@ -35,6 +35,12 @@ function App() {
         <Route path="/doctor/dashboard" element={<Dashboard />} />
         <Route path="/doctor/dashboard/details" element={<DoctorDetails />} />
         <Route path="/doctor/dashboard/appointment" element={<Appointment />} />
+
+
+
+
+          {/* hospital */}
+        <Route path="/hospital/dashboard" element={<HospitalDashboard />} />
       </Routes>
     </BrowserRouter>
   );
