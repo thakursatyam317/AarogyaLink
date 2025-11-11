@@ -20,11 +20,14 @@ const HospitalDashboard = () => {
                         <h1 className='text-white text-2xl font-bold ms-3'>Welcome Satyam Thakur</h1>
 
                          <div className='grid'>
-                        <NavLink className='text-white -my-10 text-xl hover:text-gray-300 h-12 w-60 hover:bg-gray-700 rounded-2xl ms-[10%] mt-12' onClick={handleClick} >Today Appointment</NavLink>
-                         <NavLink className='text-white -my-10 text-xl hover:text-gray-300 h-12 w-60 hover:bg-gray-700 rounded-2xl ms-[10%] mt-12'  >Appointments</NavLink>
-                         <NavLink className='text-white -my-10 text-xl hover:text-gray-300 h-12 w-60 hover:bg-gray-700 rounded-2xl ms-[10%] mt-12'  >Today Appointment</NavLink>
-                         <NavLink className='text-white -my-10 text-xl hover:text-gray-300 h-12 w-60 hover:bg-gray-700 rounded-2xl ms-[10%] mt-12'  >Today Appointment</NavLink>
-                         <NavLink to='/doctor/dashboard/details' className='text-white -my-10 text-xl hover:text-gray-300 h-12 w-60 hover:bg-gray-700 rounded-2xl ms-[10%] mt-12'  >Details</NavLink>
+                        <NavLink className='text-white -my-10 text-xl hover:text-gray-300 h-12 w-60 hover:bg-gray-700 rounded-2xl ms-[10%] mt-12' onClick={handleClick} >Dashboard</NavLink>
+                        <NavLink className='text-white -my-10 text-xl hover:text-gray-300 h-12 w-60 hover:bg-gray-700 rounded-2xl ms-[10%] mt-12'  >Today Appointment</NavLink>
+                         <NavLink className='text-white -my-10 text-xl hover:text-gray-300 h-12 w-60 hover:bg-gray-700 rounded-2xl ms-[10%] mt-12'  >Appointment</NavLink>
+                         <NavLink className='text-white -my-10 text-xl hover:text-gray-300 h-12 w-60 hover:bg-gray-700 rounded-2xl ms-[10%] mt-12'  >Doctors</NavLink>
+                         
+                         <NavLink className='text-white -my-10 text-xl hover:text-gray-300 h-12 w-60 hover:bg-gray-700 rounded-2xl ms-[10%] mt-12'  >EMR</NavLink>
+                         <NavLink className='text-white -my-10 text-xl hover:text-gray-300 h-12 w-60 hover:bg-gray-700 rounded-2xl ms-[10%] mt-12'  >EHR</NavLink>
+                         <NavLink to='/doctor/dashboard/details' className='text-white -my-10 text-xl hover:text-gray-300 h-12 w-60 hover:bg-gray-700 rounded-2xl ms-[10%] mt-12'  >Hospitals</NavLink>
                          </div>
                         
                     </div>
