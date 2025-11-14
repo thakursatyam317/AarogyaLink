@@ -151,9 +151,9 @@ const Dashboard = () => {
               <div className="grid">
                 <NavLink
                   className="text-white -my-10 text-xl hover:text-gray-300 h-12 w-60 hover:bg-gray-700 rounded-2xl ms-[10%] mt-12"
-                  onClick={handleClick}
+                  to='/doctor/dashboard'
                 >
-                  Today Appointment
+                  Dashboard
                 </NavLink>
                 <NavLink className="text-white -my-10 text-xl hover:text-gray-300 h-12 w-60 hover:bg-gray-700 rounded-2xl ms-[10%] mt-12">
                   Appointments
