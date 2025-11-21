@@ -142,7 +142,7 @@ const DoctorDetailComplete = () => {
                 <div className="flex items-center gap-2">
                   <p>
                     <span className="font-medium">Doctor ID:</span> <br />
-                    {doctor.doctorUniqueId || doctor._id}
+                    {doctor.doctorUniqueId || doctor.doctorID}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
@@ -160,7 +160,7 @@ const DoctorDetailComplete = () => {
               </div>
               <div className="mt-6">
                   <Link
-                    to={`/appointment/book/payment`}
+                    to={`/appointments/.?${doctor.doctorID}`}
                     className="inline-block ms-60 mt-10 bg-blue-500 hover:bg-amber-500 text-white font-semibold px-6 py-2 rounded-lg shadow-md transition-all duration-200"
                   >
                     Book Appointment

@@ -41,7 +41,20 @@ const Appointment = () => {
               <h1 className="text-3xl ms-10 font-bold">Doctor Dashboard</h1>
               <div>
                 <h1>Today Appointment</h1>
-                <div></div>
+                <div>
+                  <div>
+                    <div>
+                      <img src="" alt="" />
+                    </div>
+                    <div>
+                      <h1>Satyam Thakur</h1>
+                      <p>Doctor Appointment</p>
+                      <p>10th Aug, 2023 | 10:00 AM</p>
+                    </div>
+                  </div>
+                  
+
+                </div>
               </div>
             </div>
           </div>
