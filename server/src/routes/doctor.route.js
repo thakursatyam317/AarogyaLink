@@ -1,5 +1,5 @@
 import express from "express";
-import { createDoctor, updateDoctorProfile, getDoctorDetails , getDoctorList, getDoctorDetailsByID} from "../controllers/doctor.controller.js";
+import { createDoctor, updateDoctorProfile, getDoctorDetails , getDoctorList, getDoctorDetailsByID, getDoctorAppointmentDetails} from "../controllers/doctor.controller.js";
 import { userProtection } from "../middlewares/user.middleware.js";
 import multer from "multer";
 
@@ -18,6 +18,7 @@ router.put(
 );
 router.get("/list", userProtection, getDoctorList);
 router.get("/:id", userProtection, getDoctorDetailsByID);
+router.get("/appointments/:id", userProtection, getDoctorAppointmentDetails);
 
 
 export default router;
