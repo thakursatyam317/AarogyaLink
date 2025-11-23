@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate, NavLink } from "react-router-dom";
+import { useNavigate, NavLink, Link } from "react-router-dom";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -69,9 +69,9 @@ const Dashboard = () => {
 
               {/* Quick Actions */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <button className="p-5 bg-purple-600 text-white rounded-xl shadow hover:bg-purple-700" >
+                <Link className="p-5 bg-purple-600 text-white rounded-xl shadow hover:bg-purple-700"  to="/doctor/dashboard/notifications">
                   Notification
-                </button>
+                </Link>
                 <button className="p-5 bg-blue-600 text-white rounded-xl shadow hover:bg-blue-700">
                   Schedule Appointment
                 </button>

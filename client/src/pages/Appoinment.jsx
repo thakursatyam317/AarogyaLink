@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../contexts/authContext";
 import authAxios from "../utils/authAxios";
-import { useLocation } from "react-router-dom";
-
+import { useLocation, useNavigate } from "react-router-dom";
+import { Toaster, toast } from "react-hot-toast";
 
 const Appointment = () => {
   const [patientName, setPatientName] = useState("");
@@ -11,11 +11,10 @@ const Appointment = () => {
   const [time, setTime] = useState("");
   const { authUser } = useAuth();
   const location = useLocation();
-
+  const navigate = useNavigate();
 
   const [userData, setUserData] = useState({});
   const [doctorData, setDoctorData] = useState({});
-
 
   useEffect(() => {
     if (authUser) {
@@ -32,53 +31,96 @@ const Appointment = () => {
     }
   }, [authUser]);
 
- useEffect(() => {
-  const fetchDoctor = async () => {
-    try {
-  
-      const doctorID = location.search.replace("?", "");
+  useEffect(() => {
+    const fetchDoctor = async () => {
+      try {
+        const doctorID = location.search.replace("?", "");
 
-      if (!doctorID) {
-        console.error("No doctor ID found in URL");
+        if (!doctorID) {
+          console.error("No doctor ID found in URL");
+          return;
+        }
+
+        const response = await authAxios.get(
+          `/doctor/appointments/${doctorID}`
+        );
+
+        const data = response.data.data;
+
+        setDoctorData({
+          name: data?.userDetails?.userName || "",
+          specialist: data?.specialization || "",
+          experience: data?.experience || "",
+          fee: data?.consultationFee || "",
+          profilePic: data?.userDetails?.profilePic || "",
+        });
+      } catch (error) {
+        console.error("Error fetching doctor details:", error);
+      }
+    };
+
+    fetchDoctor();
+  }, [location.search]);
+
+  const handlePayment = async () => {
+    try {
+      const amount = doctorData.fee || 50;
+      console.log(amount);
+      const doctorID = location.search.replace("?", "");
+      if (!date || !time) {
+        toast.error("Please select appointment date and time");
         return;
       }
-
-      const response = await authAxios.get(`/doctor/appointments/${doctorID}`);
-
-      const data = response.data.data;
-
-      setDoctorData({
-        name: data?.userDetails?.userName || "",
-        specialist: data?.specialization || "",
-        experience: data?.experience || "",
-        fee: data?.consultationFee || "",
-        profilePic: data?.userDetails?.profilePic || "",
+      const { data } = await authAxios.post(`/appointments/${doctorID}`, {
+        doctorID: location.search.replace("?", ""),
+        amount: amount,
+        appointmentDate: date,
+        appointmentTime: time,
       });
+      console.log("Payment data received:", data);
+
+      const appointment = data.appointment;
+      console.log("Appointment created:", appointment);
+
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: amount * 100, // in paise
+        currency: "INR",
+        name: "AarogyaLink",
+        description: "Appointment Payment",
+        order_id: data.orderId,
+        handler: function (response) {
+          toast.success("Payment successful!");
+          console.log("Payment response:", response);
+          setTimeout(() => {
+            navigate("/");
+          }, 1500);
+        },
+        prefill: {
+          name: userData.userName,
+          email: userData.email,
+          contact: userData.phoneNumber,
+        },
+        theme: {
+          color: "#2563EB",
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      console.log("Razorpay instance:", rzp);
+      rzp.open();
     } catch (error) {
-      console.error("Error fetching doctor details:", error);
+      console.error("Error during payment:", error);
+      toast.error("Payment failed. Please try again.");
     }
-  };
-
-  fetchDoctor();
-}, [location.search]);
-
-  const handlePayment = () => {
-    if (!date || !time) {
-      alert("Please select date & time before confirming!");
-      return;
-    }
-    alert("₹50 Appointment Payment Successful!");
   };
 
   return (
     <div className="min-h-screen flex justify-center p-6 bg-gray-100">
+      <Toaster position="top-center" reverseOrder={false} />
       <div className="w-full mt-16 max-w-lg bg-white p-6 rounded-xl shadow-lg">
-        
         <h1 className="text-3xl font-bold text-center mb-6">Appointment</h1>
 
-        {/* -------------------------
-           Doctor Detail Section
-        -------------------------- */}
         <h2 className="text-xl font-semibold mb-2">Doctor Details</h2>
         <div className="mb-6 p-4 border rounded-lg bg-blue-50 flex">
           <div className="mx-6 my-8">
@@ -90,16 +132,21 @@ const Appointment = () => {
           </div>
 
           <div>
-            <p><strong>Name:</strong> {doctorData?.name}</p>
-            <p><strong>Specialist:</strong> {doctorData?.specialist}</p>
-            <p><strong>Experience:</strong> {doctorData?.experience} Years</p>
-            <p><strong>Fee:</strong> ₹{doctorData?.fee}</p>
+            <p>
+              <strong>Name:</strong> {doctorData?.name}
+            </p>
+            <p>
+              <strong>Specialist:</strong> {doctorData?.specialist}
+            </p>
+            <p>
+              <strong>Experience:</strong> {doctorData?.experience} Years
+            </p>
+            <p>
+              <strong>Fee:</strong> ₹{doctorData?.fee}
+            </p>
           </div>
         </div>
 
-        {/* -------------------------
-            Patient Details Section
-        -------------------------- */}
         <h2 className="text-xl font-semibold mb-2">Patient Details</h2>
         <div className="mb-6 p-4 border rounded-lg bg-green-50 flex">
           <div className="mx-6 my-8">
@@ -111,35 +158,48 @@ const Appointment = () => {
           </div>
 
           <div>
-            <p><strong>Name:</strong> {userData.userName}</p>
-            <p><strong>Email:</strong> {userData.email}</p>
-            <p><strong>Phone:</strong> {userData.phoneNumber}</p>
-            <p><strong>Gender:</strong> {userData.gender}</p>
-            <p><strong>Date of Birth:</strong> {userData.dob}</p>
-            <p><strong>Blood Group:</strong> {userData.bloodGroup}</p>
+            <p>
+              <strong>Name:</strong> {userData.userName}
+            </p>
+            <p>
+              <strong>Email:</strong> {userData.email}
+            </p>
+            <p>
+              <strong>Phone:</strong> {userData.phoneNumber}
+            </p>
+            <p>
+              <strong>Gender:</strong> {userData.gender}
+            </p>
+            <p>
+              <strong>Date of Birth:</strong> {userData.dob}
+            </p>
+            <p>
+              <strong>Blood Group:</strong> {userData.bloodGroup}
+            </p>
           </div>
         </div>
 
-        {/* -------------------------
-            Date & Time Selection
-        -------------------------- */}
-        <input
-          type="date"
-          className="w-full p-2 border rounded mb-3"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-        />
+        <div>
+          <div>
+            <strong>Appointment Date :</strong>
+            <input
+              type="date"
+              className="w-full p-2 border rounded mb-3"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+            />
+          </div>
+          <div>
+            <strong>Appointment Time :</strong>
+            <input
+              type="time"
+              className="w-full p-2 border rounded mb-4"
+              value={time}
+              onChange={(e) => setTime(e.target.value)}
+            />
+          </div>
+        </div>
 
-        <input
-          type="time"
-          className="w-full p-2 border rounded mb-4"
-          value={time}
-          onChange={(e) => setTime(e.target.value)}
-        />
-
-        {/* -------------------------
-            Payment Button
-        -------------------------- */}
         <button
           onClick={handlePayment}
           className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg"

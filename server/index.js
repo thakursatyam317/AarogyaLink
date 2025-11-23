@@ -6,6 +6,7 @@ import  connectDB from './src/configs/db.js'
 import authRoute from './src/routes/auth.route.js'
 import userRoute from './src/routes/user.route.js'
 import doctorAuth from './src/routes/doctor.route.js'
+import appointmentRoute from './src/routes/appointment.route.js';
 
 
 dotenv.config();
@@ -27,6 +28,7 @@ app.use(cookieParser());
 app.use('/api/auth',authRoute);
 app.use('/api/user', userRoute);
 app.use('/api/doctor',doctorAuth);
+app.use('/api/appointments', appointmentRoute);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, ()=>{

@@ -16,6 +16,7 @@ import CreateDoctor from "./pages/CreateDoctor";
 import DoctorDetailComplete from "./pages/DoctorDetailComplete";
 import HospitalDashboard from './pages/dashboard/admin/Dashboard'
 import Appointments from "./pages/Appoinment";
+import DoctorNotification from "./pages/dashboard/doctor/Notifiation";
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
         <Route path="/doctor/dashboard" element={<Dashboard />} />
         <Route path="/doctor/dashboard/details" element={<DoctorDetails />} />
         <Route path="/doctor/dashboard/appointment" element={<Appointment />} />
+        <Route path="/doctor/dashboard/notifications" element={<DoctorNotification />} />
 
 
 
