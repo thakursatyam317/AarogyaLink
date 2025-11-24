@@ -42,24 +42,14 @@ export const getDoctorDetails = async (req, res) => {
     }
     const doctor = await Doctor.findOne({ user_id: user_id });
     console.log("Found doctor:", doctor);
-    if(!doctor){
-      throw new ApiError(404, "Doctor not found")
+    if (!doctor) {
+      throw new ApiError(404, "Doctor not found");
     }
     //it is not working
 
-    res.status(200).json(
-      new ApiResponse(
-          true,
-          "Doctor profile Get sucessfully",
-          doctor
-        )
-    )
-    
-    
-
-    
-
-    
+    res
+      .status(200)
+      .json(new ApiResponse(true, "Doctor profile Get sucessfully", doctor));
   } catch (error) {
     console.error("Error fetching doctor details by user ID:", error);
     return res.status(500).json({
@@ -81,7 +71,7 @@ export const updateDoctorProfile = async (req, res) => {
       startTime,
       endTime,
       hospitalID,
-      holidays ,
+      holidays,
       specialization,
       experience,
       consultationFee,
@@ -129,7 +119,6 @@ export const updateDoctorProfile = async (req, res) => {
         experience,
         consultationFee,
         description,
-        
       },
       { new: true }
     );
@@ -156,16 +145,12 @@ export const updateDoctorProfile = async (req, res) => {
   }
 };
 
-
-
 export const getDoctorList = async (req, res) => {
   try {
     const user_id = req.user?._id || req.user?.id;
 
-
     const user = await User.findById(user_id);
     console.log("Found user:-- ", user);
-    
 
     if (!user_id) {
       return res.status(400).json({
@@ -174,26 +159,19 @@ export const getDoctorList = async (req, res) => {
       });
     }
 
-
     //there was use a pipeline for 2-3 days after
     const doctors = await Doctor.find();
-    
+
     // const doctors = await Doctor.aggregate([
     //   {
-        
 
     //   }
     // ]);
     console.log("Found doctors:", doctors);
 
-    res.status(200).json(
-      new ApiResponse(
-          200, 
-          "Doctor list fetched successfully",
-          doctors
-        )
-    );
-
+    res
+      .status(200)
+      .json(new ApiResponse(200, "Doctor list fetched successfully", doctors));
   } catch (error) {
     console.error("Error fetching doctor list:", error);
     return res.status(500).json({
@@ -201,14 +179,10 @@ export const getDoctorList = async (req, res) => {
       message: "Server error while fetching doctor list",
     });
   }
-
-
-} 
-
+};
 
 export const getDoctorDetailsByID = async (req, res) => {
   try {
-  
     const doctorID = req.params.id;
     console.log("Fetching details for Doctor ID:", doctorID);
 
@@ -216,32 +190,30 @@ export const getDoctorDetailsByID = async (req, res) => {
       throw new ApiError(400, "Doctor ID is required");
     }
 
-  
-    const doctor = await Doctor.findOne({doctorID : doctorID})
-      .select("-password"); 
-      console.log(doctor);
+    const doctor = await Doctor.findOne({ doctorID: doctorID }).select(
+      "-password"
+    );
+    console.log(doctor);
     if (!doctor) {
       throw new ApiError(404, "Doctor not found");
     }
 
-   
-    return res.status(200).json(
-      new ApiResponse(200, "Doctor details fetched successfully", doctor)
-    );
-
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(200, "Doctor details fetched successfully", doctor)
+      );
   } catch (error) {
     console.error("Error fetching doctor details by ID:", error);
     return res
       .status(500)
-      .json(new ApiError(500, "Server error while fetching doctor details by ID"));
+      .json(
+        new ApiError(500, "Server error while fetching doctor details by ID")
+      );
   }
 };
 
-
-
-
 export const getDoctorAppointmentDetails = async (req, res) => {
-
   try {
     const doctorID = req.params.id;
     console.log("Fetching appointment details for Doctor ID:", doctorID);
@@ -249,25 +221,69 @@ export const getDoctorAppointmentDetails = async (req, res) => {
     if (!doctorID) {
       throw new ApiError(400, "Doctor ID is required");
     }
-    const doctor = await Doctor.findOne({doctorID : doctorID});
+    const doctor = await Doctor.findOne({ doctorID: doctorID });
     console.log(doctor);
 
     if (!doctor) {
       throw new ApiError(404, "Doctor not found");
     }
 
-    return res.status(200).json(
-      new ApiResponse(200, "Doctor appointment details fetched successfully", doctor)
-    );
-
-
-    
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          "Doctor appointment details fetched successfully",
+          doctor
+        )
+      );
   } catch (error) {
     console.error("Error fetching doctor appointment details:", error);
     return res
       .status(500)
-      .json(new ApiError(500, "Server error while fetching doctor appointment details"));
+      .json(
+        new ApiError(
+          500,
+          "Server error while fetching doctor appointment details"
+        )
+      );
   }
+};
 
-  
-}
+
+//for today night is completing this function
+export const getPatientsAppointedToDoctor = async (req, res) => {
+  try {
+    const doctor_id = req.user?._id || req.user?.id;
+    console.log("Fetching patients for Doctor ID:", doctor_id);
+    if (!doctor_id) {
+      throw new ApiError(400, "Doctor ID is required");
+    }
+    const doctor = await Doctor.findOne({ user_id: doctor_id });
+    console.log(doctor);
+
+    if (!doctor) {
+      throw new ApiError(404, "Doctor not found");
+    }
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          "Patients appointed to doctor fetched successfully",
+          doctor.appointments
+        )
+      );
+
+  } catch (error) {
+    console.error("Error fetching patients appointed to doctor:", error);
+    return res
+      .status(500)
+      .json(
+        new ApiError(
+          500,
+          "Server error while fetching patients appointed to doctor"
+        )
+      );
+  }
+};
