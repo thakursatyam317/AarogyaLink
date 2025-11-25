@@ -91,3 +91,70 @@ export const getDoctorAppointmentDetails = async (req, res) => {
       .json(new ApiResponse(false, null, message));
   }
 };
+
+
+// ========================
+// GET Doctor Notifications
+// ========================
+export const getDoctorNotifications = async (req, res) => {
+  try {
+    const doctorID = req.user.id; // Doctor logged in
+
+    const notifications = await Appointment.find({ doctorID })
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json(
+      new ApiResponse(200, notifications, "Notifications loaded")
+    );
+  } catch (error) {
+    return res.status(500).json(new ApiError(500, "Server error"));
+  }
+};
+
+
+// ========================
+// UPDATE DATE & TIME
+// ========================
+export const updateNotification = async (req, res) => {
+  try {
+    const { newDate, newTime } = req.body;
+    const id = req.params.id;
+
+    const appointment = await Appointment.findById(id);
+    if (!appointment) throw new ApiError(404, "Appointment not found");
+
+    appointment.newDate = newDate;
+    appointment.newTime = newTime;
+    await appointment.save();
+
+    return res.status(200).json(
+      new ApiResponse(200, appointment, "Date & time updated")
+    );
+  } catch (error) {
+    return res.status(500).json(new ApiError(500, "Server error"));
+  }
+};
+
+
+// ========================
+// ACCEPT / REJECT APPOINTMENT
+// ========================
+export const respondNotification = async (req, res) => {
+  try {
+    const { action } = req.body;
+    const id = req.params.id;
+
+    const appointment = await Appointment.findById(id);
+    if (!appointment) throw new ApiError(404, "Appointment not found");
+
+    appointment.status = action === "accept" ? "accepted" : "rejected";
+    await appointment.save();
+
+    return res.status(200).json(
+      new ApiResponse(200, appointment, `Appointment ${action}`)
+    );
+  } catch (error) {
+    return res.status(500).json(new ApiError(500, "Server error"));
+  }
+};
+
