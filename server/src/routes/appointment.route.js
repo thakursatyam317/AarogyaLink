@@ -1,9 +1,7 @@
 import express from "express";
 
 
-import { getDoctorAppointmentDetails,  getDoctorNotifications,
-  updateNotification,
-  respondNotification  } from "../controllers/appointment.controller.js";
+import { getDoctorAppointment, getAllAppointmentsForDoctor } from "../controllers/appointment.controller.js";
 import { userProtection } from "../middlewares/user.middleware.js";
 
 
@@ -13,19 +11,12 @@ const router = express.Router();
 
 
 
-router.post("/:id", userProtection, getDoctorAppointmentDetails);
+router.post("/:id", userProtection, getDoctorAppointment);
+router.get("/allappointments", userProtection, getAllAppointmentsForDoctor);
 
 
 
 
-// GET all notifications for doctor
-router.get("/", userProtection, getDoctorNotifications);
-
-// Update DATE & TIME
-router.patch("/:id", userProtection, updateNotification);
-
-// Accept / Reject
-router.post("/:id/respond", userProtection, respondNotification);
 
 
 

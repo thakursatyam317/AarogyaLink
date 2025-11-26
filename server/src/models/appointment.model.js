@@ -24,14 +24,14 @@ const paymentDetailsSchema = new mongoose.Schema({
 
 const appointmentSchema = new mongoose.Schema(
   {
-    patientID: {
+    patient_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
 
     // Doctor ID = STRING like “DOC-20251105-QATMBZ”
-    doctorID: {
+    doctor_id: {
       type: String,
       required: true,
     },

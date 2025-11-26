@@ -5,7 +5,7 @@ import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import razorpayInstance from "../configs/razorpay.js";
 
-export const getDoctorAppointmentDetails = async (req, res) => {
+export const getDoctorAppointment = async (req, res) => {
   try {
     const doctorID = req.params.id; // comes from URL
     const { appointmentDate, appointmentTime, amount } = req.body;
@@ -24,8 +24,10 @@ export const getDoctorAppointmentDetails = async (req, res) => {
     // ----------------------------
     // Fetch doctor & user
     // ----------------------------
-    const doctor = await Doctor.findOne({ doctorID });
+    const doctor = await Doctor.findOne({ doctorID: doctorID });
     console.log("doctor", doctor);
+    const doctor_id = doctor._id;
+    console.log("doctor_id", doctor_id);
 
     if (!doctor) throw new ApiError(404, "Doctor not found");
 
@@ -36,15 +38,21 @@ export const getDoctorAppointmentDetails = async (req, res) => {
     // ----------------------------
     // Create Appointment (pending)
     // ----------------------------
+    console.log("Creating appointment...");
     const appointment = await Appointment.create({
-      doctorID,
-      patientID: userId,
+      doctor_id: doctor_id,
+      patient_id: userId,
       appointmentDate,
       appointmentTime,
       amount,
       paymentStatus: "pending",
       appointmentStatus: "upcoming",
     });
+    console.log(
+      "🚀 ~ file: appointment.controller.js:49 ~ getDoctorAppointment ~ appointment:",
+      appointment
+    );
+    console.log("Created Appointment:", appointment);
 
     // ----------------------------
     // Razorpay Order
@@ -59,12 +67,11 @@ export const getDoctorAppointmentDetails = async (req, res) => {
     console.log("Razorpay Order:", order);
     appointment.paymentDetails = {
       paymentID: order.id,
-        amount: order.amount,
-        currency: order.currency,
-        receipt: order.receipt,
-        status: order.status,
-        date: new Date(order.created_at * 1000),
-
+      amount: order.amount,
+      currency: order.currency,
+      receipt: order.receipt,
+      status: order.status,
+      date: new Date(order.created_at * 1000),
     };
     await appointment.save();
 
@@ -92,69 +99,44 @@ export const getDoctorAppointmentDetails = async (req, res) => {
   }
 };
 
-
-// ========================
-// GET Doctor Notifications
-// ========================
-export const getDoctorNotifications = async (req, res) => {
+export const getAllAppointmentsForDoctor = async (req, res) => {
   try {
-    const doctorID = req.user.id; // Doctor logged in
+    const doctor_id = req.user.id; // from JWT
 
-    const notifications = await Appointment.find({ doctorID })
-      .sort({ createdAt: -1 });
+    console.log("Doctor ID:", doctor_id);
 
-    return res.status(200).json(
-      new ApiResponse(200, notifications, "Notifications loaded")
-    );
+    if (!doctor_id) {
+      throw new ApiError(400, "Doctor ID is required");
+    }
+    const doctor = await Doctor.findOne({
+      user_id: doctor_id,
+    });
+    if (!doctor) {
+      throw new ApiError(404, "Doctor not found");
+    }
+    const appointments = await Appointment.find({ doctor_id: doctor._id });
+
+    console.log("Appointments:", appointments);
+    return res
+      .status(200)
+      .json(
+        new ApiResponse( 200, "Appointments fetched successfully", appointments)
+      );
   } catch (error) {
-    return res.status(500).json(new ApiError(500, "Server error"));
+    console.error("❌ Get All Appointments Error:", error);
+    return res
+      .status(error.statusCode || 500)
+      .json(new ApiResponse(false, null, "Server Error"));
   }
 };
 
-
-// ========================
-// UPDATE DATE & TIME
-// ========================
-export const updateNotification = async (req, res) => {
+export const acceptAndRejectAppointment = async (req, res) => {
   try {
-    const { newDate, newTime } = req.body;
-    const id = req.params.id;
-
-    const appointment = await Appointment.findById(id);
-    if (!appointment) throw new ApiError(404, "Appointment not found");
-
-    appointment.newDate = newDate;
-    appointment.newTime = newTime;
-    await appointment.save();
-
-    return res.status(200).json(
-      new ApiResponse(200, appointment, "Date & time updated")
-    );
+    const doctor_id = req.user.id;
   } catch (error) {
-    return res.status(500).json(new ApiError(500, "Server error"));
+    console.error("❌ Accept/Reject Appointment Error:", error);
+    return res
+      .status(error.statusCode || 500)
+      .json(new ApiResponse(false, null, "Server Error"));
   }
 };
-
-
-// ========================
-// ACCEPT / REJECT APPOINTMENT
-// ========================
-export const respondNotification = async (req, res) => {
-  try {
-    const { action } = req.body;
-    const id = req.params.id;
-
-    const appointment = await Appointment.findById(id);
-    if (!appointment) throw new ApiError(404, "Appointment not found");
-
-    appointment.status = action === "accept" ? "accepted" : "rejected";
-    await appointment.save();
-
-    return res.status(200).json(
-      new ApiResponse(200, appointment, `Appointment ${action}`)
-    );
-  } catch (error) {
-    return res.status(500).json(new ApiError(500, "Server error"));
-  }
-};
-
