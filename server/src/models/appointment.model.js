@@ -22,6 +22,58 @@ const paymentDetailsSchema = new mongoose.Schema({
 
 });
 
+const patientDetailsSchema = new mongoose.Schema({
+  fullName : {
+    type : String,
+  },
+  email: {
+    type : String,
+  },
+  phoneNumber: {
+    type : String,
+  },
+  gender: {
+    type : String,
+  },
+  prifilePic : {
+    type : String,
+  },
+  userID : {
+    type : String,
+  },
+
+  age: {
+    type : String,
+  },
+});
+
+const doctorDetailsSchema = new mongoose.Schema({
+  fullName : {
+    type : String,  
+  },
+  email: {
+    type : String,
+  },
+  specialization: {
+    type : String,
+  },
+  doctorID : {
+    type : String,
+  },
+  age: {
+    type : Number,
+  },
+  gender: {
+    type : String,
+  },
+  phoneNumber: {
+    type : String,
+  },
+  profilePic : {
+    type : String,
+  },
+});
+
 const appointmentSchema = new mongoose.Schema(
   {
     patient_id: {
@@ -32,8 +84,16 @@ const appointmentSchema = new mongoose.Schema(
 
     // Doctor ID = STRING like “DOC-20251105-QATMBZ”
     doctor_id: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
       required: true,
+    },
+    patientDetail : {
+      type : patientDetailsSchema,
+      default: {},
+    },
+    doctorDetail : {
+      type : doctorDetailsSchema,
+      default: {},
     },
 
     // STORE doctor snapshot if needed (optional)

@@ -13,8 +13,9 @@ const Notification = () => {
     const fetchAppointment = async () => {
       try {
         const response = await authAxios.get("/appointments/allappointments");
-        setAppointment(response.data.data);
+        setAppointment(response.data);
         console.log("Fetched Appointments:", response);
+        console.log("Appointment Data:", appointment);
       } catch (error) {
         console.error("Error fetching appointments:", error);
       }
@@ -84,7 +85,7 @@ const Notification = () => {
 
             {/* Content */}
             <div className="flex-1">
-              <h2 className="text-lg font-semibold">Dr. Satyam Thakur</h2>
+              <h2 className="text-lg font-semibold">Dr </h2>
               <p className="text-gray-600">Doctor Appointment Request</p>
 
               {/* Editing UI */}

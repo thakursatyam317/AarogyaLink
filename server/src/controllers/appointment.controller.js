@@ -35,6 +35,7 @@ export const getDoctorAppointment = async (req, res) => {
     console.log("user", user);
     if (!user) throw new ApiError(404, "User not found");
 
+
     // ----------------------------
     // Create Appointment (pending)
     // ----------------------------
@@ -42,6 +43,23 @@ export const getDoctorAppointment = async (req, res) => {
     const appointment = await Appointment.create({
       doctor_id: doctor_id,
       patient_id: userId,
+      patientDetail: {
+        fullName: user.userName,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        gender: user.gender,
+        profilePic: user.profilePic,
+        age: user.age,
+      },
+      doctorDetail: {
+        fullName: doctor.userDetails.userName,
+        email: doctor.userDetails.email,
+        phoneNumber: doctor.userDetails.phoneNumber,
+        specialization: doctor.specialization,
+        profilePic: doctor.userDetails.profilePic,
+        age: doctor.age,
+        gender: doctor.gender,
+      },
       appointmentDate,
       appointmentTime,
       amount,
@@ -116,11 +134,14 @@ export const getAllAppointmentsForDoctor = async (req, res) => {
     }
     const appointments = await Appointment.find({ doctor_id: doctor._id });
 
+    // const pasientDetail =  await User.findById(appointments.patient_id);
+    // const doctorDetail =  await Doctor.findById(appointments.doctor_id);
+
     console.log("Appointments:", appointments);
     return res
       .status(200)
       .json(
-        new ApiResponse( 200, "Appointments fetched successfully", appointments)
+        new ApiResponse( 200, "Appointments fetched successfully",  appointments )
       );
   } catch (error) {
     console.error("❌ Get All Appointments Error:", error);
