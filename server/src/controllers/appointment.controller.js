@@ -151,13 +151,46 @@ export const getAllAppointmentsForDoctor = async (req, res) => {
   }
 };
 
-export const acceptAndRejectAppointment = async (req, res) => {
+
+
+export const isAcceptedOrRejected = async (req, res) => {
   try {
-    const doctor_id = req.user.id;
+    const { date, time, status } = req.body;
+    const appointmentId = req.params.id;
+
+    console.log("Appointment ID:", appointmentId);
+
+    const appointment = await Appointment.findById(appointmentId);
+
+    if (!appointment) {
+      throw new ApiError(404, "Appointment not found");
+    }
+
+    const updatedAppointment = await Appointment.findByIdAndUpdate(
+      appointmentId,
+      {
+        appointmentDate: date ?? appointment.appointmentDate,
+        appointmentTime: time ?? appointment.appointmentTime,
+        status: status ?? appointment.status,
+      },
+      { new: true }
+    );
+
+    console.log("Updated Appointment:", updatedAppointment);
+
+    return res.status(200).json(
+      new ApiResponse(
+        200,
+        updatedAppointment,
+        "Appointment updated successfully"
+      )
+    );
+
   } catch (error) {
     console.error("❌ Accept/Reject Appointment Error:", error);
+
     return res
       .status(error.statusCode || 500)
-      .json(new ApiResponse(false, null, "Server Error"));
+      .json(new ApiResponse(500, null, error.message || "Server Error"));
   }
 };
