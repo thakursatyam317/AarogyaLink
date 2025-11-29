@@ -183,9 +183,12 @@ export const getDoctorList = async (req, res) => {
 
 export const getDoctorDetailsByID = async (req, res) => {
   try {
-    const doctorID = req.params.id;
+    const doctorID = req.params.id ;
     console.log("Fetching details for Doctor ID:", doctorID);
-
+    console.log(doctorID);
+    console.log(req.params.appointments);
+    console.log("Soemething");
+    
     if (!doctorID) {
       throw new ApiError(400, "Doctor ID is required");
     }

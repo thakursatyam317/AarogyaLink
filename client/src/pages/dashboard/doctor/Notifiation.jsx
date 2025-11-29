@@ -13,8 +13,8 @@ const Notification = () => {
       try {
         const response = await authAxios.get("/appointments/allappointments");
 
-        const data = response?.data?.data || response?.data;
-        setAppointments(data || []);
+        const data = response?.data?.data ;
+        setAppointments(data[0]?.appointments || []);
 
         console.log("Fetched Appointments:", data);
       } catch (error) {
@@ -140,11 +140,13 @@ const Notification = () => {
 
             <div className="flex-1">
               <h2 className="text-lg font-semibold">
-                {item.patientDetail?.email || "Unknown Patient"}
+                {item.patientDetail?.fullName || "Unknown Patient"}
               </h2>
+              <h2>{item.patientDetail?.email || "Unknown Email"}</h2>
 
               <p className="text-gray-600">Doctor Appointment Request</p>
-
+              <h1>{item.doctorDetail?.fullName || "Unknown Doctor"}</h1>
+              <h2>{item.doctorDetail?.email || "Unknown Email"}</h2>
               {/* EDIT UI */}
               {isEditing === item._id ? (
                 <div className="bg-blue-50 border border-blue-200 p-3 rounded-lg mt-2">
@@ -153,14 +155,14 @@ const Notification = () => {
                     <input
                       type="date"
                       className="block w-full p-2 border rounded-lg"
-                      value={newDate}
+                      value={item.appointmentDate || newDate}
                       onChange={(e) => setNewDate(e.target.value)}
                     />
 
                     <input
                       type="time"
                       className="block w-full p-2 border rounded-lg"
-                      value={newTime}
+                      value={item.appointmentTime || newTime}
                       onChange={(e) => setNewTime(e.target.value)}
                     />
                   </div>
@@ -184,11 +186,11 @@ const Notification = () => {
               ) : (
                 <>
                   <p className="text-gray-700 font-medium mt-1">
-                    Time: <span className="text-blue-600">{formatTime(item.time)}</span>
+                    Time: <span className="text-blue-600">{formatTime(item.appointmentTime)}</span>
                   </p>
 
                   <p className="text-gray-700 font-medium">
-                    Date: <span className="text-blue-600">{item.date}</span>
+                    Date: <span className="text-blue-600">{item.appointmentDate.split("-").reverse().join("-")}</span>
                   </p>
 
                   <p className="text-gray-500 text-sm mt-1">

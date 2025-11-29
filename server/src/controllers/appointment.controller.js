@@ -4,16 +4,16 @@ import Appointment from "../models/appointment.model.js";
 import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import razorpayInstance from "../configs/razorpay.js";
+import mongoose from "mongoose";
 
+
+//User or Patient book the appoinrment to doctor and payment done by razorpay
 export const getDoctorAppointment = async (req, res) => {
   try {
     const doctorID = req.params.id; // comes from URL
     const { appointmentDate, appointmentTime, amount } = req.body;
     const userId = req.user.id; // JWT user
 
-    // ----------------------------
-    // Validation
-    // ----------------------------
     if (!doctorID) throw new ApiError(400, "Doctor ID is required");
     if (!userId) throw new ApiError(400, "User ID is required");
 
@@ -21,9 +21,6 @@ export const getDoctorAppointment = async (req, res) => {
       throw new ApiError(400, "Appointment date, time & amount are required");
     }
 
-    // ----------------------------
-    // Fetch doctor & user
-    // ----------------------------
     const doctor = await Doctor.findOne({ doctorID: doctorID });
     console.log("doctor", doctor);
     const doctor_id = doctor._id;
@@ -35,10 +32,6 @@ export const getDoctorAppointment = async (req, res) => {
     console.log("user", user);
     if (!user) throw new ApiError(404, "User not found");
 
-
-    // ----------------------------
-    // Create Appointment (pending)
-    // ----------------------------
     console.log("Creating appointment...");
     const appointment = await Appointment.create({
       doctor_id: doctor_id,
@@ -49,7 +42,7 @@ export const getDoctorAppointment = async (req, res) => {
         phoneNumber: user.phoneNumber,
         gender: user.gender,
         profilePic: user.profilePic,
-        age: user.age,
+        age: user.dob,
       },
       doctorDetail: {
         fullName: doctor.userDetails.userName,
@@ -119,29 +112,52 @@ export const getDoctorAppointment = async (req, res) => {
 
 export const getAllAppointmentsForDoctor = async (req, res) => {
   try {
-    const doctor_id = req.user.id; // from JWT
+    const user_id = req.doctor.user_id; // from JWT
+    console.log("Doctor User ID from Token:", user_id);
 
-    console.log("Doctor ID:", doctor_id);
+    console.log("Doctor ID:", user_id);
 
-    if (!doctor_id) {
-      throw new ApiError(400, "Doctor ID is required");
+    if (!user_id) {
+      throw new ApiError(400, "user ID is required");
     }
     const doctor = await Doctor.findOne({
-      user_id: doctor_id,
+      user_id: user_id,
     });
+    console.log("Doctor Found:", doctor);
     if (!doctor) {
       throw new ApiError(404, "Doctor not found");
     }
     const appointments = await Appointment.find({ doctor_id: doctor._id });
+    console.log("doctor._id", doctor._id);
+    const withoutAccepted = await Appointment.aggregate([
+      {
+        $match: {
+          doctor_id: new mongoose.Types.ObjectId(doctor._id),
+        },
+      },
+      {
+        $group: {
+          _id: "$status",
+          count: { $sum: 1 },
+          appointments: { $push: "$$ROOT" },
+        },
+      },
+      {
+        $match: { _id: { $ne: "accepted" } },
+      },
+    ]);
+
+    
 
     // const pasientDetail =  await User.findById(appointments.patient_id);
     // const doctorDetail =  await Doctor.findById(appointments.doctor_id);
 
     console.log("Appointments:", appointments);
+    console.log("withoutAccepted:", withoutAccepted);
     return res
       .status(200)
       .json(
-        new ApiResponse( 200, "Appointments fetched successfully",  appointments )
+        new ApiResponse(200, "Appointments fetched successfully", withoutAccepted)
       );
   } catch (error) {
     console.error("❌ Get All Appointments Error:", error);
@@ -150,8 +166,6 @@ export const getAllAppointmentsForDoctor = async (req, res) => {
       .json(new ApiResponse(false, null, "Server Error"));
   }
 };
-
-
 
 export const isAcceptedOrRejected = async (req, res) => {
   try {
@@ -178,14 +192,15 @@ export const isAcceptedOrRejected = async (req, res) => {
 
     console.log("Updated Appointment:", updatedAppointment);
 
-    return res.status(200).json(
-      new ApiResponse(
-        200,
-        updatedAppointment,
-        "Appointment updated successfully"
-      )
-    );
-
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          updatedAppointment,
+          "Appointment updated successfully"
+        )
+      );
   } catch (error) {
     console.error("❌ Accept/Reject Appointment Error:", error);
 
@@ -194,3 +209,34 @@ export const isAcceptedOrRejected = async (req, res) => {
       .json(new ApiResponse(500, null, error.message || "Server Error"));
   }
 };
+
+
+export const getAllAcceptedAppointmentsForDoctor = async (req, res) => {
+  try {
+    const doctor_id = req.doctor._id; // from JWT
+    const user_id = req.doctor.user_id;
+    console.log("Doctor ID:", user_id); 
+    console.log("Doctor Internal ID:", doctor_id);
+    if (!user_id) {
+      throw new ApiError(400, "Doctor ID is required");
+    }
+    const doctor = await Doctor.findOne(doctor_id);
+    const appointments = await Appointment.find({ doctor_id: doctor._id, status: "accepted" });
+
+    console.log("Accepted Appointments:", appointments);
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(200, "Accepted Appointments fetched successfully", appointments)
+      );
+  } catch (error) {
+    console.error("❌ Get All Accepted Appointments Error:", error);
+    return res
+      .status(error.statusCode || 500)
+      .json(new ApiResponse(false, null, "Server Error"));
+  }
+}
+
+
+
+// in this file error and solve tommorow or sunday

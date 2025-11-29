@@ -1,9 +1,9 @@
 import express from "express";
 
 
-import { getDoctorAppointment, getAllAppointmentsForDoctor, isAcceptedOrRejected } from "../controllers/appointment.controller.js";
+import { getDoctorAppointment, getAllAppointmentsForDoctor, isAcceptedOrRejected , getAllAcceptedAppointmentsForDoctor } from "../controllers/appointment.controller.js";
 import { userProtection } from "../middlewares/user.middleware.js";
-
+import { doctorProtection } from "../middlewares/doctor.middleware.js";
 
 const router = express.Router();
 
@@ -11,10 +11,11 @@ const router = express.Router();
 
 
 
-router.post("/:id", userProtection, getDoctorAppointment);
-router.get("/allappointments", userProtection, getAllAppointmentsForDoctor);
+router.post("/:id", userProtection,doctorProtection, getDoctorAppointment);
+router.get("/allappointments", userProtection,doctorProtection, getAllAppointmentsForDoctor);
 
 router.put("/update-status/:id", userProtection, isAcceptedOrRejected);
+router.get("/acceptedappointments", userProtection, getAllAcceptedAppointmentsForDoctor);
 
 
 
