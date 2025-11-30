@@ -6,7 +6,6 @@ import ApiResponse from "../utils/ApiResponse.js";
 import razorpayInstance from "../configs/razorpay.js";
 import mongoose from "mongoose";
 
-
 //User or Patient book the appoinrment to doctor and payment done by razorpay
 export const getDoctorAppointment = async (req, res) => {
   try {
@@ -147,8 +146,6 @@ export const getAllAppointmentsForDoctor = async (req, res) => {
       },
     ]);
 
-    
-
     // const pasientDetail =  await User.findById(appointments.patient_id);
     // const doctorDetail =  await Doctor.findById(appointments.doctor_id);
 
@@ -157,7 +154,11 @@ export const getAllAppointmentsForDoctor = async (req, res) => {
     return res
       .status(200)
       .json(
-        new ApiResponse(200, "Appointments fetched successfully", withoutAccepted)
+        new ApiResponse(
+          200,
+          "Appointments fetched successfully",
+          withoutAccepted
+        )
       );
   } catch (error) {
     console.error("❌ Get All Appointments Error:", error);
@@ -210,24 +211,34 @@ export const isAcceptedOrRejected = async (req, res) => {
   }
 };
 
-
 export const getAllAcceptedAppointmentsForDoctor = async (req, res) => {
   try {
-    const doctor_id = req.doctor._id; // from JWT
-    const user_id = req.doctor.user_id;
-    console.log("Doctor ID:", user_id); 
-    console.log("Doctor Internal ID:", doctor_id);
+    const user_id = req.user?.id || req.user._id; // from JWT
+    // const user_id = req.doctor.user_id;
+    console.log("Doctor ID:", user_id);
+
     if (!user_id) {
       throw new ApiError(400, "Doctor ID is required");
     }
-    const doctor = await Doctor.findOne(doctor_id);
-    const appointments = await Appointment.find({ doctor_id: doctor._id, status: "accepted" });
+    const doctor = await Doctor.findOne({ user_id: user_id });
+    const appointments = await Appointment.aggregate([
+      {
+        $match: {
+          doctor_id: doctor._id,
+          status: "accepted",
+        },
+      },
+    ]);
 
     console.log("Accepted Appointments:", appointments);
     return res
       .status(200)
       .json(
-        new ApiResponse(200, "Accepted Appointments fetched successfully", appointments)
+        new ApiResponse(
+          200,
+          "Accepted Appointments fetched successfully",
+          appointments
+        )
       );
   } catch (error) {
     console.error("❌ Get All Accepted Appointments Error:", error);
@@ -235,8 +246,6 @@ export const getAllAcceptedAppointmentsForDoctor = async (req, res) => {
       .status(error.statusCode || 500)
       .json(new ApiResponse(false, null, "Server Error"));
   }
-}
-
-
+};
 
 // in this file error and solve tommorow or sunday

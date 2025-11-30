@@ -4,6 +4,7 @@ import authAxios from "../../../utils/authAxios";
 
 const Appointment = () => {
   const [appointments, setAppointments] = useState([]);
+  const [searchText, setSearchText] = useState("");
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -19,11 +20,17 @@ const Appointment = () => {
     fetchAppointments();
   }, []);
 
-  // Reverse date → DD-MM-YYYY
   const formatDate = (dateString) => {
     if (!dateString) return "";
     return dateString.split("-").reverse().join("-");
   };
+
+  // 🔍 FILTER APPOINTMENTS BY NAME
+  const filteredAppointments = appointments.filter((item) =>
+    item.patientDetail?.fullName
+      ?.toLowerCase()
+      .includes(searchText.toLowerCase())
+  );
 
   return (
     <>
@@ -34,13 +41,15 @@ const Appointment = () => {
             <h1 className="text-2xl font-bold">Welcome Satyam Thakur</h1>
 
             <div className="grid mt-10 space-y-4">
-              <NavLink to="/doctor/dashboard"
+              <NavLink
+                to="/doctor/dashboard"
                 className="hover:bg-gray-700 p-3 rounded-xl text-lg"
               >
                 Dashboard
               </NavLink>
 
-              <NavLink to="/doctor/appointments"
+              <NavLink
+                to="/doctor/dashboard/appointment"
                 className="hover:bg-gray-700 p-3 rounded-xl text-lg"
               >
                 Appointments
@@ -50,7 +59,8 @@ const Appointment = () => {
                 Today Appointment
               </NavLink>
 
-              <NavLink to="/doctor/dashboard/details"
+              <NavLink
+                to="/doctor/dashboard/details"
                 className="hover:bg-gray-700 p-3 rounded-xl text-lg"
               >
                 Details
@@ -59,20 +69,29 @@ const Appointment = () => {
           </div>
         </div>
 
-        {/* MAIN AREA */}
-        <div className="ms-[20%] w-[80%] p-10">
-          <h1 className="text-3xl font-bold mb-8">Doctor Dashboard</h1>
+        {/* MAIN CONTENT */}
+        <div className="ms-[20%] mt-16 w-[80%] p-10">
+          <h1 className="text-3xl font-bold mb-6">Accepted Appointments</h1>
 
-          <h2 className="text-xl font-semibold mb-5">Accepted Appointments</h2>
+          {/* 🔍 SEARCH BAR */}
+          <div className="mb-6">
+            <input
+              type="text"
+              placeholder="Search by patient name..."
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              className="w-full md:w-1/2 p-3 border border-gray-300 rounded-xl shadow-sm focus:border-blue-600 outline-none"
+            />
+          </div>
 
-          {appointments.length === 0 ? (
+          {filteredAppointments.length === 0 ? (
             <p className="text-gray-500">No appointments found.</p>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-              {appointments.map((item) => (
+            <div className="flex flex-col gap-6">
+              {filteredAppointments.map((item) => (
                 <div
                   key={item._id}
-                  className="flex items-center bg-white p-5 rounded-xl shadow-md hover:shadow-lg transition-all border border-gray-200"
+                  className="bg-white min-h-[180px] flex items-center p-6 rounded-xl shadow-md hover:shadow-xl transition-all border border-gray-200"
                 >
                   {/* PATIENT IMAGE */}
                   <img
@@ -85,22 +104,39 @@ const Appointment = () => {
                   />
 
                   {/* DETAILS */}
-                  <div className="ml-5">
+                  <div className="ml-6 w-full">
                     <h1 className="text-xl font-bold">
                       {item.patientDetail?.fullName}
                     </h1>
-
                     <p className="text-gray-600 text-sm">Patient Appointment</p>
 
                     <p className="text-gray-700 font-medium mt-1">
-                      📅 {formatDate(item.appointmentDate)}  
-                      &nbsp; | &nbsp;  
-                      ⏰ {item.appointmentTime}
+                      📅 {formatDate(item.appointmentDate)} &nbsp; | &nbsp; ⏰{" "}
+                      {item.appointmentTime}
                     </p>
 
                     <span className="inline-block mt-2 px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">
                       {item.status.toUpperCase()}
                     </span>
+
+                    {/* EXTRA FIELDS */}
+                    <div className="mt-3 text-sm text-gray-700 grid grid-cols-2 gap-2">
+                      <p><strong>Age:</strong> {item.patientDetail?.age || "N/A"}</p>
+                      <p><strong>Gender:</strong> {item.patientDetail?.gender || "N/A"}</p>
+                      <p><strong>Phone:</strong> {item.patientDetail?.phone || "N/A"}</p>
+                      <p><strong>Reason:</strong> {item.reason || "Not Provided"}</p>
+                    </div>
+
+                    {/* BUTTONS */}
+                    <div className="flex gap-4 mt-4">
+                      <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                        View Details
+                      </button>
+
+                      <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                        Mark as Completed
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}

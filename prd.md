@@ -5,7 +5,7 @@
 #### Start Date: 13/10/2025
 #### End Date: 31/12/2025
 
-²²
+
 ## 1. Overview
 Aarogya Link is a comprehensive health management system designed to streamline patient care, medical records, and healthcare services. The platform aims to connect patients, healthcare providers, and medical facilities through an integrated digital solution.
 
@@ -23,11 +23,11 @@ Aarogya Link is a comprehensive health management system designed to streamline 
 - **Chat Bot Integration**: Implement chat bot for instant support and information retrieval.
 
 ## 3. Technology Stack
-- **Frontend**: React.js, HTML5, CSS3, Tailwind CSS, JavaScript
+- **Frontend**: React.js, HTML, CSS, Tailwind CSS, JavaScript.
 - **Backend**: Node.js, Express.js
 - **Database**: MongoDB
 - **Backend Dependencies**: Mongoose, JWT, bcryptjs, cors, dotenv, cloudinary, multer , nodemailer, mailgen,  short-unique-id, cookie-parser.
--**Payment Gateway**: Razorpay.
+- **Payment Gateway**: Razorpay.
 - **Frontend Dependencies**: Axios, react-router-dom, react-icons, hot-toaster
 
 ## 4. Goals & Objectives

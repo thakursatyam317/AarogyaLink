@@ -11,7 +11,7 @@ const router = express.Router();
 
 
 
-router.post("/:id", userProtection,doctorProtection, getDoctorAppointment);
+router.post("/getappointment/:id", userProtection,doctorProtection, getDoctorAppointment);
 router.get("/allappointments", userProtection,doctorProtection, getAllAppointmentsForDoctor);
 
 router.put("/update-status/:id", userProtection, isAcceptedOrRejected);

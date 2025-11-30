@@ -183,19 +183,21 @@ export const getDoctorList = async (req, res) => {
 
 export const getDoctorDetailsByID = async (req, res) => {
   try {
-    const doctorID = req.params.id ;
+    const doctorID = req.params.id;
+    const user_id = req.user?._id || req.user?.id;
+    console.log("doctor_id from token:", user_id);
     console.log("Fetching details for Doctor ID:", doctorID);
-    console.log(doctorID);
-    console.log(req.params.appointments);
-    console.log("Soemething");
-    
+    // console.log(doctorID);
+    // console.log(req.params.appointments);
+    // console.log("Soemething");
+
     if (!doctorID) {
       throw new ApiError(400, "Doctor ID is required");
     }
 
-    const doctor = await Doctor.findOne({ doctorID: doctorID }).select(
-      "-password"
-    );
+    const doctor = await Doctor.findOne({
+      user_id: user_id,
+    }).select("-password");
     console.log(doctor);
     if (!doctor) {
       throw new ApiError(404, "Doctor not found");
@@ -253,7 +255,6 @@ export const getDoctorAppointmentDetails = async (req, res) => {
   }
 };
 
-
 //for today night is completing this function
 export const getPatientsAppointedToDoctor = async (req, res) => {
   try {
@@ -277,7 +278,6 @@ export const getPatientsAppointedToDoctor = async (req, res) => {
           doctor.appointments
         )
       );
-
   } catch (error) {
     console.error("Error fetching patients appointed to doctor:", error);
     return res

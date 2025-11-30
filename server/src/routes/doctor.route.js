@@ -17,7 +17,7 @@ router.put(
   updateDoctorProfile
 );
 router.get("/list", userProtection, getDoctorList);
-router.get("/:id", userProtection, getDoctorDetailsByID);
+router.get("/detail/:id", userProtection, getDoctorDetailsByID);
 router.get("/appointments/:id", userProtection, getDoctorAppointmentDetails);
 
 

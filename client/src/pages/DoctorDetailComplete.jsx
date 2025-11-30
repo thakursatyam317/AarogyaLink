@@ -20,7 +20,7 @@ const DoctorDetailComplete = () => {
   useEffect(() => {
     const fetchDoctor = async () => {
       try {
-        const response = await authAxios.get(`/doctor/${id}`);
+        const response = await authAxios.get(`/doctor/detail/${id}`);
         console.log(response.data.data);
         setDoctor(response.data.data);
         setLoading(false);

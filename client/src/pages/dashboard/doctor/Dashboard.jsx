@@ -26,7 +26,7 @@ const Dashboard = () => {
                   Dashboard
                 </NavLink>
                 <NavLink className="text-white -my-10 text-xl hover:text-gray-300 h-12 w-60 hover:bg-gray-700 rounded-2xl ms-[10%] mt-12"
-                  to='/doctor/appointments'
+                  to='/doctor/dashboard/appointment'
                 >
                   Appointments
                 </NavLink>
