@@ -35,7 +35,7 @@ const patientDetailsSchema = new mongoose.Schema({
   gender: {
     type : String,
   },
-  prifilePic : {
+  profilePic : {
     type : String,
   },
   userID : {

@@ -12,6 +12,11 @@ export const getDoctorAppointment = async (req, res) => {
     const doctorID = req.params.id; // comes from URL
     const { appointmentDate, appointmentTime, amount } = req.body;
     const userId = req.user.id; // JWT user
+    console.log("Doctor ID:", doctorID);
+    console.log("User ID:", userId);
+    console.log("Appointment Date:", appointmentDate);
+    console.log("Appointment Time:", appointmentTime);
+    console.log("Amount:", amount);
 
     if (!doctorID) throw new ApiError(400, "Doctor ID is required");
     if (!userId) throw new ApiError(400, "User ID is required");

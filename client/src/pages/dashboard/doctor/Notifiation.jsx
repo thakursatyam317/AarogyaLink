@@ -133,20 +133,20 @@ const Notification = () => {
             className="bg-white shadow-md rounded-xl p-4 flex items-start gap-4 hover:shadow-lg transition-all mb-4"
           >
             <img
-              src="https://cdn-icons-png.flaticon.com/512/847/847969.png"
+              src={item.patientDetail?.profilePic || "/default-profile.png"}
               alt="profile"
-              className="w-16 h-16 rounded-full object-cover"
+              className="w-32 h-32 mt-10  rounded-full object-cover"
             />
 
-            <div className="flex-1">
+            <div className="flex-1 ms-20">
               <h2 className="text-lg font-semibold">
-                {item.patientDetail?.fullName || "Unknown Patient"}
+                <strong>Patient Name: </strong>  {item.patientDetail?.fullName || "Unknown Patient"}
               </h2>
-              <h2>{item.patientDetail?.email || "Unknown Email"}</h2>
+              <h2><strong>Patient Email: </strong> {item.patientDetail?.email || "Unknown Email"}</h2>
 
               <p className="text-gray-600">Doctor Appointment Request</p>
-              <h1>{item.doctorDetail?.fullName || "Unknown Doctor"}</h1>
-              <h2>{item.doctorDetail?.email || "Unknown Email"}</h2>
+              <h1><strong>Doctor Name: </strong> {item.doctorDetail?.fullName || "Unknown Doctor"}</h1>
+              <h2><strong>Doctor Email: </strong> {item.doctorDetail?.email || "Unknown Email"}</h2>
               {/* EDIT UI */}
               {isEditing === item._id ? (
                 <div className="bg-blue-50 border border-blue-200 p-3 rounded-lg mt-2">

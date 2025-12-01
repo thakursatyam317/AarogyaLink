@@ -71,7 +71,7 @@ const Appointment = () => {
         toast.error("Please select appointment date and time");
         return;
       }
-      const { data } = await authAxios.post(`/appointments/${doctorID}`, {
+      const { data } = await authAxios.post(`/appointments/getappointment/${doctorID}`, {
         doctorID: location.search.replace("?", ""),
         amount: amount,
         appointmentDate: date,

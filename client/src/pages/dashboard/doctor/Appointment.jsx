@@ -9,7 +9,9 @@ const Appointment = () => {
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        const response = await authAxios.get("/appointments/acceptedappointments");
+        const response = await authAxios.get(
+          "/appointments/acceptedappointments"
+        );
         setAppointments(response.data.data);
         console.log("Accepted Appointments:", response.data.data);
       } catch (error) {
@@ -24,7 +26,23 @@ const Appointment = () => {
     if (!dateString) return "";
     return dateString.split("-").reverse().join("-");
   };
+  const calculateAge = (dob) => {
+  if (!dob) return "N/A";
 
+  const birthDate = new Date(dob);
+  const today = new Date();
+
+  let age = today.getFullYear() - birthDate.getFullYear();
+
+  const month = today.getMonth() - birthDate.getMonth();
+  if (month < 0 || (month === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+
+  return age;
+};
+
+///doctor/dashboard/appointments/prescription
   // 🔍 FILTER APPOINTMENTS BY NAME
   const filteredAppointments = appointments.filter((item) =>
     item.patientDetail?.fullName
@@ -100,19 +118,19 @@ const Appointment = () => {
                       "https://via.placeholder.com/80"
                     }
                     alt="Patient"
-                    className="w-20 h-20 rounded-full border shadow"
+                    className="w-48 h-48 rounded-full border shadow"
                   />
 
                   {/* DETAILS */}
-                  <div className="ml-6 w-full">
-                    <h1 className="text-xl font-bold">
+                  <div className=" ml-28 w-full">
+                    <h1 className="text-xl font-bold hover:text-amber-500">
                       {item.patientDetail?.fullName}
                     </h1>
                     <p className="text-gray-600 text-sm">Patient Appointment</p>
 
                     <p className="text-gray-700 font-medium mt-1">
-                      📅 {formatDate(item.appointmentDate)} &nbsp; | &nbsp; ⏰{" "}
-                      {item.appointmentTime}
+                      <strong>Appointment Date: </strong>{formatDate(item.appointmentDate)}  <br />  
+                      <strong>Appoitment Time: </strong>{item.appointmentTime}
                     </p>
 
                     <span className="inline-block mt-2 px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">
@@ -121,10 +139,22 @@ const Appointment = () => {
 
                     {/* EXTRA FIELDS */}
                     <div className="mt-3 text-sm text-gray-700 grid grid-cols-2 gap-2">
-                      <p><strong>Age:</strong> {item.patientDetail?.age || "N/A"}</p>
-                      <p><strong>Gender:</strong> {item.patientDetail?.gender || "N/A"}</p>
-                      <p><strong>Phone:</strong> {item.patientDetail?.phone || "N/A"}</p>
-                      <p><strong>Reason:</strong> {item.reason || "Not Provided"}</p>
+                      <p>
+                        <strong>Email: </strong>
+                        {item.patientDetail?.email || "N/A"}
+                      </p>
+                      <p>
+                        <strong>Age:</strong>{" "}
+                        {calculateAge(item.patientDetail?.age)}
+                      </p>
+                      <p>
+                        <strong>Gender:</strong>{" "}
+                        {item.patientDetail?.gender || "N/A"}
+                      </p>
+                      <p>
+                        <strong>Phone:</strong>{" "}
+                        {item.patientDetail?.phoneNumber || "N/A"}
+                      </p>
                     </div>
 
                     {/* BUTTONS */}
@@ -133,9 +163,9 @@ const Appointment = () => {
                         View Details
                       </button>
 
-                      <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
-                        Mark as Completed
-                      </button>
+                      <NavLink className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition" to={`/doctor/dashboard/appointments/prescription`}>
+                        Start Consultation 
+                      </NavLink>
                     </div>
                   </div>
                 </div>
