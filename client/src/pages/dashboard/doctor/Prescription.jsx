@@ -1,7 +1,10 @@
-import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { NavLink, useParams } from "react-router-dom";
+import authAxios from "../../../utils/authAxios";
 
 const Prescription = () => {
+  const { id } = useParams(); // <-- Patient ID from URL
+
   const [diagnosis, setDiagnosis] = useState([
     { name: "", icd: "", namaste: "" },
   ]);
@@ -9,30 +12,71 @@ const Prescription = () => {
     { name: "", meal: "", dosage: "" },
   ]);
   const [checkups, setCheckups] = useState([""]);
+  const [prescriptionData, setPrescriptionData] = useState(null);
 
+  // -------------------------------------------
+  // ADD FUNCTIONS
+  // -------------------------------------------
   const addDiagnosis = () =>
     setDiagnosis([...diagnosis, { name: "", icd: "", namaste: "" }]);
+
   const addMedicine = () =>
     setMedicines([...medicines, { name: "", meal: "", dosage: "" }]);
+
   const addCheckup = () => setCheckups([...checkups, ""]);
 
-  const handleDiagnosisChange = (i, f, v) => {
-    const u = [...diagnosis];
-    u[i][f] = v;
-    setDiagnosis(u);
+  // -------------------------------------------
+  // REMOVE FUNCTIONS
+  // -------------------------------------------
+  const removeDiagnosis = (index) =>
+    setDiagnosis(diagnosis.filter((_, i) => i !== index));
+
+  const removeMedicine = (index) =>
+    setMedicines(medicines.filter((_, i) => i !== index));
+
+  const removeCheckup = (index) =>
+    setCheckups(checkups.filter((_, i) => i !== index));
+
+  // -------------------------------------------
+  // HANDLE CHANGE
+  // -------------------------------------------
+  const handleDiagnosisChange = (i, field, value) => {
+    const updated = [...diagnosis];
+    updated[i][field] = value;
+    setDiagnosis(updated);
   };
 
-  const handleMedicineChange = (i, f, v) => {
-    const u = [...medicines];
-    u[i][f] = v;
-    setMedicines(u);
+  const handleMedicineChange = (i, field, value) => {
+    const updated = [...medicines];
+    updated[i][field] = value;
+    setMedicines(updated);
   };
 
-  const handleCheckupChange = (i, v) => {
-    const u = [...checkups];
-    u[i] = v;
-    setCheckups(u);
+  const handleCheckupChange = (i, value) => {
+    const updated = [...checkups];
+    updated[i] = value;
+    setCheckups(updated);
   };
+
+  // -------------------------------------------
+  // FETCH PRESCRIPTION DATA
+  // -------------------------------------------
+  useEffect(() => {
+    const fetchPrescriptionData = async () => {
+      try {
+        const response = await authAxios.get(
+          `/prescription/getprescription/${id}`
+        );
+
+        setPrescriptionData(response.data.data);
+        console.log("Prescription Data:", response.data.data);
+      } catch (error) {
+        console.error("Error fetching prescription:", error);
+      }
+    };
+
+    fetchPrescriptionData();
+  }, [id]);
 
   return (
     <>
@@ -53,85 +97,107 @@ const Prescription = () => {
         <div className="ms-[20%] w-[80%] p-10 mt-10 flex justify-center">
           <div
             className="bg-white p-10 border border-gray-400 rounded-2xl"
-            style={{
-              width: "794px",
-              minHeight: "1123px",
-            }}
+            style={{ width: "794px", minHeight: "1123px" }}
           >
-            {/* TITLE */}
             <h1 className="font-bold text-4xl mb-6 text-center">
               Prescription
             </h1>
-
             <hr className="border-t-2 border-gray-400 mb-8" />
-
-            {/* DOCTOR DETAILS */}
+            {/* ==========================
+                DOCTOR DETAILS
+            =========================== */}
             <Section title="Doctor Details">
               <Grid2>
-                <Item label="Name" value="Dr. Satyam Thakur" />
-                <Item label="Email" value="thakursatyam317@gmail.com" />
-                <Item label="Contact" value="+91 9754584581" />
-                <Item label="Doctor ID" value="12349dtrgyuh123" />
-                <Item label="Gender" value="Male" />
+                <Item
+                  label="Name"
+                  value={prescriptionData?.doctorDetail?.fullName || "N/A"}
+                />
+                <Item
+                  label="Email"
+                  value={prescriptionData?.doctorDetail?.email || "N/A"}
+                />
+                <Item
+                  label="Doctor ID"
+                  value={prescriptionData?.doctor_id || "N/A"}
+                />
               </Grid2>
             </Section>
-
-            {/* PATIENT DETAILS */}
+            {/* ==========================
+                PATIENT DETAILS
+            =========================== */}
             <Section title="Patient Details">
               <Grid2>
-                <Item label="Name" value="Satyam Thakur" />
-                <Item label="Email" value="thakursatyam317@gmail.com" />
-                <Item label="Contact" value="+91 9754584581" />
-                <Item label="Patient ID" value="12349dtrgyuh123" />
-                <Item label="Gender" value="Male" />
-                <Item label="Age" value="24" />
-                <Item label="Address" value="313, Bank Colony, Pipariya" />
-                <Item label="Blood Group" value="O+" />
+                <Item
+                  label="Name"
+                  value={prescriptionData?.patientDetail?.fullName || "N/A"}
+                />
+                <Item
+                  label="Email"
+                  value={prescriptionData?.patientDetail?.email || "N/A"}
+                />
+                <Item
+                  label="Phone"
+                  value={prescriptionData?.patientDetail?.phoneNumber || "N/A"}
+                />
+                <Item
+                  label="Gender"
+                  value={prescriptionData?.patientDetail?.gender || "N/A"}
+                />
               </Grid2>
             </Section>
-
-            {/* DIAGNOSIS */}
+            {/* ==========================
+                DIAGNOSIS
+            =========================== */}
             <Section title="Diagnosis">
               {diagnosis.map((item, idx) => (
-                <div key={idx} className="grid grid-cols-3 gap-5 mb-4">
+                <div key={idx} className="grid grid-cols-4 w-full gap-5 mb-4">
+                  {/* BIG WIDE INPUT */}
                   <Input
-                    placeholder="Diagnosis Name"
+                    placeholder="Diagnosis"
                     value={item.name}
                     onChange={(e) =>
                       handleDiagnosisChange(idx, "name", e.target.value)
                     }
+                    className="w-72" // <-- Increase width here
                   />
+
                   <Input
                     placeholder="ICD Code"
                     value={item.icd}
                     onChange={(e) =>
                       handleDiagnosisChange(idx, "icd", e.target.value)
                     }
+                    className="w-36 ms-32" // optional small
                   />
+
                   <Input
                     placeholder="NAMASTE Code"
                     value={item.namaste}
                     onChange={(e) =>
                       handleDiagnosisChange(idx, "namaste", e.target.value)
                     }
+                    className="w-36 ms-26" // optional small
                   />
+
+                  {/* REMOVE BUTTON */}
+                  <button
+                    className="bg-red-500 text-white ms-20 w-10 h-10 flex items-center justify-center rounded-full mt-1"
+                    onClick={() => removeDiagnosis(idx)}
+                  >
+                    –
+                  </button>
                 </div>
               ))}
-              <div className="flex justify-between items-center  mt-3">
-                <Button label="+ Add More" onClick={addDiagnosis}  />
 
-                <Button
-                  label="Remove"
-                  type="remove"
-                  onClick={() => removeDiagnosis(idx)}
-                />
-              </div>
+              <Button label="+ Add Diagnosis" onClick={addDiagnosis} />
             </Section>
 
-            {/* MEDICINE */}
+            {/* ==========================
+                MEDICINES
+            =========================== */}
             <Section title="Medicines">
               {medicines.map((item, idx) => (
-                <div key={idx} className="grid grid-cols-3 gap-5 mb-4">
+                <div key={idx} className="grid grid-cols-4 gap-5 mb-4">
                   <Input
                     placeholder="Medicine Name"
                     value={item.name}
@@ -139,13 +205,15 @@ const Prescription = () => {
                       handleMedicineChange(idx, "name", e.target.value)
                     }
                   />
+
                   <Input
-                    placeholder="Before/After Meal"
+                    placeholder="Meal (Before/After)"
                     value={item.meal}
                     onChange={(e) =>
                       handleMedicineChange(idx, "meal", e.target.value)
                     }
                   />
+
                   <Input
                     placeholder="Dosage"
                     value={item.dosage}
@@ -153,51 +221,54 @@ const Prescription = () => {
                       handleMedicineChange(idx, "dosage", e.target.value)
                     }
                   />
+
+                  {/* SMALL ROUND REMOVE BUTTON */}
+                  <button
+                    className="bg-red-500 text-white w-10 h-10 flex items-center justify-center rounded-full mt-1"
+                    onClick={() => removeMedicine(idx)}
+                  >
+                    –
+                  </button>
                 </div>
               ))}
-              <div className="flex justify-between items-center mt-3">
-                <Button label="+ Add More" onClick={addMedicine} />
 
-                <Button
-                  label="Remove"
-                  type="remove"
-                  onClick={() => removeMedicine(idx)}
-                />
-              </div>
+              <Button label="+ Add Medicine" onClick={addMedicine} />
             </Section>
-
-            {/* CHECKUP */}
+            {/* ==========================
+                CHECKUP
+            =========================== */}
             <Section title="Check-Up">
               {checkups.map((item, idx) => (
-                <div key={idx} className="mb-4">
-                  <Input
-                    placeholder="Next Check-Up Details"
-                    full
-                    value={item}
-                    onChange={(e) => handleCheckupChange(idx, e.target.value)}
-                  />
-                </div>
-                
-              ))}
-              <div className="flex justify-between items-center mt-3">
-                <Button label="+ Add More" onClick={addCheckup} />
-              
-                <Button
-                  label="Remove"
-                  type="remove"
-                  onClick={() => removeCheckup(idx)}
-                />
-              </div>
-            </Section>
+                <div key={idx} className="grid grid-cols-6 gap-4 mb-4">
+                  {/* FULL WIDTH INPUT — spans 5 columns */}
+                  <div className="col-span-5">
+                    <Input
+                      placeholder="Next Check-Up Details"
+                      full
+                      value={item}
+                      onChange={(e) => handleCheckupChange(idx, e.target.value)}
+                    />
+                  </div>
 
+                  {/* SMALL ROUND REMOVE BUTTON */}
+                  <button
+                    className="bg-red-500 text-white w-10 h-10 flex items-center justify-center rounded-full mt-1"
+                    onClick={() => removeCheckup(idx)}
+                  >
+                    –
+                  </button>
+                </div>
+              ))}
+
+              <Button label="+ Add Checkup" onClick={addCheckup} />
+            </Section>
             {/* NEXT APPOINTMENT */}
             <Section title="Next Appointment">
               <input type="date" className="border p-2 rounded w-60" />
             </Section>
-
-            {/* SUBMIT */}
+            {/* SUBMIT BUTTON */}
             <div className="text-center mt-8">
-              <button className="bg-blue-500 hover:bg-amber-500 px-8 py-3 text-lg rounded-xl">
+              <button className="bg-blue-600 px-8 py-3 text-lg rounded-xl text-white hover:bg-amber-500">
                 Submit Prescription
               </button>
             </div>
@@ -208,8 +279,9 @@ const Prescription = () => {
   );
 };
 
-/* COMPONENTS */
+export default Prescription;
 
+/* ========== COMPONENTS ========== */
 const Section = ({ title, children }) => (
   <div className="mb-8">
     <h2 className="text-2xl font-bold text-blue-900">{title}</h2>
@@ -220,44 +292,30 @@ const Section = ({ title, children }) => (
 );
 
 const Grid2 = ({ children }) => (
-  <div className="grid grid-cols-2 gap-3 text-[17px]">{children}</div>
+  <div className="grid grid-cols-2 gap-3">{children}</div>
 );
 
 const Item = ({ label, value }) => (
-  <p>
-    <strong>{label}:</strong> {value}
+  <p className="text-lg">
+    <strong>{label}: </strong> {value}
   </p>
 );
 
-const Input = ({ placeholder, value, onChange, full }) => (
+const Input = ({ placeholder, value, onChange, full, className }) => (
   <input
     type="text"
     placeholder={placeholder}
-    className={`border p-2 rounded ${full ? "w-full" : ""}`}
     value={value}
     onChange={onChange}
+    className={`border p-2 rounded ${full ? "w-full" : ""} ${className}`}
   />
 );
 
 const Button = ({ label, onClick }) => (
   <button
     onClick={onClick}
-    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-amber-500"
+    className="bg-blue-600 text-white px-5 py-2 rounded hover:bg-amber-500 mt-3"
   >
     {label}
   </button>
 );
-
-const removeDiagnosis = (index) => {
-  setDiagnosis(diagnosis.filter((_, i) => i !== index));
-};
-
-const removeMedicine = (index) => {
-  setMedicines(medicines.filter((_, i) => i !== index));
-};
-
-const removeCheckup = (index) => {
-  setCheckups(checkups.filter((_, i) => i !== index));
-};
-
-export default Prescription;

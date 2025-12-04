@@ -27,22 +27,22 @@ const Appointment = () => {
     return dateString.split("-").reverse().join("-");
   };
   const calculateAge = (dob) => {
-  if (!dob) return "N/A";
+    if (!dob) return "N/A";
 
-  const birthDate = new Date(dob);
-  const today = new Date();
+    const birthDate = new Date(dob);
+    const today = new Date();
 
-  let age = today.getFullYear() - birthDate.getFullYear();
+    let age = today.getFullYear() - birthDate.getFullYear();
 
-  const month = today.getMonth() - birthDate.getMonth();
-  if (month < 0 || (month === 0 && today.getDate() < birthDate.getDate())) {
-    age--;
-  }
+    const month = today.getMonth() - birthDate.getMonth();
+    if (month < 0 || (month === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
 
-  return age;
-};
+    return age;
+  };
 
-///doctor/dashboard/appointments/prescription
+  ///doctor/dashboard/appointments/prescription
   // 🔍 FILTER APPOINTMENTS BY NAME
   const filteredAppointments = appointments.filter((item) =>
     item.patientDetail?.fullName
@@ -129,8 +129,10 @@ const Appointment = () => {
                     <p className="text-gray-600 text-sm">Patient Appointment</p>
 
                     <p className="text-gray-700 font-medium mt-1">
-                      <strong>Appointment Date: </strong>{formatDate(item.appointmentDate)}  <br />  
-                      <strong>Appoitment Time: </strong>{item.appointmentTime}
+                      <strong>Appointment Date: </strong>
+                      {formatDate(item.appointmentDate)} <br />
+                      <strong>Appoitment Time: </strong>
+                      {item.appointmentTime}
                     </p>
 
                     <span className="inline-block mt-2 px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">
@@ -163,8 +165,11 @@ const Appointment = () => {
                         View Details
                       </button>
 
-                      <NavLink className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition" to={`/doctor/dashboard/appointment/prescription`}>
-                        Start Consultation 
+                      <NavLink
+                        className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+                        to={`/doctor/dashboard/appointment/prescription/${item.patient_id}`}
+                      >
+                        Start Consultation
                       </NavLink>
                     </div>
                   </div>

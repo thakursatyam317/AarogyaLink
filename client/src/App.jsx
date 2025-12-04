@@ -40,7 +40,7 @@ function App() {
         <Route path="/doctor/dashboard/details" element={<DoctorDetails />} />
         <Route path="/doctor/dashboard/appointment" element={<Appointment />} />
         <Route path="/doctor/dashboard/notifications" element={<DoctorNotification />} />
-        <Route path="/doctor/dashboard/appointment/prescription" element={<Prescription />} />
+        <Route path="/doctor/dashboard/appointment/prescription/:id" element={<Prescription />} />
 
 
 

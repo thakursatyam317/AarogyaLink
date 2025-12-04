@@ -50,10 +50,10 @@ Aarogya Link is a comprehensive health management system designed to streamline 
 - Provide appointment tracking for patients.
 - Improve doctor response time.
 - Maintain secure and fast authentication using JWT.
-- Offer a clean dashboard for both doctor and Admin.
+- Offer a clean dashboard for both Doctor and Admin.
 
 
-## 5. User Personas
+## 5. Roles wise Access
 - **Patients**: Individuals seeking medical consultations and health management services.
 - **Doctors**: Healthcare professionals providing medical consultations and treatments.
 - **Admin**: Personnel managing the healthcare facility's operations and system maintenance.   
@@ -94,7 +94,7 @@ Aarogya Link is a comprehensive health management system designed to streamline 
 - Manage Patients.
 - View All Appointments.
 - Shared the data from one hospital to another hospital and also checked the comes data and send data status checked and see the data own hospital.
-- block/unblock Doctors and Patients.
+- Block/unblock Doctors and Patients.
 - Dashboard to see total doctors, total patients, total appointments, total earnings, EHR-EMR system etc.
 
 
@@ -132,13 +132,6 @@ Aarogya Link is a comprehensive health management system designed to streamline 
 
 #### 7.3 Doctor Management
 ##### **/doctor** // doctor.route
-
-
-
-
-
-
-
 
 #### 7.4 Admin Management
 ##### **/admin**// admin route
