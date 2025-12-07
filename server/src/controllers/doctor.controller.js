@@ -162,11 +162,7 @@ export const getDoctorList = async (req, res) => {
     //there was use a pipeline for 2-3 days after
     const doctors = await Doctor.find();
 
-    // const doctors = await Doctor.aggregate([
-    //   {
 
-    //   }
-    // ]);
     console.log("Found doctors:", doctors);
 
     res
