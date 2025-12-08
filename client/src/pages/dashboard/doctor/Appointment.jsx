@@ -10,7 +10,10 @@ const Appointment = () => {
     const fetchAppointments = async () => {
       try {
         const response = await authAxios.get(
-          "/appointments/acceptedappointments"
+          "/appointments/acceptedappointments",
+          {
+            withCredentials: true,
+          }
         );
         setAppointments(response.data.data);
         console.log("Accepted Appointments:", response.data.data);
@@ -42,8 +45,8 @@ const Appointment = () => {
     return age;
   };
 
-  ///doctor/dashboard/appointments/prescription
-  // 🔍 FILTER APPOINTMENTS BY NAME
+  // /doctor/dashboard/appointments/prescription
+
   const filteredAppointments = appointments.filter((item) =>
     item.patientDetail?.fullName
       ?.toLowerCase()
@@ -139,7 +142,7 @@ const Appointment = () => {
                       {item.status.toUpperCase()}
                     </span>
 
-                    {/* EXTRA FIELDS */}
+                    
                     <div className="mt-3 text-sm text-gray-700 grid grid-cols-2 gap-2">
                       <p>
                         <strong>Email: </strong>
@@ -159,7 +162,7 @@ const Appointment = () => {
                       </p>
                     </div>
 
-                    {/* BUTTONS */}
+                
                     <div className="flex gap-4 mt-4">
                       <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
                         View Details

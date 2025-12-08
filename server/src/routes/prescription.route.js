@@ -6,6 +6,6 @@ import { doctorProtection } from '../middlewares/doctor.middleware.js';
 const router = express.Router();
 router.get('/getprescription/:id', userProtection,doctorProtection, getThePrescriptionData);
 
-router.post('/createprescription', userProtection, doctorProtection, getThePrescriptionData);
+// router.post('/createprescription', userProtection, doctorProtection, getThePrescriptionData);
 
 export default router;
