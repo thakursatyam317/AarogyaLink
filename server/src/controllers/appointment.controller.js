@@ -86,6 +86,7 @@ export const getDoctorAppointment = async (req, res) => {
       currency: order.currency,
       receipt: order.receipt,
       status: order.status,
+      razorpay_payment_id: "",
       date: new Date(order.created_at * 1000),
     };
     await appointment.save();
@@ -111,6 +112,45 @@ export const getDoctorAppointment = async (req, res) => {
     return res
       .status(error.statusCode || 500)
       .json(new ApiResponse(false, null, message));
+  }
+};
+
+export const razarpayIdUpdate = async (req, res) => {
+  try {
+    const { razorpay_payment_id } = req.body;
+    console.log("razaray id :", razorpay_payment_id);
+
+    const { doctorEmail, userEmail } = req.body;
+    console.log("Patient _id", userEmail);
+    console.log("doctor_id ", doctorEmail);
+
+    const appointment = await Appointment.findOne({
+      "doctorDetail.email": doctorEmail,
+      "patientDetail.email": userEmail,
+    });
+    console.log("appointment found", appointment);
+    if (!appointment) {
+      return res
+        .status(404)
+        .json(new ApiResponse(false, null, "Appointment not found"));
+    }
+    // console.log("Appointment, Payment is complete", appointment);
+
+    appointment.paymentDetails.razorpay_payment_id = razorpay_payment_id;
+    appointment.paymentDetails.status = "paid";
+    appointment.paymentStatus = "paid";
+    await appointment.save();
+    console.log("Appointment, Payment is complete", appointment);
+    console.log("Razorpay ID saved successfully");
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, "key is added", appointment));
+  } catch (error) {
+    console.log("The razorpay id is not updated");
+    return res
+      .status(error.statusCode || 500)
+      .json(new ApiResponse(false, null, "Server Error"));
   }
 };
 

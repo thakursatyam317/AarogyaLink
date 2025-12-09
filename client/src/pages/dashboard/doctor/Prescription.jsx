@@ -3,7 +3,7 @@ import { NavLink, useParams } from "react-router-dom";
 import authAxios from "../../../utils/authAxios";
 
 const Prescription = () => {
-  const { id } = useParams(); // <-- Patient ID from URL
+  const { id } = useParams(); 
 
   const [diagnosis, setDiagnosis] = useState([
     { name: "", icd: "", namaste: "" },
@@ -14,9 +14,7 @@ const Prescription = () => {
   const [checkups, setCheckups] = useState([""]);
   const [prescriptionData, setPrescriptionData] = useState(null);
 
-  // -------------------------------------------
-  // ADD FUNCTIONS
-  // -------------------------------------------
+
   const addDiagnosis = () =>
     setDiagnosis([...diagnosis, { name: "", icd: "", namaste: "" }]);
 
@@ -25,9 +23,7 @@ const Prescription = () => {
 
   const addCheckup = () => setCheckups([...checkups, ""]);
 
-  // -------------------------------------------
-  // REMOVE FUNCTIONS
-  // -------------------------------------------
+
   const removeDiagnosis = (index) =>
     setDiagnosis(diagnosis.filter((_, i) => i !== index));
 
@@ -37,9 +33,7 @@ const Prescription = () => {
   const removeCheckup = (index) =>
     setCheckups(checkups.filter((_, i) => i !== index));
 
-  // -------------------------------------------
-  // HANDLE CHANGE
-  // -------------------------------------------
+
   const handleDiagnosisChange = (i, field, value) => {
     const updated = [...diagnosis];
     updated[i][field] = value;
@@ -58,9 +52,7 @@ const Prescription = () => {
     setCheckups(updated);
   };
 
-  // -------------------------------------------
-  // FETCH PRESCRIPTION DATA
-  // -------------------------------------------
+
   useEffect(() => {
     const fetchPrescriptionData = async () => {
       try {
@@ -68,8 +60,9 @@ const Prescription = () => {
           `/prescription/getprescription/${id}`
         );
 
-        setPrescriptionData(response.data.data);
-        console.log("Prescription Data:", response.data.data);
+        setPrescriptionData(response.data.data[0]);
+        console.log("Prescription Data:", response.data.data[0]);
+        console.log("prescreption data:", prescriptionData);
       } catch (error) {
         console.error("Error fetching prescription:", error);
       }
@@ -117,6 +110,16 @@ const Prescription = () => {
                   value={prescriptionData?.doctorDetail?.email || "N/A"}
                 />
                 <Item
+                  label="Phone"
+                  value={prescriptionData?.doctorDetail?.phoneNumber || "N/A"}
+                />
+
+              <Item
+                  label="Specialization"
+                  value={prescriptionData?.doctorDetail?.specialization || "N/A"}
+                />
+
+                <Item
                   label="Doctor ID"
                   value={prescriptionData?.doctor_id || "N/A"}
                 />
@@ -131,6 +134,7 @@ const Prescription = () => {
                   label="Name"
                   value={prescriptionData?.patientDetail?.fullName || "N/A"}
                 />
+               
                 <Item
                   label="Email"
                   value={prescriptionData?.patientDetail?.email || "N/A"}
@@ -139,9 +143,14 @@ const Prescription = () => {
                   label="Phone"
                   value={prescriptionData?.patientDetail?.phoneNumber || "N/A"}
                 />
+
                 <Item
                   label="Gender"
                   value={prescriptionData?.patientDetail?.gender || "N/A"}
+                />
+                <Item
+                  label="patient ID"
+                  value={prescriptionData?.patientDetail?.patientID || "N/A"}
                 />
               </Grid2>
             </Section>

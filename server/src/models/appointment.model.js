@@ -19,6 +19,9 @@ const paymentDetailsSchema = new mongoose.Schema({
   paymentID  : {
     type : String,
   },
+  razorpay_payment_id :{
+    type: String
+  }
 
 });
 

@@ -49,6 +49,7 @@ const Appointment = () => {
 
         setDoctorData({
           name: data?.userDetails?.userName || "",
+          email : data?.userDetails?.email || "",
           specialist: data?.specialization || "",
           experience: data?.experience || "",
           fee: data?.consultationFee || "",
@@ -89,9 +90,19 @@ const Appointment = () => {
         name: "AarogyaLink",
         description: "Appointment Payment",
         order_id: data.orderId,
-        handler: function (response) {
+        handler: async function (response) {
           toast.success("Payment successful!");
           console.log("Payment response:", response);
+          console.log("doctor_id :", doctorData.email);
+          console.log("patient_id :", userData.email);
+          const responseresent  = await authAxios.patch(`/appointments/paymentappointment`,
+            {
+              razorpay_payment_id: response.razorpay_payment_id,
+              doctorEmail : doctorData.email,
+              userEmail : userData.email
+            }
+          );
+          console.log("responseresent : ",responseresent);
           setTimeout(() => {
             navigate("/");
           }, 1500);
