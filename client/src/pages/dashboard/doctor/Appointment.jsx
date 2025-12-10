@@ -5,6 +5,7 @@ import authAxios from "../../../utils/authAxios";
 const Appointment = () => {
   const [appointments, setAppointments] = useState([]);
   const [searchText, setSearchText] = useState("");
+  
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -53,6 +54,8 @@ const Appointment = () => {
       .includes(searchText.toLowerCase())
   );
 
+
+  
   return (
     <>
       <div className="flex">
@@ -170,7 +173,7 @@ const Appointment = () => {
 
                       <NavLink
                         className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
-                        to={`/doctor/dashboard/appointment/prescription/${item.patient_id}`}
+                        to={`/doctor/dashboard/appointment/prescription/${item.patient_id}`} 
                       >
                         Start Consultation
                       </NavLink>

@@ -152,7 +152,7 @@ Aarogya Link is a comprehensive health management system designed to streamline 
 
 
 ## 9. Timeline
- - The project End Time line is 31/12/2025 to 10/01/2025.
+ - The project End Time line is 05/01/2026 to 15/01/2026.
 
 ## 10. Deployment 
 - This project is deploy at hostinger.

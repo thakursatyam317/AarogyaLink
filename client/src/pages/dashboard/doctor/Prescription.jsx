@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { NavLink, useParams } from "react-router-dom";
+import { NavLink, useNavigate, useParams } from "react-router-dom";
 import authAxios from "../../../utils/authAxios";
 
+
 const Prescription = () => {
-  const { id } = useParams(); 
+  const { id } = useParams();
+  const navigate = useNavigate();
 
   const [diagnosis, setDiagnosis] = useState([
     { name: "", icd: "", namaste: "" },
@@ -13,27 +15,22 @@ const Prescription = () => {
   ]);
   const [checkups, setCheckups] = useState([""]);
   const [prescriptionData, setPrescriptionData] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-
+  // add / remove helpers (unchanged)
   const addDiagnosis = () =>
     setDiagnosis([...diagnosis, { name: "", icd: "", namaste: "" }]);
-
   const addMedicine = () =>
     setMedicines([...medicines, { name: "", meal: "", dosage: "" }]);
-
   const addCheckup = () => setCheckups([...checkups, ""]);
-
-
   const removeDiagnosis = (index) =>
     setDiagnosis(diagnosis.filter((_, i) => i !== index));
-
   const removeMedicine = (index) =>
     setMedicines(medicines.filter((_, i) => i !== index));
-
   const removeCheckup = (index) =>
     setCheckups(checkups.filter((_, i) => i !== index));
 
-
+  // field change handlers
   const handleDiagnosisChange = (i, field, value) => {
     const updated = [...diagnosis];
     updated[i][field] = value;
@@ -52,24 +49,72 @@ const Prescription = () => {
     setCheckups(updated);
   };
 
-
   useEffect(() => {
     const fetchPrescriptionData = async () => {
       try {
         const response = await authAxios.get(
           `/prescription/getprescription/${id}`
         );
+        const fetched = response.data?.data?.[0] ?? null;
+        setPrescriptionData(fetched);
 
-        setPrescriptionData(response.data.data[0]);
-        console.log("Prescription Data:", response.data.data[0]);
-        console.log("prescreption data:", prescriptionData);
+        // Populate local form state if you want to edit existing prescription:
+        if (fetched) {
+          if (Array.isArray(fetched.diagnosis) && fetched.diagnosis.length)
+            setDiagnosis(fetched.diagnosis);
+          if (Array.isArray(fetched.medicines) && fetched.medicines.length)
+            setMedicines(fetched.medicines);
+          if (Array.isArray(fetched.checkups) && fetched.checkups.length)
+            setCheckups(fetched.checkups);
+        }
+
+        console.log("Fetched prescription:", fetched);
       } catch (error) {
         console.error("Error fetching prescription:", error);
       }
     };
 
-    fetchPrescriptionData();
+    if (id) fetchPrescriptionData();
   }, [id]);
+
+  const handleSave = async () => {
+    try {
+      setLoading(true);
+
+      // pick patient and doctor details from fetched data (or from separate state if you have)
+      const patientDetail = prescriptionData?.patientDetail ?? null;
+      const doctorDetail = prescriptionData?.doctorDetail ?? null;
+
+      // Build a single object body (not an array)
+      const body = {
+        diagnosis,
+        medicines,
+        checkups,
+        patientDetail,
+        doctorDetail,
+      };
+
+      console.log("Sending Data:", body);
+
+      const response = await authAxios.post(
+        `/prescription/createprescription`,
+        body
+      );
+
+      console.log("PDF:", response.data);
+      console.log("Full Response:", response);
+      setTimeout(()=>{
+        navigate("/");
+      },
+      2000
+    )
+      // show success toast / navigate / set state as needed
+    } catch (error) {
+      console.log("The PDF is not generated", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
@@ -96,9 +141,8 @@ const Prescription = () => {
               Prescription
             </h1>
             <hr className="border-t-2 border-gray-400 mb-8" />
-            {/* ==========================
-                DOCTOR DETAILS
-            =========================== */}
+
+            {/* DOCTOR & PATIENT DETAILS (read-only from fetched data) */}
             <Section title="Doctor Details">
               <Grid2>
                 <Item
@@ -113,28 +157,25 @@ const Prescription = () => {
                   label="Phone"
                   value={prescriptionData?.doctorDetail?.phoneNumber || "N/A"}
                 />
-
-              <Item
+                <Item
                   label="Specialization"
-                  value={prescriptionData?.doctorDetail?.specialization || "N/A"}
+                  value={
+                    prescriptionData?.doctorDetail?.specialization || "N/A"
+                  }
                 />
-
                 <Item
                   label="Doctor ID"
                   value={prescriptionData?.doctor_id || "N/A"}
                 />
               </Grid2>
             </Section>
-            {/* ==========================
-                PATIENT DETAILS
-            =========================== */}
+
             <Section title="Patient Details">
               <Grid2>
                 <Item
                   label="Name"
                   value={prescriptionData?.patientDetail?.fullName || "N/A"}
                 />
-               
                 <Item
                   label="Email"
                   value={prescriptionData?.patientDetail?.email || "N/A"}
@@ -143,7 +184,6 @@ const Prescription = () => {
                   label="Phone"
                   value={prescriptionData?.patientDetail?.phoneNumber || "N/A"}
                 />
-
                 <Item
                   label="Gender"
                   value={prescriptionData?.patientDetail?.gender || "N/A"}
@@ -154,41 +194,35 @@ const Prescription = () => {
                 />
               </Grid2>
             </Section>
-            {/* ==========================
-                DIAGNOSIS
-            =========================== */}
+
+            {/* DIAGNOSIS, MEDICINES, CHECKUPS (form UI unchanged) */}
             <Section title="Diagnosis">
               {diagnosis.map((item, idx) => (
                 <div key={idx} className="grid grid-cols-4 w-full gap-5 mb-4">
-                  {/* BIG WIDE INPUT */}
                   <Input
                     placeholder="Diagnosis"
                     value={item.name}
                     onChange={(e) =>
                       handleDiagnosisChange(idx, "name", e.target.value)
                     }
-                    className="w-72" // <-- Increase width here
+                    className="w-72"
                   />
-
                   <Input
                     placeholder="ICD Code"
                     value={item.icd}
                     onChange={(e) =>
                       handleDiagnosisChange(idx, "icd", e.target.value)
                     }
-                    className="w-36 ms-32" // optional small
+                    className="w-36 ms-32"
                   />
-
                   <Input
                     placeholder="NAMASTE Code"
                     value={item.namaste}
                     onChange={(e) =>
                       handleDiagnosisChange(idx, "namaste", e.target.value)
                     }
-                    className="w-36 ms-26" // optional small
+                    className="w-36 ms-26"
                   />
-
-                  {/* REMOVE BUTTON */}
                   <button
                     className="bg-red-500 text-white ms-20 w-10 h-10 flex items-center justify-center rounded-full mt-1"
                     onClick={() => removeDiagnosis(idx)}
@@ -201,9 +235,6 @@ const Prescription = () => {
               <Button label="+ Add Diagnosis" onClick={addDiagnosis} />
             </Section>
 
-            {/* ==========================
-                MEDICINES
-            =========================== */}
             <Section title="Medicines">
               {medicines.map((item, idx) => (
                 <div key={idx} className="grid grid-cols-4 gap-5 mb-4">
@@ -214,7 +245,6 @@ const Prescription = () => {
                       handleMedicineChange(idx, "name", e.target.value)
                     }
                   />
-
                   <Input
                     placeholder="Meal (Before/After)"
                     value={item.meal}
@@ -222,7 +252,6 @@ const Prescription = () => {
                       handleMedicineChange(idx, "meal", e.target.value)
                     }
                   />
-
                   <Input
                     placeholder="Dosage"
                     value={item.dosage}
@@ -230,8 +259,6 @@ const Prescription = () => {
                       handleMedicineChange(idx, "dosage", e.target.value)
                     }
                   />
-
-                  {/* SMALL ROUND REMOVE BUTTON */}
                   <button
                     className="bg-red-500 text-white w-10 h-10 flex items-center justify-center rounded-full mt-1"
                     onClick={() => removeMedicine(idx)}
@@ -243,13 +270,10 @@ const Prescription = () => {
 
               <Button label="+ Add Medicine" onClick={addMedicine} />
             </Section>
-            {/* ==========================
-                CHECKUP
-            =========================== */}
+
             <Section title="Check-Up">
               {checkups.map((item, idx) => (
                 <div key={idx} className="grid grid-cols-6 gap-4 mb-4">
-                  {/* FULL WIDTH INPUT — spans 5 columns */}
                   <div className="col-span-5">
                     <Input
                       placeholder="Next Check-Up Details"
@@ -258,8 +282,6 @@ const Prescription = () => {
                       onChange={(e) => handleCheckupChange(idx, e.target.value)}
                     />
                   </div>
-
-                  {/* SMALL ROUND REMOVE BUTTON */}
                   <button
                     className="bg-red-500 text-white w-10 h-10 flex items-center justify-center rounded-full mt-1"
                     onClick={() => removeCheckup(idx)}
@@ -271,14 +293,18 @@ const Prescription = () => {
 
               <Button label="+ Add Checkup" onClick={addCheckup} />
             </Section>
-            {/* NEXT APPOINTMENT */}
+
             <Section title="Next Appointment">
               <input type="date" className="border p-2 rounded w-60" />
             </Section>
-            {/* SUBMIT BUTTON */}
+
             <div className="text-center mt-8">
-              <button className="bg-blue-600 px-8 py-3 text-lg rounded-xl text-white hover:bg-amber-500">
-                Submit Prescription
+              <button
+                className="bg-blue-600 px-8 py-3 text-lg rounded-xl text-white hover:bg-amber-500"
+                onClick={handleSave}
+                disabled={loading}
+              >
+                {loading ? "Saving..." : "Submit Prescription"}
               </button>
             </div>
           </div>

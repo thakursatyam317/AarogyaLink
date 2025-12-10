@@ -19,6 +19,9 @@ const userDetailsSchema = new mongoose.Schema({
   gender: {
     type: String,
   },
+  userID :{
+    type : String
+  },
   profilePic: {
     type: String,
   },
