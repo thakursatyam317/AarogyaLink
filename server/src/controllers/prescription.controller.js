@@ -57,6 +57,7 @@ export const createPrescription = async (req, res) => {
     const { diagnosis, medicines, checkups, patientDetail, doctorDetail } =
       req.body;
     console.log("Received prescription data:", req.body);
+    
 
     const folder = path.join(process.cwd(), "prescription");
     if (!fs.existsSync(folder)) fs.mkdirSync(folder);
@@ -76,68 +77,173 @@ export const createPrescription = async (req, res) => {
 
     console.log("File path of the file: ", filePath);
 
-    const doc = new PDFDocument({ size: "A4" });
-    const writeStream = fs.createWriteStream(filePath);
-    doc.pipe(writeStream);
+    // ---------------- PDF GENERATOR (SYSTEMIC VERSION) ----------------
 
-    doc.fontSize(20).text("AAROGYA LINK HOSPITAL", { align: "center" });
-    doc.moveDown();
+    // ---------------- PDF GENERATOR (FINAL UI PERFECTED VERSION) ----------------
 
-    doc
-      .fontSize(12)
-      .text(
-        "45, Bhel Nagar, Bhopal, | +91 9754584581 | aarogyalink1@gmail.com",
-        { align: "center" }
-      );
-    doc.moveDown();
+const doc = new PDFDocument({ size: "A4", margin: 50 });
+const writeStream = fs.createWriteStream(filePath);
+doc.pipe(writeStream);
 
-    doc.fontSize(16).text("PRESCRIPTION REPORT", { align: "center" });
-    doc.moveDown();
+// -------------------------------------------------------------
+// HEADER SECTION
+// -------------------------------------------------------------
+doc.fontSize(22).text("AAROGYA LINK HOSPITAL", { align: "center", bold: true });
+doc.moveDown(0.5);
 
-    doc.fontSize(13).text(" PATIENT DETAILS", { underline: true });
-    doc.fontSize(11);
-    doc.text(`Name: ${patientDetail.fullName}`);
-    doc.text(`Email;: ${patientDetail.email}`);
-    doc.text(`Phone: ${patientDetail.phoneNumber}`);
-    doc.text(`Age: ${patientDetail.age}`);
-    doc.text(`Patient ID: ${patientDetail._id}`);
-    doc.text(`Gender: ${patientDetail.gender}`);
-    doc.moveDown();
+doc.fontSize(12).text(
+  "45, Bhel Nagar, Bhopal | +91 9754584581 | aarogyalink1@gmail.com",
+  { align: "center" }
+);
+doc.moveDown(1.5);
 
-    doc.fontSize(13).text("DOCTOR DETAILS", { underline: true });
-    doc.fontSize(11);
-    doc.text(`Name: ${doctorDetail.fullName}`);
-    doc.text(`Email;: ${doctorDetail.email}`);
-    doc.text(`Phone: ${doctorDetail.phoneNumber}`);
-    doc.text(`Age: ${doctorDetail.age}`);
-    doc.text(`Patient ID: ${doctorDetail._id}`);
-    doc.text(`Gender: ${doctorDetail.gender}`);
-    doc.moveDown();
+doc.fontSize(16).text("PRESCRIPTION REPORT", { align: "center" });
+doc.moveDown(1.2);
 
-    doc.fontSize(13).text("DIAGNOSIS: ", { underline: true });
-    doc.fontSize(11);
-    for (let key of Object.keys(diagnosis)) {
-      console.log(key, diagnosis[key]);
-      doc.text(`Diagnosis : ${key} `);
+// Blue horizontal line
+function separator(y) {
+  doc.strokeColor("#4aa3df").moveTo(50, y).lineTo(550, y).stroke();
+}
+
+// -------------------------------------------------------------
+// TWO-COLUMN SECTION MAKER (PERFECTED UI)
+// -------------------------------------------------------------
+function printTwoColumnSection(title, data, startY) {
+  let y = startY;
+
+  separator(y - 5);
+
+  doc.fontSize(14).text(title, 50, y, { underline: true });
+  y += 30;
+
+  const leftX = 50;
+  const rightX = 300;
+
+  const entries = Object.entries(data);
+
+  doc.fontSize(12);
+
+  // LEFT 3 fields
+  for (let i = 0; i < 3; i++) {
+    if (!entries[i]) break;
+    const [label, value] = entries[i];
+    doc.text(`${label}: ${value}`, leftX, y);
+    y += 20;
+  }
+
+  // Reset y for right column alignment
+  let rightY = startY + 30;
+
+  // RIGHT 3 fields
+  for (let i = 3; i < entries.length; i++) {
+    const [label, value] = entries[i];
+    doc.text(`${label}: ${value}`, rightX, rightY);
+    rightY += 20;
+  }
+
+  return Math.max(y, rightY) + 10;
+}
+
+// -------------------------------------------------------------
+// DOCTOR DETAILS
+// -------------------------------------------------------------
+let y = 150;
+
+y = printTwoColumnSection(
+  "DOCTOR DETAILS",
+  {
+    Name: doctorDetail.fullName,
+    Email: doctorDetail.email,
+    Phone: doctorDetail.phoneNumber,
+    Age: doctorDetail.age,
+    "Doctor ID": doctorDetail._id,
+    Gender: doctorDetail.gender,
+  },
+  y
+);
+
+// -------------------------------------------------------------
+// PATIENT DETAILS
+// -------------------------------------------------------------
+y = printTwoColumnSection(
+  "PATIENT DETAILS",
+  {
+    Name: patientDetail.fullName,
+    Email: patientDetail.email,
+    Phone: patientDetail.phoneNumber,
+    Age: patientDetail.age,
+    "Patient ID": patientDetail._id,
+    Gender: patientDetail.gender,
+  },
+  y
+);
+
+// -------------------------------------------------------------
+// DYNAMIC SECTION MAKER (DIAGNOSIS, MEDICINES, CHECKUPS)
+// -------------------------------------------------------------
+function addDynamicSection(title, items) {
+  separator(y);
+  y += 15;
+
+  doc.fontSize(14).text(title, 50, y, { underline: true });
+  y += 25;
+
+  doc.fontSize(12);
+
+  // CASE 1: items is ARRAY OF OBJECTS (diagnosis / medicines)
+  if (Array.isArray(items) && typeof items[0] === "object") {
+    items.forEach((obj, index) => {
+      doc.fontSize(12).text(`• Item ${index + 1}`, 60, y);
+      y += 18;
+
+      for (let key in obj) {
+        doc.fontSize(11).text(`   ${key}: ${obj[key]}`, 80, y);
+        y += 16;
+      }
+
+      y += 10;
+    });
+  }
+
+  // CASE 2: items is ARRAY OF STRINGS (checkups)
+  else if (Array.isArray(items) && typeof items[0] === "string") {
+    items.forEach((text) => {
+      doc.text(`• ${text}`, 70, y);
+      y += 18;
+    });
+  }
+
+  // CASE 3: items is OBJECT with key-value pairs (fallback)
+  else if (typeof items === "object") {
+    for (let key of Object.keys(items)) {
+      doc.text(`${key}: ${items[key]}`, 70, y);
+      y += 18;
     }
-    doc.moveDown();
+  }
 
-    doc.fontSize(13).text("MEDICINES: ", { underline: true });
-    doc.fontSize(11);
-    for (let key of Object.keys(medicines)) {
-      console.log(key, medicines[key]);
-      doc.text(`Diagnosis : ${key} `);
-    }
-    doc.moveDown();
+  y += 20;
 
-    doc.fontSize(13).text("CHECKUPS: ", { underline: true });
-    doc.fontSize(11);
-    for (let key of Object.keys(checkups)) {
-      console.log(key, checkups[key]);
-      doc.text(`Diagnosis : ${key} `);
-    }
+  // Auto new page
+  if (y > 750) {
+    doc.addPage();
+    y = 50;
+  }
+}
 
-    doc.end();
+
+// -------------------------------------------------------------
+// SECTIONS
+// -------------------------------------------------------------
+addDynamicSection("DIAGNOSIS", diagnosis);
+addDynamicSection("MEDICINES", medicines);
+addDynamicSection("CHECKUPS", checkups);
+
+separator(y);
+
+// -------------------------------------------------------------
+// END PDF
+// -------------------------------------------------------------
+doc.end();
 
     await new Promise((resolve) => writeStream.on("finish", resolve));
     console.log(" PDF Finished Writing!");
