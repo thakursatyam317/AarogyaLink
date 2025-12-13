@@ -221,7 +221,7 @@ export const createPrescription = async (req, res) => {
       item.namaste  || "",
     ]);
 
-    const diagnosisHeaders = ["Name", "ICD Code", "Comment"];
+    const diagnosisHeaders = ["Name", "ICD Code", "NAMASTE"];
 
     y = drawTable(doc, diagnosisHeaders, diagnosisRows, 50, y);
 
@@ -234,11 +234,12 @@ export const createPrescription = async (req, res) => {
 
     const medicineRows = medicines.map(item => [
       item.name || "",
-      item.dose || "",
-      item.days || "",
+      item.meal|| "",
+      item.dosage || "",
+      
     ]);
 
-    const medicineHeaders = ["Medicine", "Dose", "Frequency", "Days"];
+    const medicineHeaders = ["Medicine", "Meal", "Dosage"];
 
     y = drawTable(doc, medicineHeaders, medicineRows, 50, y);
 
