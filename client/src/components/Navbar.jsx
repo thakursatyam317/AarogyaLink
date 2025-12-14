@@ -200,7 +200,7 @@ const Navbar = () => {
                           </Link>
                         </li>
                         <li>
-                          <Link to="/emr" className="block hover:text-blue-600">
+                          <Link to="/dashboard/emr" className="block hover:text-blue-600">
                             <div className="flex items-center">
                               <Folder className="w-6 h-6 mx-2" /> EMR
                             </div>
