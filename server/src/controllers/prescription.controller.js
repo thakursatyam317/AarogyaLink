@@ -9,6 +9,7 @@ import fs from "fs";
 import path from "path";
 import PDFDocument from "pdfkit";
 import mongoose from "mongoose";
+import Preception from '../models/prescreption.model.js'
 
 export const getThePrescriptionData = async (req, res) => {
   try {
@@ -279,6 +280,32 @@ export const createPrescription = async (req, res) => {
     });
 
     fs.unlinkSync(filePath);
+
+    
+
+    const prescreption = await Preception.create({
+      prescriptionpdf :  uploadResponse.url,
+       patientDetail: {
+        fullName : patientDetail.fullName,
+        email : patientDetail.email,
+        user_id : patientDetail.user_id,
+      
+        
+        phoneNumber :patientDetail.phoneNumber,
+        
+       },
+       doctorDetail: {
+        fullName : doctorDetail,
+        email : doctorDetail,
+        specialization : doctorDetail,
+        doctor_id : doctorDetail,
+       
+        phoneNumber : doctorDetail,
+        
+       }
+    });
+
+    prescreption.save();
 
     res.status(201).json({
       success: true,

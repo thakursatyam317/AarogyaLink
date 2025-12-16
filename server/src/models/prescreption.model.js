@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import User from "./user.model";
+import User from "./user.model.js";
 
 const patientDetailsSchema = new mongoose.Schema({
   fullName: {
@@ -81,3 +81,8 @@ const prescriptionSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+
+const Preception = mongoose.model("Preception", prescriptionSchema);
+
+export default Preception;
