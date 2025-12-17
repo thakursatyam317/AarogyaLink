@@ -20,19 +20,8 @@ const EMR = () => {
         age: "1992-05-10",
       },
     },
-    {
-      _id: "2",
-      appointmentDate: "2025-12-16",
-      appointmentTime: "12:00 PM",
-      status: "accepted",
-      patientDetail: {
-        fullName: "Amit Verma",
-        email: "amit@gmail.com",
-        phoneNumber: "8888888888",
-        gender: "Male",
-        age: "1988-02-20",
-      },
-    },
+    
+    
   ];
 
   // 🔹 Filter by search
