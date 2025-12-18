@@ -1,28 +1,36 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
+import { useAuth } from "../../../contexts/authContext";
+import authAxios from "../../../utils/authAxios";
 
 const EMR = () => {
+  const { user } = useAuth();
+
   const [searchText, setSearchText] = useState("");
   const [activePatientId, setActivePatientId] = useState(null);
 
-  // 🔹 Dummy Data (replace with API later)
-  const appointments = [
-    {
-      _id: "1",
-      appointmentDate: "2025-12-15",
-      appointmentTime: "10:30 AM",
-      status: "accepted",
-      patientDetail: {
-        fullName: "Rahul Sharma",
-        email: "rahul@gmail.com",
-        phoneNumber: "9999999999",
-        gender: "Male",
-        age: "1992-05-10",
-      },
-    },
-    
-    
-  ];
+  const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  // 🔹 FETCH EMR DATA FROM BACKEND
+  useEffect(() => {
+    const fetchEMR = async () => {
+      try {
+        const res = await authAxios.get(
+          "/doctor/appointments/emr"
+        );
+        setAppointments(res.data);
+      } catch (err) {
+        console.error(err);
+        setError("Failed to load EMR data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEMR();
+  }, []);
 
   // 🔹 Filter by search
   const filteredAppointments = appointments.filter((item) =>
@@ -43,7 +51,7 @@ const EMR = () => {
       <div className="w-[18%] min-h-screen bg-gray-900">
         <div className="mt-20">
           <h1 className="text-white text-2xl font-bold ms-3">
-            Welcome Satyam Thakur
+            Welcome {user?.fullName}
           </h1>
 
           <div className="grid">
@@ -62,13 +70,6 @@ const EMR = () => {
                 {item}
               </NavLink>
             ))}
-
-            <NavLink
-              to="/doctor/dashboard/details"
-              className="text-white text-xl h-12 w-60 hover:bg-gray-700 rounded-2xl ms-[10%] mt-6"
-            >
-              Hospitals
-            </NavLink>
           </div>
         </div>
       </div>
@@ -80,86 +81,78 @@ const EMR = () => {
         </h1>
 
         {/* 🔍 Search */}
-        <div className="mb-6">
-          <input
-            type="text"
-            placeholder="Search patient by name..."
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            className="w-full md:w-1/2 p-3 border rounded-xl shadow-sm outline-none"
-          />
-        </div>
+        <input
+          type="text"
+          placeholder="Search patient by name..."
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          className="w-full md:w-1/2 p-3 border rounded-xl shadow-sm mb-6"
+        />
 
-        {/* Patient List */}
-        {filteredAppointments.length === 0 ? (
+        {/* ⏳ Loading */}
+        {loading && <p>Loading EMR data...</p>}
+
+        {/* ❌ Error */}
+        {error && <p className="text-red-500">{error}</p>}
+
+        {/* 📋 Patient List */}
+        {!loading && filteredAppointments.length === 0 && (
           <p className="text-gray-500">No patients found.</p>
-        ) : (
-          <div className="flex flex-col gap-6">
-            {filteredAppointments.map((item) => (
-              <div
-                key={item._id}
-                className="bg-white p-6 rounded-xl shadow border"
-              >
-                <h2 className="text-xl font-bold">
-                  {item.patientDetail.fullName}
-                </h2>
-
-                <p className="mt-1">
-                  <strong>Date:</strong>{" "}
-                  {formatDate(item.appointmentDate)}
-                </p>
-                <p>
-                  <strong>Time:</strong> {item.appointmentTime}
-                </p>
-
-                <span className="inline-block mt-2 px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-semibold">
-                  {item.status.toUpperCase()}
-                </span>
-
-                {/* Basic Info */}
-                <div className="grid grid-cols-2 gap-4 mt-4 text-sm">
-                  <p><strong>Email:</strong> {item.patientDetail.email}</p>
-                  <p><strong>Phone:</strong> {item.patientDetail.phoneNumber}</p>
-                </div>
-
-                {/* Button */}
-                <button
-                  onClick={() =>
-                    setActivePatientId(
-                      activePatientId === item._id ? null : item._id
-                    )
-                  }
-                  className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
-                >
-                  {activePatientId === item._id
-                    ? "Hide Complete Details"
-                    : "View Complete Details"}
-                </button>
-
-                {/* Complete Details */}
-                {activePatientId === item._id && (
-                  <div className="mt-4 bg-gray-50 p-4 rounded-lg grid grid-cols-2 gap-4 text-sm">
-                    <p>
-                      <strong>Gender:</strong>{" "}
-                      {item.patientDetail.gender}
-                    </p>
-                    <p>
-                      <strong>Age:</strong>{" "}
-                      {calculateAge(item.patientDetail.age)}
-                    </p>
-
-                    <div className="col-span-2">
-                      <h3 className="font-semibold">Prescription</h3>
-                      <p className="text-gray-500">
-                        Not added yet
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
         )}
+
+        <div className="flex flex-col gap-6">
+          {filteredAppointments.map((item) => (
+            <div
+              key={item._id}
+              className="bg-white p-6 rounded-xl shadow border"
+            >
+              <h2 className="text-xl font-bold">
+                {item.patientDetail.fullName}
+              </h2>
+
+              <p className="mt-1">
+                <strong>Date:</strong> {formatDate(item.appointmentDate)}
+              </p>
+              <p>
+                <strong>Time:</strong> {item.appointmentTime}
+              </p>
+
+              <span className="inline-block mt-2 px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-semibold">
+                {item.status.toUpperCase()}
+              </span>
+
+              <div className="grid grid-cols-2 gap-4 mt-4 text-sm">
+                <p><strong>Email:</strong> {item.patientDetail.email}</p>
+                <p><strong>Phone:</strong> {item.patientDetail.phoneNumber}</p>
+              </div>
+
+              <button
+                onClick={() =>
+                  setActivePatientId(
+                    activePatientId === item._id ? null : item._id
+                  )
+                }
+                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm"
+              >
+                {activePatientId === item._id
+                  ? "Hide Complete Details"
+                  : "View Complete Details"}
+              </button>
+
+              {activePatientId === item._id && (
+                <div className="mt-4 bg-gray-50 p-4 rounded-lg grid grid-cols-2 gap-4 text-sm">
+                  <p><strong>Gender:</strong> {item.patientDetail.gender}</p>
+                  <p><strong>Age:</strong> {calculateAge(item.patientDetail.age)}</p>
+
+                  <div className="col-span-2">
+                    <h3 className="font-semibold">Prescription</h3>
+                    <p className="text-gray-500">Not added yet</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
