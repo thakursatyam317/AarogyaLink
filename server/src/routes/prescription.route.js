@@ -8,4 +8,5 @@ router.get('/getprescription/:id', userProtection,doctorProtection, getThePrescr
 
 router.post('/createprescription', userProtection, doctorProtection,createPrescription);
 
+
 export default router;

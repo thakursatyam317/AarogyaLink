@@ -8,6 +8,7 @@ import userRoute from './src/routes/user.route.js'
 import doctorAuth from './src/routes/doctor.route.js'
 import appointmentRoute from './src/routes/appointment.route.js';
 import prescriptionRoute from './src/routes/prescription.route.js';
+import emr from '../server/src/routes/EMR.route.js';
 
 dotenv.config();
 const app = express();
@@ -30,6 +31,7 @@ app.use('/api/user', userRoute);
 app.use('/api/doctor',doctorAuth);
 app.use('/api/appointments', appointmentRoute);
 app.use('/api/prescription', prescriptionRoute);
+app.use('/api/emr', emr);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, ()=>{

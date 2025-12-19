@@ -18,9 +18,11 @@ const EMR = () => {
     const fetchEMR = async () => {
       try {
         const res = await authAxios.get(
-          "/doctor/appointments/emr"
+          "/emr/doctor/emr"
         );
-        setAppointments(res.data);
+        console.log("response", res)
+        setAppointments(res.data)
+        console.log(appointments);
       } catch (err) {
         console.error(err);
         setError("Failed to load EMR data");
