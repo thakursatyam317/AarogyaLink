@@ -13,7 +13,7 @@ const EMR = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // 🔹 FETCH EMR DATA FROM BACKEND
+
   useEffect(() => {
     const fetchEMR = async () => {
       try {
@@ -49,7 +49,7 @@ const EMR = () => {
 
   return (
     <div className="flex">
-      {/* ================= LEFT SIDEBAR ================= */}
+     
       <div className="w-[18%] min-h-screen bg-gray-900">
         <div className="mt-20">
           <h1 className="text-white text-2xl font-bold ms-3">
@@ -76,13 +76,13 @@ const EMR = () => {
         </div>
       </div>
 
-      {/* ================= RIGHT SIDE ================= */}
+      
       <div className="w-[82%] p-10 bg-gray-100 min-h-screen">
         <h1 className="text-3xl font-bold mb-6">
           Electronic Medical Record (EMR)
         </h1>
 
-        {/* 🔍 Search */}
+      
         <input
           type="text"
           placeholder="Search patient by name..."
@@ -91,13 +91,13 @@ const EMR = () => {
           className="w-full md:w-1/2 p-3 border rounded-xl shadow-sm mb-6"
         />
 
-        {/* ⏳ Loading */}
+       
         {loading && <p>Loading EMR data...</p>}
 
-        {/* ❌ Error */}
+        
         {error && <p className="text-red-500">{error}</p>}
 
-        {/* 📋 Patient List */}
+        
         {!loading && filteredAppointments.length === 0 && (
           <p className="text-gray-500">No patients found.</p>
         )}

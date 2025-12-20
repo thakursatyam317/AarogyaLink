@@ -219,7 +219,7 @@ export const getDoctorAppointmentDetails = async (req, res) => {
   try {
     const doctorID = req.params.id;
     console.log("Fetching appointment details for Doctor ID:", doctorID);
-
+    
     if (!doctorID) {
       throw new ApiError(400, "Doctor ID is required");
     }

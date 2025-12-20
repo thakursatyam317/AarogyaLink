@@ -77,7 +77,7 @@ const Login = () => {
           <Toaster position="top-center" reverseOrder={false} />
           <div className="">
             <div>
-              <img src="" alt="" />
+              {/* <img src="" alt="" /> */}
             </div>
             <div className="mt-0 ml-8 ">
               <form

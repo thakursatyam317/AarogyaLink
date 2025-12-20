@@ -46,6 +46,7 @@ const Appointment = () => {
         );
 
         const data = response.data.data;
+        console.log(`data ${data}`, data.userDetails.userName)
 
         setDoctorData({
           name: data?.userDetails?.userName || "",
@@ -55,6 +56,7 @@ const Appointment = () => {
           fee: data?.consultationFee || "",
           profilePic: data?.userDetails?.profilePic || "",
         });
+        console.log("doctorData : ",doctorData);
       } catch (error) {
         console.error("Error fetching doctor details:", error);
       }
@@ -136,7 +138,7 @@ const Appointment = () => {
         <div className="mb-6 p-4 border rounded-lg bg-blue-50 flex">
           <div className="mx-6 my-8">
             <img
-              src={doctorData?.profilePic || ""}
+              src={doctorData?.profilePic }
               alt="Doctor"
               className="h-28 w-28 rounded-full border"
             />
