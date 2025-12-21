@@ -20,7 +20,7 @@ const userDetailsSchema = new mongoose.Schema({
     type: String,
   },
   userID :{
-    type : String
+    type : String 
   },
   profilePic: {
     type: String,

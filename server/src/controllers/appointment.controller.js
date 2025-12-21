@@ -12,6 +12,8 @@ export const getDoctorAppointment = async (req, res) => {
     const doctorID = req.params.id; // comes from URL
     const { appointmentDate, appointmentTime, amount } = req.body;
     const userId = req.user.id; // JWT user
+
+
     console.log("Doctor ID:", doctorID);
     console.log("User ID:", userId);
     console.log("Appointment Date:", appointmentDate);
@@ -41,21 +43,23 @@ export const getDoctorAppointment = async (req, res) => {
       doctor_id: doctor_id,
       patient_id: userId,
       patientDetail: {
-        fullName: user.userName,
+        userName: user.userName,
         email: user.email,
         phoneNumber: user.phoneNumber,
         gender: user.gender,
         profilePic: user.profilePic,
-        age: user.dob,
+        dob: user.dob,
+        userID : user.userID
       },
       doctorDetail: {
-        fullName: doctor.userDetails.userName,
+        userName: doctor.userDetails.userName,
         email: doctor.userDetails.email,
         phoneNumber: doctor.userDetails.phoneNumber,
         specialization: doctor.specialization,
         profilePic: doctor.userDetails.profilePic,
-        age: doctor.age,
-        gender: doctor.gender,
+        dob: doctor.userDetails.dob,
+        gender: doctor.userDetails.gender,
+        doctorID : doctor.doctorID
       },
       appointmentDate,
       appointmentTime,
@@ -97,11 +101,11 @@ export const getDoctorAppointment = async (req, res) => {
     return res.status(200).json(
       new ApiResponse(
         200,
-        {
+        "Appointment created & Razorpay order generated successfully",
+         {
           appointment,
           order,
-        },
-        "Appointment created & Razorpay order generated successfully"
+        }
       )
     );
   } catch (error) {

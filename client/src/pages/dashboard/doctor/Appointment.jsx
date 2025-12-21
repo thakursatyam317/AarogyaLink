@@ -17,7 +17,7 @@ const Appointment = () => {
           }
         );
         setAppointments(response.data.data);
-        console.log("Accepted Appointments:", response.data.data);
+        console.log("Accepted Appointments:", response.data);
       } catch (error) {
         console.error("Error fetching accepted appointments:", error);
       }
@@ -49,7 +49,7 @@ const Appointment = () => {
   // /doctor/dashboard/appointments/prescription
 
   const filteredAppointments = appointments.filter((item) =>
-    item.patientDetail?.fullName
+    item.patientDetail?.userName
       ?.toLowerCase()
       .includes(searchText.toLowerCase())
   );
@@ -130,7 +130,7 @@ const Appointment = () => {
                   {/* DETAILS */}
                   <div className=" ml-28 w-full">
                     <h1 className="text-xl font-bold hover:text-amber-500">
-                      {item.patientDetail?.fullName}
+                      {item.patientDetail?.userName}
                     </h1>
                     <p className="text-gray-600 text-sm">Patient Appointment</p>
 
@@ -173,7 +173,7 @@ const Appointment = () => {
 
                       <NavLink
                         className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
-                        to={`/doctor/dashboard/appointment/prescription/${item.patient_id}`} 
+                        to={`/doctor/dashboard/appointment/prescription/${item.patientDetail.userID}`} 
                       >
                         Start Consultation
                       </NavLink>

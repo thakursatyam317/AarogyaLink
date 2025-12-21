@@ -110,6 +110,7 @@ export const updateDoctorProfile = async (req, res) => {
           gender,
           profilePic: user.profilePic,
           userID: user.userID,
+
         },
         startTime,
         endTime,

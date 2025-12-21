@@ -9,16 +9,21 @@ import fs from "fs";
 import path from "path";
 import PDFDocument from "pdfkit";
 import mongoose from "mongoose";
-import Preception from '../models/prescreption.model.js'
+import Preception from "../models/prescreption.model.js";
 
 export const getThePrescriptionData = async (req, res) => {
   try {
     const doctor_id = req.user?._id || req.user?.id;
     console.log("Logged-in doctorId:", doctor_id);
-    const user_id = req.params.id;
-    console.log("User ID from params:", user_id);
+    const patientID = req.params.id.replace(":", "");
+    console.log("User ID from params:", patientID);
+    
 
-    const user = await User.findById(user_id);
+
+    const user = await User.findOne({ userID: patientID });
+    if (!user) {
+     throw new ApiError(404, "Patient not found");
+    }
     console.log("Found user for prescription:", user);
 
     const doctor = await Doctor.findOne({ user_id: doctor_id });
@@ -26,6 +31,8 @@ export const getThePrescriptionData = async (req, res) => {
     if (!doctor) {
       throw new ApiError(404, "Doctor not found");
     }
+    console.log("Doctor _id", doctor._id)
+    console.log("Doctor _id", user._id)
     const appointment = await Appointment.aggregate([
       {
         $match: {
@@ -56,7 +63,8 @@ export const createPrescription = async (req, res) => {
     const doctor_id = req.user?._id || req.user?.id;
     console.log("Logged-in doctorId:", doctor_id);
 
-    const { diagnosis, medicines, checkups, patientDetail, doctorDetail } = req.body;
+    const { diagnosis, medicines, checkups, patientDetail, doctorDetail } =
+      req.body;
     console.log("Received prescription data:", req.body);
 
     // -------------------------------------------------------------
@@ -71,7 +79,7 @@ export const createPrescription = async (req, res) => {
 
     console.log("Patient : ", appointment);
 
-    const tempfileName = appointment.patientDetail.fullName
+    const tempfileName = appointment.patientDetail.userName
       .toLowerCase()
       .replace(/\s+/g, "_");
 
@@ -93,10 +101,12 @@ export const createPrescription = async (req, res) => {
     doc.fontSize(22).text("AAROGYA LINK HOSPITAL", { align: "center" });
     doc.moveDown(0.5);
 
-    doc.fontSize(12).text(
-      "45, Bhel Nagar, Bhopal | +91 9754584581 | aarogyalink1@gmail.com",
-      { align: "center" }
-    );
+    doc
+      .fontSize(12)
+      .text(
+        "45, Bhel Nagar, Bhopal | +91 9754584581 | aarogyalink1@gmail.com",
+        { align: "center" }
+      );
     doc.moveDown(1.5);
 
     doc.fontSize(16).text("PRESCRIPTION REPORT", { align: "center" });
@@ -179,7 +189,14 @@ export const createPrescription = async (req, res) => {
     // -------------------------------------------------------------
     // TABLE RENDER FUNCTION
     // -------------------------------------------------------------
-    function drawTable(doc, headers, rows, startX = 50, startY = 50, rowHeight = 25) {
+    function drawTable(
+      doc,
+      headers,
+      rows,
+      startX = 50,
+      startY = 50,
+      rowHeight = 25
+    ) {
       let y = startY;
 
       doc.rect(startX, y, 500, rowHeight).fill("#E8E8E8").stroke();
@@ -216,10 +233,10 @@ export const createPrescription = async (req, res) => {
     doc.fontSize(14).text("DIAGNOSIS", 50, y, { underline: true });
     y += 30;
 
-    const diagnosisRows = diagnosis.map(item => [
+    const diagnosisRows = diagnosis.map((item) => [
       item.name || "",
       item.icd || "",
-      item.namaste  || "",
+      item.namaste || "",
     ]);
 
     const diagnosisHeaders = ["Name", "ICD Code", "NAMASTE"];
@@ -233,11 +250,10 @@ export const createPrescription = async (req, res) => {
     doc.fontSize(14).text("MEDICINES", 50, y, { underline: true });
     y += 30;
 
-    const medicineRows = medicines.map(item => [
+    const medicineRows = medicines.map((item) => [
       item.name || "",
-      item.meal|| "",
+      item.meal || "",
       item.dosage || "",
-      
     ]);
 
     const medicineHeaders = ["Medicine", "Meal", "Dosage"];
@@ -281,28 +297,25 @@ export const createPrescription = async (req, res) => {
 
     fs.unlinkSync(filePath);
 
-    
-
     const prescreption = await Preception.create({
-      prescriptionpdf :  uploadResponse.url,
-       patientDetail: {
-        fullName : patientDetail.fullName,
-        email : patientDetail.email,
-        user_id : patientDetail.user_id,
-      
-        
-        phoneNumber :patientDetail.phoneNumber,
-        
-       },
-       doctorDetail: {
-        fullName : doctorDetail,
-        email : doctorDetail,
-        specialization : doctorDetail,
-        doctor_id : doctorDetail,
-       
-        phoneNumber : doctorDetail,
-        
-       }
+      prescriptionpdf: uploadResponse.url,
+
+      patientDetail: {
+        userName: patientDetail.userName,
+        email: patientDetail.email,
+        user_id: patientDetail.user_id,
+        userID: patientDetail.userID,
+
+        phoneNumber: patientDetail.phoneNumber,
+      },
+      doctorDetail: {
+        userName: doctorDetail.userName,
+        email: doctorDetail.email,
+        specialization: doctorDetail.specialization,
+        doctor_id: doctorDetail.doctor_id,
+        doctorID: doctorDetail.doctorID,
+        phoneNumber: doctorDetail.phoneNumber,
+      },
     });
 
     prescreption.save();
@@ -313,9 +326,13 @@ export const createPrescription = async (req, res) => {
       pdfUrl: uploadResponse.url,
       fileId: uploadResponse.fileId,
     });
-
   } catch (error) {
     console.error("❌ Create Prescription Error:", error);
-    return res.status(500).json({ success: false, message: "Server error while creating prescription" });
+    return res
+      .status(500)
+      .json({
+        success: false,
+        message: "Server error while creating prescription",
+      });
   }
 };

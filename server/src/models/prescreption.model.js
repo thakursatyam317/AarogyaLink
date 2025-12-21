@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import User from "./user.model.js";
 
 const patientDetailsSchema = new mongoose.Schema({
-  fullName: {
+  userName: {
     type: String,
   },
   email: {
@@ -24,13 +24,13 @@ const patientDetailsSchema = new mongoose.Schema({
     type : mongoose.Schema.Types.ObjectId,
     ref : "User"
   },
-  age: {
+  dob: {
     type: String,
   },
 });
 
 const doctorDetailsSchema = new mongoose.Schema({
-  fullName: {
+  userName: {
     type: String,
   },
   email: {
@@ -46,7 +46,7 @@ const doctorDetailsSchema = new mongoose.Schema({
     type : mongoose.Schema.Types.ObjectId,
     ref : "User"
   },
-  age: {
+  dob: {
     type: Number,
   },
   gender: {

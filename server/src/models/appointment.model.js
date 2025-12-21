@@ -2,78 +2,78 @@ import mongoose from "mongoose";
 
 const paymentDetailsSchema = new mongoose.Schema({
   amount: {
-    type : Number,
+    type: Number,
   },
   currency: {
-    type : String,
+    type: String,
   },
   receipt: {
-    type : String,
+    type: String,
   },
   status: {
-    type : String,
+    type: String,
   },
   date: {
-    type : Date,
+    type: Date,
   },
-  paymentID  : {
-    type : String,
+  paymentID: {
+    type: String,
   },
-  razorpay_payment_id :{
-    type: String
-  }
-
+  razorpay_payment_id: {
+    type: String,
+  },
 });
 
 const patientDetailsSchema = new mongoose.Schema({
-  fullName : {
-    type : String,
+  userName: {
+    type: String,
   },
   email: {
-    type : String,
+    type: String,
   },
   phoneNumber: {
-    type : String,
+    type: String,
   },
   gender: {
-    type : String,
+    type: String,
   },
-  profilePic : {
-    type : String,
+  profilePic: {
+    type: String,
   },
-  userID : {
-    type : String,
+  userID: {
+    type: String, // this is not save in db
   },
 
-  age: {
-    type : String,
+  dob: {
+    type: String, // this is not safe in db
   },
 });
 
 const doctorDetailsSchema = new mongoose.Schema({
-  fullName : {
-    type : String,  
+  userName: {
+    type: String,
   },
   email: {
-    type : String,
+    type: String,
   },
   specialization: {
-    type : String,
+    type: String,
   },
-  doctorID : {
-    type : String,
+  doctorID: {
+    type: String,
   },
-  age: {
-    type : Number,
+  dob: {
+    type: Number, 
   },
+
   gender: {
-    type : String,
+    type: String, 
   },
   phoneNumber: {
-    type : String,
+    type: String,
   },
-  profilePic : {
-    type : String,
+  profilePic: {
+    type: String,
   },
 });
 
@@ -90,12 +90,12 @@ const appointmentSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       required: true,
     },
-    patientDetail : {
-      type : patientDetailsSchema,
+    patientDetail: {
+      type: patientDetailsSchema,
       default: {},
     },
-    doctorDetail : {
-      type : doctorDetailsSchema,
+    doctorDetail: {
+      type: doctorDetailsSchema,
       default: {},
     },
 

@@ -2,9 +2,8 @@ import React, { useState, useEffect } from "react";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import authAxios from "../../../utils/authAxios";
 
-
 const Prescription = () => {
-  const { id } = useParams();
+  const { patientID } = useParams();
   const navigate = useNavigate();
 
   const [diagnosis, setDiagnosis] = useState([
@@ -53,8 +52,9 @@ const Prescription = () => {
     const fetchPrescriptionData = async () => {
       try {
         const response = await authAxios.get(
-          `/prescription/getprescription/${id}`
+          `/prescription/getprescription/:${patientID}`
         );
+        console.log("patientID  ", patientID);
         const fetched = response.data?.data?.[0] ?? null;
         setPrescriptionData(fetched);
 
@@ -74,8 +74,8 @@ const Prescription = () => {
       }
     };
 
-    if (id) fetchPrescriptionData();
-  }, [id]);
+    if (patientID) fetchPrescriptionData();
+  }, [patientID]);
 
   const handleSave = async () => {
     try {
@@ -103,11 +103,9 @@ const Prescription = () => {
 
       console.log("PDF:", response.data);
       console.log("Full Response:", response);
-      setTimeout(()=>{
+      setTimeout(() => {
         navigate("/");
-      },
-      2000
-    )
+      }, 2000);
       // show success toast / navigate / set state as needed
     } catch (error) {
       console.log("The PDF is not generated", error);
@@ -147,7 +145,7 @@ const Prescription = () => {
               <Grid2>
                 <Item
                   label="Name"
-                  value={prescriptionData?.doctorDetail?.fullName || "N/A"}
+                  value={prescriptionData?.doctorDetail?.userName || "N/A"}
                 />
                 <Item
                   label="Email"
@@ -165,7 +163,7 @@ const Prescription = () => {
                 />
                 <Item
                   label="Doctor ID"
-                  value={prescriptionData?.doctor_id || "N/A"}
+                  value={prescriptionData?.doctorDetail?.doctorID || "N/A"}
                 />
               </Grid2>
             </Section>
@@ -174,7 +172,7 @@ const Prescription = () => {
               <Grid2>
                 <Item
                   label="Name"
-                  value={prescriptionData?.patientDetail?.fullName || "N/A"}
+                  value={prescriptionData?.patientDetail?.userName || "N/A"}
                 />
                 <Item
                   label="Email"
@@ -190,7 +188,7 @@ const Prescription = () => {
                 />
                 <Item
                   label="patient ID"
-                  value={prescriptionData?.patientDetail?.patientID || "N/A"}
+                  value={prescriptionData?.patientDetail?.userID || "N/A"}
                 />
               </Grid2>
             </Section>

@@ -11,7 +11,7 @@ const router = express.Router();
 
 
 
-router.post("/getappointment/:id", userProtection,doctorProtection, getDoctorAppointment);
+router.post("/getappointment/:id", userProtection, getDoctorAppointment);
 router.patch("/paymentappointment", userProtection,doctorProtection, razarpayIdUpdate );
 
 router.get("/allappointments", userProtection,doctorProtection, getAllAppointmentsForDoctor);
