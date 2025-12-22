@@ -128,6 +128,15 @@ const Appointment = () => {
     }
   };
 
+
+
+
+  const today = new Date();
+  const todayDate = today.toISOString().split("T")[0];
+  const currentTime = today.toTimeString().slice(0, 5);
+
+ 
+
   return (
     <div className="min-h-screen flex justify-center p-6 bg-gray-100">
       <Toaster position="top-center" reverseOrder={false} />
@@ -199,6 +208,7 @@ const Appointment = () => {
               type="date"
               className="w-full p-2 border rounded mb-3"
               value={date}
+              min={todayDate}
               onChange={(e) => setDate(e.target.value)}
             />
           </div>
@@ -208,6 +218,7 @@ const Appointment = () => {
               type="time"
               className="w-full p-2 border rounded mb-4"
               value={time}
+              min={date === todayDate ? currentTime : undefined}
               onChange={(e) => setTime(e.target.value)}
             />
           </div>
