@@ -4,7 +4,7 @@ import { UserRound, Folder, Languages, Stethoscope } from "lucide-react";
 const Footer = () => {
   return (
     <footer className="bg-blue-500 text-white mt-16">
-      <div className="max-w-7xl mx-auto py-10 px-6 md:px-12 flex flex-col md:flex-row justify-between">
+      <div className="max-w-7xl mx-auto py-10 px-6 md:px-12 flex flex-col md:flex-row justify-between text-center md:text-left gap-8 md:gap-0">
         
         {/* Branding */}
         <div className="mb-6 md:mb-0">
@@ -47,16 +47,16 @@ const Footer = () => {
         <div>
           <h2 className="font-semibold text-lg mb-3">Services</h2>
           <ul className="space-y-2">
-            <li className="flex items-center gap-2 hover:text-amber-200 transition">
+            <li className="flex items-center justify-center md:justify-start gap-2 hover:text-amber-200 transition">
               <Stethoscope className="w-5 h-5" /> Prescription
             </li>
-            <li className="flex items-center gap-2 hover:text-amber-200 transition">
+            <li className="flex items-center justify-center md:justify-start gap-2 hover:text-amber-200 transition">
               <Folder className="w-5 h-5" /> EMR
             </li>
-            <li className="flex items-center gap-2 hover:text-amber-200 transition">
+            <li className="flex items-center justify-center md:justify-start gap-2 hover:text-amber-200 transition">
               <Languages className="w-5 h-5" /> Language Support
             </li>
-            <li className="flex items-center gap-2 hover:text-amber-200 transition">
+            <li className="flex items-center justify-center md:justify-start gap-2 hover:text-amber-200 transition">
               <UserRound className="w-5 h-5" /> Profile Management
             </li>
           </ul>

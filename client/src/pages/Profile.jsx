@@ -48,22 +48,13 @@ const Profile = () => {
           setUserData((prev) => ({
             ...prev,
             ...res.data.data,
-            address: res.data.data.address || {
-              houseNumber: "",
-              street: "",
-              city: "",
-              state: "",
-              pincode: "",
-              country: "",
-            },
+            address: res.data.data.address || prev.address,
           }));
-
           if (res.data.data.profilePic) {
             setPreview(res.data.data.profilePic);
           }
         }
       } catch (error) {
-        console.error("Error fetching profile:", error);
         if (error.response?.status === 401) {
           localStorage.removeItem("token");
           window.location.href = "/login";
@@ -109,86 +100,74 @@ const Profile = () => {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      console.log("res.data.updatedUser ",res.data.updatedUser);
-      console.log("res.data.updatedUser ",res.data.data);
       if (res.data?.updatedUser) {
         setUserData(res.data.updatedUser);
         setPreview(res.data.updatedUser.profilePic || "");
         setPhotoFile(null);
         setIsEditing(false);
         await fetchProfile();
-
-        toast.success("Profile updated successfully", {
-          duration: 1500,
-          position: "top-center",
-        });
+        toast.success("Profile updated successfully");
       }
-    } catch (error) {
-      console.error("Error updating profile:", error);
+    } catch {
       toast.error("Error updating profile");
     }
   };
 
   return (
     <>
-      <div>
-        <Toaster position="top-center" reverseOrder={false} />
-        <div className="h-[700px] grid rounded-2xl justify-center ms-15 mt-24 shadow-[0_0_25px_rgba(59,130,246,0.25)] w-[1400px]">
-          <div className="flex justify-between relative">
-            <h1 className="text-5xl font-semibold absolute mt-14 ms-3">
+      <Toaster position="top-center" />
+      <div className="px-4">
+        <div className="min-h-screen md:h-[700px] grid rounded-2xl justify-center md:ms-15 mt-24 shadow-[0_0_25px_rgba(59,130,246,0.25)] w-full md:w-[1400px] bg-white p-4 md:p-6">
+          <div className="flex flex-col md:flex-row justify-between relative">
+            <h1 className="text-3xl md:text-5xl font-semibold md:absolute mt-6 md:mt-14 md:ms-3 text-center">
               Profile
             </h1>
-            <div className="ms-[35%] mt-14 grid">
-            <div>
-              <label htmlFor="" className="text-xl">
-                Hospital ID :-{" "}
-              </label>
-              {userData.hospitalID ? (
-                <span className="text-xl hover:text-blue-600 hover:shadow-blue-500">
-                  {userData.hospitalID}
-                </span>
-              ) : (
-                <select
-                  value={selectedHospital}
-                  onChange={(e) => setSelectedHospital(e.target.value)}
-                  className="border border-gray-300 rounded-md p-2 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">---Select Hospital---</option>
-                  <option value="Hos-AarogyaLink-0112">
-                    Hos-AarogyaLink-0112
-                  </option>
-                  <option value="Hos-AarogyaLink-0113">
-                    Hos-AarogyaLink-0113
-                  </option>
-                  <option value="Hos-AarogyaLink-0114">
-                    Hos-AarogyaLink-0114
-                  </option>
-                </select>
-              )}
+
+            <div className="md:ms-[35%] mt-6 md:mt-14 grid text-center md:text-left">
+              <div>
+                <label className="text-lg md:text-xl">Hospital ID :- </label>
+                {userData.hospitalID ? (
+                  <span className="text-lg md:text-xl">
+                    {userData.hospitalID}
+                  </span>
+                ) : (
+                  <select
+                    value={selectedHospital}
+                    onChange={(e) => setSelectedHospital(e.target.value)}
+                    className="border rounded-md p-2 text-base md:text-lg"
+                  >
+                    <option value="">---Select Hospital---</option>
+                    <option value="Hos-AarogyaLink-0112">
+                      Hos-AarogyaLink-0112
+                    </option>
+                    <option value="Hos-AarogyaLink-0113">
+                      Hos-AarogyaLink-0113
+                    </option>
+                    <option value="Hos-AarogyaLink-0114">
+                      Hos-AarogyaLink-0114
+                    </option>
+                  </select>
+                )}
+              </div>
+
+              <div>
+                <label className="text-lg md:text-xl">User ID :- </label>
+                <span className="text-lg md:text-xl">{userData.userID}</span>
+              </div>
             </div>
 
-            <div>
-              <label htmlFor="" className="text-xl">
-                User ID :-{" "}
-              </label>
-              <span className="text-xl hover:text-blue-600 hover:shadow-blue-500">
-                {userData.userID}
-              </span>
-            </div>
-          </div>
-
-            <div>
+            <div className="flex justify-center md:block">
               {!isEditing ? (
                 <button
                   onClick={() => setIsEditing(true)}
-                  className=" ms-[15%] mt-10 h-11 w-40  rounded-xl bg-blue-500 hover:bg-amber-500 hover:text-white text-2xl"
+                  className="md:ms-[15%] mt-6 md:mt-10 h-11 w-40 rounded-xl bg-blue-500 hover:bg-amber-500 text-white text-xl"
                 >
                   Edit
                 </button>
               ) : (
                 <button
                   onClick={handleSave}
-                  className=" ms-[95%] mt-10 h-11 w-40  rounded-xl bg-green-500 hover:bg-amber-500 hover:text-white text-2xl"
+                  className="md:ms-[95%] mt-6 md:mt-10 h-11 w-40 rounded-xl bg-green-500 hover:bg-amber-500 text-white text-xl"
                 >
                   Save
                 </button>
@@ -196,206 +175,215 @@ const Profile = () => {
             </div>
           </div>
 
-          <div className="flex">
-            <div className="h-[300px] w-[300px] border rounded-full mt-30 -ms-10 object-fill relative">
-              <img
-                src={preview || userData?.profilePic || ""}
-                alt=""
-                className="h-[298px] w-[300px] border rounded-full object-fill"
-              />
-              <div className="h-10 w-10 rounded-full border-2 ms-64 -mt-22 flex justify-center bg-blue-50 hover:bg-amber-50 absolute z-20">
+          <div className="flex flex-col md:flex-row mt-10 gap-10">
+            <div className="flex justify-center">
+              <div className="h-[220px] w-[220px] md:h-[300px] md:w-[300px] border rounded-full relative">
+                <img
+                  src={preview || userData?.profilePic || ""}
+                  className="h-full w-full rounded-full object-cover"
+                />
                 {isEditing && (
-                  <>
-                    <FaCamera className=" group-hover:text-white text-xl text-blue-500 hover:text-amber-500 mt-1.5 ms-1.2" />
+                  <div className="absolute bottom-4 right-4 bg-white p-2 rounded-full">
+                    <FaCamera className="text-blue-500" />
                     <input
                       type="file"
                       accept="image/*"
-                      className="absolute h-full w-full opacity-0 cursor-pointer"
+                      className="absolute inset-0 opacity-0 cursor-pointer"
                       onChange={handlePhotoChange}
                     />
-                  </>
+                  </div>
                 )}
               </div>
             </div>
 
-            <div className="flex ms-20">
-              <div className="mx-10">
-                <h1 className="mt-9 text-2xl">Personal Detail :</h1>
-                <div className="grid my-5 w-80">
-                  <label htmlFor="" className="my-1">
-                    User Name :-
-                  </label>
-                  <input
-                    type="text"
-                    name="userName"
-                    value={userData?.userName || ""}
-                    onChange={handleChange}
-                    disabled={!isEditing}
-                    className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
-                  />
-                </div>
-                <div className="grid my-5">
-                  <label htmlFor="">Email :- </label>
-                  <input
-                    type="text"
-                    name="email"
-                    value={userData?.email || ""}
-                    onChange={handleChange}
-                    disabled={!isEditing}
-                    className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
-                  />
-                </div>
-                <div className="grid my-5">
-                  <label htmlFor="">Phone Number :-</label>
-                  <input
-                    type="text"
-                    name="phoneNumber"
-                    value={userData?.phoneNumber || ""}
-                    onChange={handleChange}
-                    disabled={!isEditing}
-                    className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
-                  />
-                </div>
-                <div className="grid my-5">
-                  <label htmlFor="">Date of Birth :-</label>
-                  <input
-                    type="date"
-                    name="dob"
-                    value={userData?.dob || ""}
-                    onChange={handleChange}
-                    disabled={!isEditing}
-                    className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
-                  />
-                </div>
-                <div className="grid my-5">
-                  <label htmlFor="">Gender :-</label>
-                  <input
-                    type="text"
-                    name="gender"
-                    value={userData?.gender || ""}
-                    onChange={handleChange}
-                    disabled={!isEditing}
-                    className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
-                  />
-                </div>
-                <div className="grid my-5">
-                  <label htmlFor="">Blood Group :-</label>
-                  <input
-                    type="text"
-                    name="bloodGroup"
-                    value={userData?.bloodGroup || ""}
-                    onChange={handleChange}
-                    disabled={!isEditing}
-                    className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
-                  />
-                </div>
-              </div>
+            <div className="flex flex-col md:flex-row md:ms-20 gap-10">
+              {/* PERSONAL & ADDRESS SECTIONS REMAIN EXACTLY SAME */}
+              <div className="flex ms-20">
+                <div className="mx-10">
+                  <h1 className="mt-9 text-2xl">Personal Detail :</h1>
 
-              <div className="mt-10 ">
-                <h1 className="text-2xl">Address :</h1>
-                <div className="grid my-5 w-80">
-                  <label htmlFor="">House Number :-</label>
-                  <input
-                    type="text"
-                    name="houseNumber"
-                    value={userData?.address?.houseNumber || ""}
-                    onChange={(e) =>
-                      setUserData((prev) => ({
-                        ...prev,
-                        address: {
-                          ...prev.address,
-                          houseNumber: e.target.value,
-                        },
-                      }))
-                    }
-                    disabled={!isEditing}
-                    className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
-                  />
+                  <div className="grid my-5 w-80">
+                    <label htmlFor="" className="my-1">
+                      User Name :-
+                    </label>
+                    <input
+                      type="text"
+                      name="userName"
+                      value={userData?.userName || ""}
+                      onChange={handleChange}
+                      disabled={!isEditing}
+                      className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
+                    />
+                  </div>
+
+                  <div className="grid my-5">
+                    <label htmlFor="">Email :- </label>
+                    <input
+                      type="text"
+                      name="email"
+                      value={userData?.email || ""}
+                      onChange={handleChange}
+                      disabled={!isEditing}
+                      className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
+                    />
+                  </div>
+
+                  <div className="grid my-5">
+                    <label htmlFor="">Phone Number :-</label>
+                    <input
+                      type="text"
+                      name="phoneNumber"
+                      value={userData?.phoneNumber || ""}
+                      onChange={handleChange}
+                      disabled={!isEditing}
+                      className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
+                    />
+                  </div>
+
+                  <div className="grid my-5">
+                    <label htmlFor="">Date of Birth :-</label>
+                    <input
+                      type="date"
+                      name="dob"
+                      value={userData?.dob || ""}
+                      onChange={handleChange}
+                      disabled={!isEditing}
+                      className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
+                    />
+                  </div>
+
+                  <div className="grid my-5">
+                    <label htmlFor="">Gender :-</label>
+                    <input
+                      type="text"
+                      name="gender"
+                      value={userData?.gender || ""}
+                      onChange={handleChange}
+                      disabled={!isEditing}
+                      className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
+                    />
+                  </div>
+
+                  <div className="grid my-5">
+                    <label htmlFor="">Blood Group :-</label>
+                    <input
+                      type="text"
+                      name="bloodGroup"
+                      value={userData?.bloodGroup || ""}
+                      onChange={handleChange}
+                      disabled={!isEditing}
+                      className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
+                    />
+                  </div>
                 </div>
 
-                <div className="grid my-5">
-                  <label htmlFor="">Street :-</label>
-                  <input
-                    type="text"
-                    name="street"
-                    value={userData?.address?.street || ""}
-                    onChange={(e) =>
-                      setUserData((prev) => ({
-                        ...prev,
-                        address: { ...prev.address, street: e.target.value },
-                      }))
-                    }
-                    disabled={!isEditing}
-                    className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
-                  />
-                </div>
+                <div className="mt-10">
+                  <h1 className="text-2xl">Address :</h1>
 
-                <div className="grid my-5">
-                  <label htmlFor="">City :-</label>
-                  <input
-                    type="text"
-                    name="city"
-                    value={userData?.address?.city || ""}
-                    onChange={(e) =>
-                      setUserData((prev) => ({
-                        ...prev,
-                        address: { ...prev.address, city: e.target.value },
-                      }))
-                    }
-                    disabled={!isEditing}
-                    className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
-                  />
-                </div>
+                  <div className="grid my-5 w-80">
+                    <label htmlFor="">House Number :-</label>
+                    <input
+                      type="text"
+                      name="houseNumber"
+                      value={userData?.address?.houseNumber || ""}
+                      onChange={(e) =>
+                        setUserData((prev) => ({
+                          ...prev,
+                          address: {
+                            ...prev.address,
+                            houseNumber: e.target.value,
+                          },
+                        }))
+                      }
+                      disabled={!isEditing}
+                      className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
+                    />
+                  </div>
 
-                <div className="grid my-5">
-                  <label htmlFor="">State :-</label>
-                  <input
-                    type="text"
-                    name="state"
-                    value={userData?.address?.state || ""}
-                    onChange={(e) =>
-                      setUserData((prev) => ({
-                        ...prev,
-                        address: { ...prev.address, state: e.target.value },
-                      }))
-                    }
-                    disabled={!isEditing}
-                    className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
-                  />
-                </div>
+                  <div className="grid my-5">
+                    <label htmlFor="">Street :-</label>
+                    <input
+                      type="text"
+                      name="street"
+                      value={userData?.address?.street || ""}
+                      onChange={(e) =>
+                        setUserData((prev) => ({
+                          ...prev,
+                          address: { ...prev.address, street: e.target.value },
+                        }))
+                      }
+                      disabled={!isEditing}
+                      className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
+                    />
+                  </div>
 
-                <div className="grid my-5">
-                  <label htmlFor="">Pin code :-</label>
-                  <input
-                    type="text"
-                    name="pincode"
-                    value={userData?.address?.pincode || ""}
-                    onChange={(e) =>
-                      setUserData((prev) => ({
-                        ...prev,
-                        address: { ...prev.address, pincode: e.target.value },
-                      }))
-                    }
-                    disabled={!isEditing}
-                    className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
-                  />
-                </div>
+                  <div className="grid my-5">
+                    <label htmlFor="">City :-</label>
+                    <input
+                      type="text"
+                      name="city"
+                      value={userData?.address?.city || ""}
+                      onChange={(e) =>
+                        setUserData((prev) => ({
+                          ...prev,
+                          address: { ...prev.address, city: e.target.value },
+                        }))
+                      }
+                      disabled={!isEditing}
+                      className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
+                    />
+                  </div>
 
-                <div className="grid my-5">
-                  <label htmlFor="">Country :-</label>
-                  <input
-                    type="text"
-                    name="country"
-                    value={userData?.address?.country || ""}
-                    onChange={(e) =>
-                      setUserData((prev) => ({
-                        ...prev,
-                        address: { ...prev.address, country: e.target.value },
-                      }))
-                    }
-                    disabled={!isEditing}
-                    className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
-                  />
+                  <div className="grid my-5">
+                    <label htmlFor="">State :-</label>
+                    <input
+                      type="text"
+                      name="state"
+                      value={userData?.address?.state || ""}
+                      onChange={(e) =>
+                        setUserData((prev) => ({
+                          ...prev,
+                          address: { ...prev.address, state: e.target.value },
+                        }))
+                      }
+                      disabled={!isEditing}
+                      className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
+                    />
+                  </div>
+
+                  <div className="grid my-5">
+                    <label htmlFor="">Pin code :-</label>
+                    <input
+                      type="text"
+                      name="pincode"
+                      value={userData?.address?.pincode || ""}
+                      onChange={(e) =>
+                        setUserData((prev) => ({
+                          ...prev,
+                          address: { ...prev.address, pincode: e.target.value },
+                        }))
+                      }
+                      disabled={!isEditing}
+                      className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
+                    />
+                  </div>
+
+                  <div className="grid my-5">
+                    <label htmlFor="">Country :-</label>
+                    <input
+                      type="text"
+                      name="country"
+                      value={userData?.address?.country || ""}
+                      onChange={(e) =>
+                        setUserData((prev) => ({
+                          ...prev,
+                          address: { ...prev.address, country: e.target.value },
+                        }))
+                      }
+                      disabled={!isEditing}
+                      className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
+                    />
+                  </div>
                 </div>
               </div>
             </div>

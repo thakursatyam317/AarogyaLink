@@ -19,10 +19,10 @@ const Contact = () => {
   };
 
   return (
-    <div className="min-h-screen bg-blue-50 pt-22 px-6 md:px-12">
+    <div className="min-h-screen bg-blue-50 pt-20 md:pt-28 px-4 md:px-12">
       {/* Header */}
       <div className="text-center mb-10">
-        <h1 className="text-4xl font-bold text-blue-700 mb-1">
+        <h1 className="text-3xl md:text-4xl font-bold text-blue-700 mb-2">
           Contact <span className="text-amber-600">Aarogya Link</span>
         </h1>
         <p className="text-gray-700 max-w-2xl mx-auto">
@@ -31,7 +31,7 @@ const Contact = () => {
       </div>
 
       {/* Contact Form */}
-      <div className="max-w-2xl mx-auto bg-white p-8 rounded-2xl shadow-[0_0_25px_rgba(59,130,246,0.25)]">
+      <div className="max-w-2xl mx-auto bg-white p-6 md:p-8 rounded-2xl shadow-[0_0_25px_rgba(59,130,246,0.25)]">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block text-gray-700 font-medium mb-2">
@@ -87,7 +87,7 @@ const Contact = () => {
         </form>
 
         {/* Contact Info */}
-        <div className="mt-8 text-gray-700 text-center space-y-1">
+        <div className="mt-8 text-gray-700 text-center space-y-1 text-sm md:text-base">
           <p>📞 +91 12345 67890</p>
           <p>📧 support@aarogyalink.com</p>
           <p>🏥 123 Health Street, RGVP Gopal, India</p>

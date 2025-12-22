@@ -29,7 +29,10 @@ const Register = () => {
     }
 
     try {
-      const res = await axios.post("http://localhost:4500/api/auth/register", data);
+      const res = await axios.post(
+        "http://localhost:4500/api/auth/register",
+        data
+      );
       if (res.status === 200 || res.status === 201) {
         toast.success("User Registered Successfully");
         setData({
@@ -54,24 +57,28 @@ const Register = () => {
 
   return (
     <>
-      <div className="flex justify-center bg-blue-50 h-[834px]">
-        <div className=" mt-48 h-[480px] w-[60%] shadow-[0_0_25px_rgba(59,130,246,0.25)] border border-blue-100 rounded-2xl bg-white p-6">
+      <div className="flex justify-center bg-blue-50 min-h-screen px-4">
+        <div className="mt-24 md:mt-48 h-auto md:h-[480px] w-full md:w-[60%] shadow-[0_0_25px_rgba(59,130,246,0.25)] border border-blue-100 rounded-2xl bg-white p-6">
           <Toaster position="top-center" reverseOrder={false} />
+
           <div className="">
             <div>
               <img src="" alt="" />
             </div>
-            <div className="mt-0 ml-8 ">
+
+            <div className="mt-0 md:ml-8">
               <form
                 action=""
-                className="grid justify-center  ml-96"
+                className="grid justify-center md:ml-96"
                 onSubmit={handleSubmit}
               >
-                <div className="mb-7">
-                  <h1 className="text-4xl mt-3 font-bold ml-28">Register</h1>
+                <div className="mb-7 text-center md:text-left">
+                  <h1 className="text-3xl md:text-4xl mt-3 font-bold md:ml-28">
+                    Register
+                  </h1>
                 </div>
 
-                <div className="grid justify-center">
+                <div className="grid justify-center w-full">
                   <input
                     type="text"
                     onChange={handleChange}
@@ -79,8 +86,9 @@ const Register = () => {
                     value={data.userName}
                     required
                     placeholder="Enter your Name"
-                    className="border  my-1.5 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2  w-[350px]"
+                    className="border my-1.5 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 w-full md:w-[350px]"
                   />
+
                   <input
                     type="email"
                     onChange={handleChange}
@@ -88,8 +96,9 @@ const Register = () => {
                     value={data.email}
                     required
                     placeholder="Enter your email"
-                    className="border my-1.5 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2  w-[350px]"
+                    className="border my-1.5 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 w-full md:w-[350px]"
                   />
+
                   <input
                     type="number"
                     onChange={handleChange}
@@ -97,8 +106,9 @@ const Register = () => {
                     value={data.phoneNumber}
                     required
                     placeholder="Enter your Number"
-                    className="border my-1.5 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2  w-[350px]"
+                    className="border my-1.5 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 w-full md:w-[350px]"
                   />
+
                   <input
                     type="password"
                     onChange={handleChange}
@@ -106,8 +116,9 @@ const Register = () => {
                     value={data.createPassword}
                     required
                     placeholder="Enter your Create Password"
-                    className="border my-1.5 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2  w-[350px]"
+                    className="border my-1.5 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 w-full md:w-[350px]"
                   />
+
                   <input
                     type="text"
                     onChange={handleChange}
@@ -115,14 +126,15 @@ const Register = () => {
                     value={data.password}
                     required
                     placeholder="Enter your Confirm Password"
-                    className="border my-1.5 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2  w-[350px]"
+                    className="border my-1.5 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 w-full md:w-[350px]"
                   />
+
                   <NavLink
                     to="/login"
                     className={({ isActive }) =>
                       isActive
-                        ? "text-blue-500 font-semibold  text-[14px] mx-2 hover:text-blue-800"
-                        : "text-blue-500  text-[14px] mx-2 hover:text-blue-800"
+                        ? "text-blue-500 font-semibold text-[14px] mx-2 hover:text-blue-800"
+                        : "text-blue-500 text-[14px] mx-2 hover:text-blue-800"
                     }
                   >
                     Sign In?
@@ -130,13 +142,14 @@ const Register = () => {
 
                   <button
                     type="sumbit"
-                    className="h-12 w-80 mx-auto bg-blue-500 rounded-xl font-medium text-2xl mt-6 hover:bg-amber-500 hover:text-white"
+                    className="h-12 w-full md:w-80 mx-auto bg-blue-500 rounded-xl font-medium text-xl md:text-2xl mt-6 hover:bg-amber-500 hover:text-white"
                   >
                     Register
                   </button>
                 </div>
               </form>
             </div>
+
           </div>
         </div>
       </div>

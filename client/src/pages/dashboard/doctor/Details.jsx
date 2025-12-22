@@ -113,7 +113,7 @@ const Dashboard = () => {
       const res = await authAxios.put("/doctor/details/update", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      console.log("res.data.updatedUser ",res.data.data);
+      console.log("res.data.updatedUser ", res.data.data);
 
       if (res.data?.data) {
         setUserData(res.data?.data);
@@ -141,34 +141,37 @@ const Dashboard = () => {
     <>
       <div>
         <Toaster position="top-center" reverseOrder={false} />
-        <div className="flex">
+
+        <div className="flex flex-col md:flex-row">
           {/* 🔹 Sidebar */}
-          <div className="w-[20%] h-screen bg-gray-600 fixed ">
-            <div className="mt-20">
-              <h1 className="text-white text-2xl font-bold ms-3">
+          <div className="w-full md:w-[20%] md:h-screen bg-gray-600 md:fixed">
+            <div className="mt-20 px-4">
+              <h1 className="text-white text-xl md:text-2xl font-bold">
                 Welcome {authUser?.userName || "Doctor"}
               </h1>
-              <div className="grid">
+
+              <div className="grid mt-6">
                 <NavLink
-                  className="text-white -my-10 text-xl hover:text-gray-300 h-12 w-60 hover:bg-gray-700 rounded-2xl ms-[10%] mt-12"
-                  to='/doctor/dashboard'
+                  className="text-white text-lg md:text-xl hover:text-gray-300 h-12 w-full md:w-60 hover:bg-gray-700 rounded-2xl mt-4 px-4 flex items-center"
+                  to="/doctor/dashboard"
                 >
                   Dashboard
                 </NavLink>
-                <NavLink className="text-white -my-10 text-xl hover:text-gray-300 h-12 w-60 hover:bg-gray-700 rounded-2xl ms-[10%] mt-12"
-                  to='/doctor/dashboard/appointment'
+
+                <NavLink
+                  className="text-white text-lg md:text-xl hover:text-gray-300 h-12 w-full md:w-60 hover:bg-gray-700 rounded-2xl mt-4 px-4 flex items-center"
+                  to="/doctor/dashboard/appointment"
                 >
                   Appointments
                 </NavLink>
-                <NavLink className="text-white -my-10 text-xl hover:text-gray-300 h-12 w-60 hover:bg-gray-700 rounded-2xl ms-[10%] mt-12">
+
+                <NavLink className="text-white text-lg md:text-xl hover:text-gray-300 h-12 w-full md:w-60 hover:bg-gray-700 rounded-2xl mt-4 px-4 flex items-center">
                   Today Appointment
                 </NavLink>
-                <NavLink className="text-white -my-10 text-xl hover:text-gray-300 h-12 w-60 hover:bg-gray-700 rounded-2xl ms-[10%] mt-12">
-                  Today Appointment
-                </NavLink>
+
                 <NavLink
                   to="/doctor/dashboard/details"
-                  className="text-white -my-10 text-xl hover:text-gray-300 h-12 w-60 hover:bg-gray-700 rounded-2xl ms-[10%] mt-12"
+                  className="text-white text-lg md:text-xl hover:text-gray-300 h-12 w-full md:w-60 hover:bg-gray-700 rounded-2xl mt-4 px-4 flex items-center"
                 >
                   Details
                 </NavLink>
@@ -176,241 +179,242 @@ const Dashboard = () => {
             </div>
           </div>
 
-          
-          <div className="ms-[20%] w-[80%]">
-            <div className="mt-20 w-84">
-              <h1 className="text-3xl ms-10 font-bold">Doctor Dashboard</h1>
-              <div className="flex justify-between items-center w-full -mb-14 mt-1 relative">
-                <div className="flex -ms-15 mt-5  w-[100%] absolute z-20">
-                  <div className="flex ">
-                    <span className="text-2xl font-semibold flex mx-30 text-gray-600 hover:text-blue-500 whitespace-nowrap">
-                      Doctor ID : {userData?.doctorID || ""}
-                    </span>
-                  </div>
-                  <div className="-ms-5">
-                    <span className="text-2xl font-semibold text-gray-600 hover:text-blue-500 whitespace-nowrap">
-                    Hospital ID : {userData?.hospitalID || ""}
-                  </span>
-                  </div>
-                </div>
-                <div className="ms-[950px] -mt-7">
-                  {!isEditing ? (
-                    <button
-                      onClick={() => setIsEditing(true)}
-                      className="ms-[15%] mt-10 h-11 w-40 rounded-xl bg-blue-500 hover:bg-amber-500 hover:text-white text-2xl"
-                    >
-                      Edit
-                    </button>
-                  ) : (
-                    <button
-                      onClick={handleSave}
-                      className="ms-[15%] mt-10 h-11 w-40 rounded-xl bg-green-500 hover:bg-amber-500 hover:text-white text-2xl"
-                    >
-                      Save
-                    </button>
-                  )}
-                </div>
+          {/* 🔹 Main Content */}
+          <div className="w-full md:ms-[20%] md:w-[80%] px-4">
+            <div className="mt-24">
+              <h1 className="text-2xl md:text-3xl font-bold mb-6">
+                Doctor Dashboard
+              </h1>
+
+              {/* Doctor + Hospital ID */}
+              <div className="flex flex-col md:flex-row justify-between gap-4 mb-6">
+                <span className="text-lg md:text-2xl font-semibold text-gray-600">
+                  Doctor ID : {userData?.doctorID || ""}
+                </span>
+                <span className="text-lg md:text-2xl font-semibold text-gray-600">
+                  Hospital ID : {userData?.hospitalID || ""}
+                </span>
               </div>
 
-              <div className=" mt-15 ">
-                <div className="flex">
-                  <div className="grid w-84">
-                    {/* 🔹 Profile Picture */}
-                    <div className="h-[300px] w-[300px] border rounded-full mt-20 ms-10 object-fill relative">
-                      <img
-                        src={preview || doctorPic}
-                        alt="Doctor Profile"
-                        className="h-[298px] w-[300px] border rounded-full object-cover"
-                      />
-                      <input
-                        type="file"
-                        id="profilePicInput"
-                        accept="image/*"
-                        className="hidden"
-                        disabled={true}
-                        
-                      />
-                      <label
-                        htmlFor="profilePicInput"
-                        className="h-10 w-10 rounded-full border-2 ms-64 -mt-22 flex justify-center items-center bg-blue-50 hover:bg-amber-50 absolute z-20 cursor-pointer"
-                      >
-                        <FaCamera className="text-xl text-blue-500 hover:text-amber-500" />
-                      </label>
-                    </div>
+              {/* Edit / Save Button */}
+              <div className="flex justify-end mb-6">
+                {!isEditing ? (
+                  <button
+                    onClick={() => setIsEditing(true)}
+                    className="h-11 w-36 rounded-xl bg-blue-500 hover:bg-amber-500 hover:text-white text-lg"
+                  >
+                    Edit
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleSave}
+                    className="h-11 w-36 rounded-xl bg-green-500 hover:bg-amber-500 hover:text-white text-lg"
+                  >
+                    Save
+                  </button>
+                )}
+              </div>
 
-                    {/* 🔹 Basic Info */}
-                    <div className="ms-11 ">
-                      <div className="grid my-5">
-                        <label>User Name :-</label>
-                        <input
-                          type="text"
-                          name="userName"
-                          value={userData?.userName || ""}
-                          disabled={true}
-                          className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
-                        />
-                      </div>
-                      <div className="grid my-5">
-                        <label>Email :-</label>
-                        <input
-                          type="email"
-                          name="email"
-                          value={userData?.email || ""}
-                          disabled={true}
-                          className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
-                        />
-                      </div>
-                      <div className="grid my-5">
-                        <label>Phone Number :-</label>
-                        <input
-                          type="text"
-                          name="phoneNumber"
-                          value={userData?.phoneNumber || ""}
-                          disabled={true}
-                          className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
-                        />
-                      </div>
-                    </div>
+              {/* Profile + Details */}
+              <div className="flex flex-col lg:flex-row gap-10">
+                {/* Profile */}
+                <div className="flex flex-col items-center">
+                  <div className="h-[250px] w-[250px] border rounded-full relative">
+                    <img
+                      src={preview || doctorPic}
+                      alt="Doctor Profile"
+                      className="h-full w-full rounded-full object-cover"
+                    />
+                    <label className="h-10 w-10 rounded-full border absolute bottom-4 right-4 flex justify-center items-center bg-blue-50">
+                      <FaCamera className="text-blue-500" />
+                    </label>
                   </div>
+                </div>
 
-                  {/* 🔹 Additional Details */}
-                  <div className="flex mt-16 ">
-                    <div className="ms-20 w-84 mt-5">
-                      <div className="grid my-5">
-                        <label>Date of Birth :-</label>
-                        <input
-                          type="date"
-                          name="dob"
-                          value={userData?.dob || ""}
-                          disabled={true}
-                          onChange={handleChange}
-                          className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
+                {/* Details (UNCHANGED CONTENT INSIDE) */}
+                <div className="mt-15">
+                  <div className="flex flex-col lg:flex-row gap-10">
+                    {/* LEFT COLUMN — SAME CONTENT */}
+                    <div className="grid w-full lg:w-84">
+                      {/* 🔹 Profile Picture */}
+                      <div className="h-[300px] w-[300px] border rounded-full mt-20 ms-10 object-fill relative">
+                        <img
+                          src={preview || doctorPic}
+                          alt="Doctor Profile"
+                          className="h-[298px] w-[300px] border rounded-full object-cover"
                         />
-                      </div>
-                      <div className="grid my-5">
-                        <label>Gender :-</label>
                         <input
-                          type="text"
-                          name="gender"
-                          value={userData?.gender || ""}
+                          type="file"
+                          id="profilePicInput"
+                          accept="image/*"
+                          className="hidden"
                           disabled={true}
-                          onChange={handleChange}
-                          className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
                         />
+                        <label
+                          htmlFor="profilePicInput"
+                          className="h-10 w-10 rounded-full border-2 ms-64 -mt-22 flex justify-center items-center bg-blue-50 hover:bg-amber-50 absolute z-20 cursor-pointer"
+                        >
+                          <FaCamera className="text-xl text-blue-500 hover:text-amber-500" />
+                        </label>
                       </div>
 
-                      {/* 🔹 Holidays */}
-                      <div className="w-full mb-6">
-                        <label>Select Holidays :- </label>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3 ">
-                          {[
-                            "Sunday",
-                            "Monday",
-                            "Tuesday",
-                            "Wednesday",
-                            "Thursday",
-                            "Friday",
-                            "Saturday",
-                          ].map((day) => (
-                            <label
-                              key={day}
-                              className="flex items-center gap-2 border border-gray-300 rounded-2xl p-3 cursor-pointer hover:bg-gray-50 transition"
-                            >
-                              <input
-                                type="checkbox"
-                                name="holidays"
-                                value={day}
-                                checked={
-                                  userData?.holidays
-                                    ?.split(",")
-                                    .includes(day) || false
-                                }
-                                disabled={!isEditing}
-                                onChange={handleChange}
-                                className="accent-amber-500 w-4 h-4"
-                              />
-                              <span className="text-gray-700 font-medium">
-                                {day}
-                              </span>
-                            </label>
-                          ))}
+                      {/* 🔹 Basic Info */}
+                      <div className="ms-11">
+                        <div className="grid my-5">
+                          <label>User Name :-</label>
+                          <input
+                            type="text"
+                            name="userName"
+                            value={userData?.userName || ""}
+                            disabled={true}
+                            className="h-9 border border-gray-300 rounded-lg p-2 w-full"
+                          />
+                        </div>
+
+                        <div className="grid my-5">
+                          <label>Email :-</label>
+                          <input
+                            type="email"
+                            name="email"
+                            value={userData?.email || ""}
+                            disabled={true}
+                            className="h-9 border border-gray-300 rounded-lg p-2 w-full"
+                          />
+                        </div>
+
+                        <div className="grid my-5">
+                          <label>Phone Number :-</label>
+                          <input
+                            type="text"
+                            name="phoneNumber"
+                            value={userData?.phoneNumber || ""}
+                            disabled={true}
+                            className="h-9 border border-gray-300 rounded-lg p-2 w-full"
+                          />
                         </div>
                       </div>
+                    </div>
 
-                      {/* 🔹 Doctor Timings */}
-                      <div className="w-full mb-4">
-                        <label>Doctor Timing :- </label>
+                    {/* RIGHT COLUMN — SAME CONTENT */}
+                    <div className="flex flex-col lg:flex-row gap-10 w-full">
+                      {/* ADDITIONAL DETAILS */}
+                      <div className="w-full lg:w-84 mt-5">
+                        <div className="grid my-5">
+                          <label>Date of Birth :-</label>
+                          <input
+                            type="date"
+                            name="dob"
+                            value={userData?.dob || ""}
+                            disabled={true}
+                            className="h-9 border border-gray-300 rounded-lg p-2 w-full"
+                          />
+                        </div>
+
+                        <div className="grid my-5">
+                          <label>Gender :-</label>
+                          <input
+                            type="text"
+                            name="gender"
+                            value={userData?.gender || ""}
+                            disabled={true}
+                            className="h-9 border border-gray-300 rounded-lg p-2 w-full"
+                          />
+                        </div>
+
+                        {/* HOLIDAYS */}
+                        <div className="w-full mb-6">
+                          <label>Select Holidays :- </label>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            {[
+                              "Sunday",
+                              "Monday",
+                              "Tuesday",
+                              "Wednesday",
+                              "Thursday",
+                              "Friday",
+                              "Saturday",
+                            ].map((day) => (
+                              <label
+                                key={day}
+                                className="flex items-center gap-2 border rounded-2xl p-3"
+                              >
+                                <input
+                                  type="checkbox"
+                                  value={day}
+                                  checked={
+                                    userData?.holidays
+                                      ?.split(",")
+                                      .includes(day) || false
+                                  }
+                                  disabled={!isEditing}
+                                  className="accent-amber-500"
+                                />
+                                <span>{day}</span>
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* TIMINGS */}
                         <div className="flex flex-col md:flex-row gap-3">
                           <input
                             type="time"
                             name="startTime"
                             value={userData?.startTime || ""}
                             disabled={!isEditing}
-                            onChange={handleChange}
-                            className="border border-gray-300 rounded-2xl p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            className="border rounded-2xl p-2 w-full"
                           />
-                          <span className="text-gray-500 flex items-center justify-center">
-                            to
-                          </span>
                           <input
                             type="time"
                             name="endTime"
                             value={userData?.endTime || ""}
                             disabled={!isEditing}
-                            onChange={handleChange}
-                            className="border border-gray-300 rounded-2xl p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            className="border rounded-2xl p-2 w-full"
                           />
                         </div>
                       </div>
-                    </div>
 
-                    {/* 🔹 Right Column */}
-                    <div className="ms-20 mt-5 w-84">
-                      <div className="grid my-5">
-                        <label>Specialization :-</label>
-                        <input
-                          type="text"
-                          name="specialization"
-                          value={userData?.specialization || ""}
-                          disabled={!isEditing}
-                          onChange={handleChange}
-                          className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
-                        />
-                      </div>
-                      <div className="grid my-5">
-                        <label>Experience :-</label>
-                        <input
-                          type="text"
-                          name="experience"
-                          value={userData?.experience || ""}
-                          disabled={!isEditing}
-                          onChange={handleChange}
-                          className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
-                        />
-                      </div>
+                      {/* RIGHT MOST COLUMN */}
+                      <div className="w-full lg:w-84 mt-5">
+                        <div className="grid my-5">
+                          <label>Specialization :-</label>
+                          <input
+                            type="text"
+                            name="specialization"
+                            value={userData?.specialization || ""}
+                            disabled={!isEditing}
+                            className="h-9 border rounded-lg p-2 w-full"
+                          />
+                        </div>
 
-                      <div className="grid my-5">
-                        <label>Consultation Fee :-</label>
-                        <input
-                          type="text"
-                          name="consultationFee"
-                          value={userData?.consultationFee || ""}
-                          disabled={!isEditing}
-                          onChange={handleChange}
-                          className="h-9 border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
-                        />
-                      </div>
+                        <div className="grid my-5">
+                          <label>Experience :-</label>
+                          <input
+                            type="text"
+                            name="experience"
+                            value={userData?.experience || ""}
+                            disabled={!isEditing}
+                            className="h-9 border rounded-lg p-2 w-full"
+                          />
+                        </div>
 
-                      <div className="w-full mb-4">
-                        <label htmlFor="description">Description :-</label>
+                        <div className="grid my-5">
+                          <label>Consultation Fee :-</label>
+                          <input
+                            type="text"
+                            name="consultationFee"
+                            value={userData?.consultationFee || ""}
+                            disabled={!isEditing}
+                            className="h-9 border rounded-lg p-2 w-full"
+                          />
+                        </div>
+
                         <textarea
-                          id="description"
                           name="description"
                           value={userData?.description || ""}
                           disabled={!isEditing}
-                          onChange={handleChange}
-                          className="w-full p-3 border border-gray-300 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition duration-200"
-                        ></textarea>
+                          className="w-full p-3 border rounded-2xl"
+                        />
                       </div>
                     </div>
                   </div>

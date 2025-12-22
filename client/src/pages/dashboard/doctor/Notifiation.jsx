@@ -108,142 +108,166 @@ const Notification = () => {
   };
 
   return (
-    <div className="flex w-full min-h-screen bg-gray-100">
+  <div className="flex flex-col lg:flex-row w-full min-h-screen bg-gray-100">
 
-      {/* Sidebar */}
-      <div className="w-[20%] h-screen bg-gray-600 fixed">
-        <div className="mt-20">
-          <h1 className="text-white text-2xl font-bold ms-3">
-            Welcome Satyam Thakur
-          </h1>
-        </div>
+    {/* Sidebar */}
+    <div className="w-full lg:w-[20%] h-auto lg:h-screen bg-gray-600 lg:fixed">
+      <div className="mt-20 px-4">
+        <h1 className="text-white text-2xl font-bold">
+          Welcome Satyam Thakur
+        </h1>
       </div>
+    </div>
 
-      {/* Notifications */}
-      <div className="flex-1 p-6 ml-[22%]">
-        <h1 className="text-2xl font-bold mb-4">Notifications</h1>
+    {/* Notifications */}
+    <div className="flex-1 p-4 lg:p-6 lg:ml-[22%]">
+      <h1 className="text-2xl font-bold mb-4">Notifications</h1>
 
-        {appointments.length === 0 && (
-          <p className="text-gray-600">No appointments found.</p>
-        )}
+      {appointments.length === 0 && (
+        <p className="text-gray-600">No appointments found.</p>
+      )}
 
-        {appointments.map((item) => (
-          <div
-            key={item._id}
-            className="bg-white shadow-md rounded-xl p-4 flex items-start gap-4 hover:shadow-lg transition-all mb-4"
-          >
-            <img
-              src={item.patientDetail?.profilePic || "/default-profile.png"}
-              alt="profile"
-              className="w-32 h-32 mt-10  rounded-full object-cover"
-            />
+      {appointments.map((item) => (
+        <div
+          key={item._id}
+          className="bg-white shadow-md rounded-xl p-4 flex flex-col lg:flex-row items-start gap-4 hover:shadow-lg transition-all mb-4"
+        >
+          {/* Profile Image */}
+          <img
+            src={item.patientDetail?.profilePic || "/default-profile.png"}
+            alt="profile"
+            className="w-24 h-24 lg:w-32 lg:h-32 rounded-full object-cover mx-auto lg:mx-0"
+          />
 
-            <div className="flex-1 ms-20">
-              <h2 className="text-lg font-semibold">
-                <strong>Patient Name: </strong>  {item.patientDetail?.fullName || "Unknown Patient"}
-              </h2>
-              <h2><strong>Patient Email: </strong> {item.patientDetail?.email || "Unknown Email"}</h2>
+          {/* Details */}
+          <div className="flex-1 lg:ms-20 text-center lg:text-left">
+            <h2 className="text-lg font-semibold">
+              <strong>Patient Name: </strong>
+              {item.patientDetail?.fullName || "Unknown Patient"}
+            </h2>
 
-              <p className="text-gray-600">Doctor Appointment Request</p>
-              <h1><strong>Doctor Name: </strong> {item.doctorDetail?.fullName || "Unknown Doctor"}</h1>
-              <h2><strong>Doctor Email: </strong> {item.doctorDetail?.email || "Unknown Email"}</h2>
-              {/* EDIT UI */}
-              {isEditing === item._id ? (
-                <div className="bg-blue-50 border border-blue-200 p-3 rounded-lg mt-2">
+            <h2>
+              <strong>Patient Email: </strong>
+              {item.patientDetail?.email || "Unknown Email"}
+            </h2>
 
-                  <div className="flex flex-col gap-3">
-                    <input
-                      type="date"
-                      className="block w-full p-2 border rounded-lg"
-                      value={item.appointmentDate || newDate}
-                      onChange={(e) => setNewDate(e.target.value)}
-                    />
+            <p className="text-gray-600 mt-1">
+              Doctor Appointment Request
+            </p>
 
-                    <input
-                      type="time"
-                      className="block w-full p-2 border rounded-lg"
-                      value={item.appointmentTime || newTime}
-                      onChange={(e) => setNewTime(e.target.value)}
-                    />
-                  </div>
+            <h1>
+              <strong>Doctor Name: </strong>
+              {item.doctorDetail?.fullName || "Unknown Doctor"}
+            </h1>
 
-                  <div className="flex gap-3 mt-3">
-                    <button
-                      className="px-4 py-2 bg-green-600 text-white rounded-lg"
-                      onClick={() => saveNewDateTime(item._id)}
-                    >
-                      Save
-                    </button>
+            <h2>
+              <strong>Doctor Email: </strong>
+              {item.doctorDetail?.email || "Unknown Email"}
+            </h2>
 
-                    <button
-                      className="px-4 py-2 bg-gray-400 text-white rounded-lg"
-                      onClick={() => setIsEditing(null)}
-                    >
-                      Cancel
-                    </button>
-                  </div>
+            {/* EDIT UI */}
+            {isEditing === item._id ? (
+              <div className="bg-blue-50 border border-blue-200 p-3 rounded-lg mt-3">
+
+                <div className="flex flex-col gap-3">
+                  <input
+                    type="date"
+                    className="block w-full p-2 border rounded-lg"
+                    value={item.appointmentDate || newDate}
+                    onChange={(e) => setNewDate(e.target.value)}
+                  />
+
+                  <input
+                    type="time"
+                    className="block w-full p-2 border rounded-lg"
+                    value={item.appointmentTime || newTime}
+                    onChange={(e) => setNewTime(e.target.value)}
+                  />
                 </div>
-              ) : (
-                <>
-                  <p className="text-gray-700 font-medium mt-1">
-                    Time: <span className="text-blue-600">{formatTime(item.appointmentTime)}</span>
-                  </p>
 
-                  <p className="text-gray-700 font-medium">
-                    Date: <span className="text-blue-600">{item.appointmentDate.split("-").reverse().join("-")}</span>
-                  </p>
-
-                  <p className="text-gray-500 text-sm mt-1">
-                    Status:{" "}
-                    <span
-                      className={
-                        item.status === "accepted"
-                          ? "text-green-600"
-                          : item.status === "rejected"
-                          ? "text-red-600"
-                          : "text-gray-600"
-                      }
-                    >
-                      {item.status || "Pending"}
-                    </span>
-                  </p>
+                <div className="flex gap-3 mt-3">
+                  <button
+                    className="px-4 py-2 bg-green-600 text-white rounded-lg"
+                    onClick={() => saveNewDateTime(item._id)}
+                  >
+                    Save
+                  </button>
 
                   <button
-                    className="mt-2 px-4 py-1 bg-blue-500 text-white rounded-lg"
-                    onClick={() => {
-                      setIsEditing(item._id);
-                      setNewDate(item.date);
-                      setNewTime(item.time);
-                    }}
+                    className="px-4 py-2 bg-gray-400 text-white rounded-lg"
+                    onClick={() => setIsEditing(null)}
                   >
-                    Edit Date & Time
+                    Cancel
                   </button>
-                </>
-              )}
-            </div>
+                </div>
+              </div>
+            ) : (
+              <>
+                <p className="text-gray-700 font-medium mt-2">
+                  Time:{" "}
+                  <span className="text-blue-600">
+                    {formatTime(item.appointmentTime)}
+                  </span>
+                </p>
 
-            {/* Accept / Reject Buttons */}
-            <div className="flex flex-col gap-3">
-              <button
-                className="px-4 py-2 bg-green-500 text-white rounded-lg"
-                onClick={() => handleAccept(item._id)}
-              >
-                Accept
-              </button>
+                <p className="text-gray-700 font-medium">
+                  Date:{" "}
+                  <span className="text-blue-600">
+                    {item.appointmentDate.split("-").reverse().join("-")}
+                  </span>
+                </p>
 
-              <button
-                className="px-4 py-2 bg-red-500 text-white rounded-lg"
-                onClick={() => handleReject(item._id)}
-              >
-                Reject
-              </button>
-            </div>
+                <p className="text-gray-500 text-sm mt-1">
+                  Status:{" "}
+                  <span
+                    className={
+                      item.status === "accepted"
+                        ? "text-green-600"
+                        : item.status === "rejected"
+                        ? "text-red-600"
+                        : "text-gray-600"
+                    }
+                  >
+                    {item.status || "Pending"}
+                  </span>
+                </p>
+
+                <button
+                  className="mt-2 px-4 py-1 bg-blue-500 text-white rounded-lg"
+                  onClick={() => {
+                    setIsEditing(item._id);
+                    setNewDate(item.date);
+                    setNewTime(item.time);
+                  }}
+                >
+                  Edit Date & Time
+                </button>
+              </>
+            )}
           </div>
-        ))}
-      </div>
 
+          {/* Accept / Reject */}
+          <div className="flex flex-row lg:flex-col gap-3 w-full lg:w-auto justify-center">
+            <button
+              className="px-4 py-2 bg-green-500 text-white rounded-lg"
+              onClick={() => handleAccept(item._id)}
+            >
+              Accept
+            </button>
+
+            <button
+              className="px-4 py-2 bg-red-500 text-white rounded-lg"
+              onClick={() => handleReject(item._id)}
+            >
+              Reject
+            </button>
+          </div>
+        </div>
+      ))}
     </div>
-  );
+  </div>
+);
+
 };
 
 export default Notification;

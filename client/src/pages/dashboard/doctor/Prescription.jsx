@@ -117,10 +117,9 @@ const Prescription = () => {
   return (
     <>
       <div className="flex bg-gray-200 min-h-screen">
-        {/* LEFT SIDEBAR */}
-        <div className="w-[20%] h-screen bg-gray-800 fixed text-white p-5">
-          <h1 className="text-3xl font-bold mb-6">Prescription Page</h1>
-
+        {/* DESKTOP SIDEBAR */}
+        <div className="hidden md:block w-[20%] h-screen bg-gray-800 fixed text-white p-5">
+          <h1 className="text-3xl font-bold mb-6">Prescription</h1>
           <div className="grid gap-4">
             <NavLink to="/doctor/dashboard">Dashboard</NavLink>
             <NavLink to="/doctor/appointments">Appointment</NavLink>
@@ -130,14 +129,16 @@ const Prescription = () => {
         </div>
 
         {/* MAIN CONTENT */}
-        <div className="ms-[20%] w-[80%] p-10 mt-10 flex justify-center">
+        <div className="md:ms-[20%] w-full md:w-[80%] p-4 md:p-10 mt-16 md:mt-10 flex justify-center">
           <div
-            className="bg-white p-10 border border-gray-400 rounded-2xl"
+            className="bg-white p-4 md:p-10 border border-gray-400 rounded-2xl w-full max-w-[794px]"
             style={{ width: "794px", minHeight: "1123px" }}
           >
-            <h1 className="font-bold text-4xl mb-6 text-center">
-              Prescription
-            </h1>
+            {/* MOBILE TOP BAR */}
+            <div className="md:hidden w-full bg-gray-800 text-white p-4 fixed top-0 z-50">
+              <h1 className="text-lg font-bold text-center">Prescription</h1>
+            </div>
+
             <hr className="border-t-2 border-gray-400 mb-8" />
 
             {/* DOCTOR & PATIENT DETAILS (read-only from fetched data) */}

@@ -5,7 +5,6 @@ import authAxios from "../../../utils/authAxios";
 const Appointment = () => {
   const [appointments, setAppointments] = useState([]);
   const [searchText, setSearchText] = useState("");
-  
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -17,7 +16,6 @@ const Appointment = () => {
           }
         );
         setAppointments(response.data.data);
-        console.log("Accepted Appointments:", response.data);
       } catch (error) {
         console.error("Error fetching accepted appointments:", error);
       }
@@ -30,23 +28,18 @@ const Appointment = () => {
     if (!dateString) return "";
     return dateString.split("-").reverse().join("-");
   };
+
   const calculateAge = (dob) => {
     if (!dob) return "N/A";
-
     const birthDate = new Date(dob);
     const today = new Date();
-
     let age = today.getFullYear() - birthDate.getFullYear();
-
     const month = today.getMonth() - birthDate.getMonth();
     if (month < 0 || (month === 0 && today.getDate() < birthDate.getDate())) {
       age--;
     }
-
     return age;
   };
-
-  // /doctor/dashboard/appointments/prescription
 
   const filteredAppointments = appointments.filter((item) =>
     item.patientDetail?.userName
@@ -54,17 +47,17 @@ const Appointment = () => {
       .includes(searchText.toLowerCase())
   );
 
-
-  
   return (
     <>
-      <div className="flex">
+      <div className="flex flex-col md:flex-row">
         {/* LEFT SIDEBAR */}
-        <div className="w-[20%] h-screen bg-gray-800 fixed text-white">
+        <div className="w-full md:w-[20%] h-auto md:h-screen bg-gray-800 md:fixed text-white">
           <div className="mt-20 ms-5">
-            <h1 className="text-2xl font-bold">Welcome Satyam Thakur</h1>
+            <h1 className="text-xl md:text-2xl font-bold">
+              Welcome Satyam Thakur
+            </h1>
 
-            <div className="grid mt-10 space-y-4">
+            <div className="grid mt-6 md:mt-10 space-y-3 md:space-y-4">
               <NavLink
                 to="/doctor/dashboard"
                 className="hover:bg-gray-700 p-3 rounded-xl text-lg"
@@ -94,10 +87,12 @@ const Appointment = () => {
         </div>
 
         {/* MAIN CONTENT */}
-        <div className="ms-[20%] mt-16 w-[80%] p-10">
-          <h1 className="text-3xl font-bold mb-6">Accepted Appointments</h1>
+        <div className="w-full md:ms-[20%] md:w-[80%] mt-6 md:mt-16 p-4 md:p-10">
+          <h1 className="text-2xl md:text-3xl font-bold mb-6">
+            Accepted Appointments
+          </h1>
 
-          {/* 🔍 SEARCH BAR */}
+          {/* SEARCH BAR */}
           <div className="mb-6">
             <input
               type="text"
@@ -115,7 +110,7 @@ const Appointment = () => {
               {filteredAppointments.map((item) => (
                 <div
                   key={item._id}
-                  className="bg-white min-h-[180px] flex items-center p-6 rounded-xl shadow-md hover:shadow-xl transition-all border border-gray-200"
+                  className="bg-white min-h-[180px] flex flex-col md:flex-row items-center p-4 md:p-6 rounded-xl shadow-md hover:shadow-xl transition-all border border-gray-200"
                 >
                   {/* PATIENT IMAGE */}
                   <img
@@ -124,20 +119,23 @@ const Appointment = () => {
                       "https://via.placeholder.com/80"
                     }
                     alt="Patient"
-                    className="w-48 h-48 rounded-full border shadow"
+                    className="w-24 h-24 md:w-48 md:h-48 rounded-full border shadow"
                   />
 
                   {/* DETAILS */}
-                  <div className=" ml-28 w-full">
-                    <h1 className="text-xl font-bold hover:text-amber-500">
+                  <div className="w-full mt-4 md:mt-0 md:ml-28">
+                    <h1 className="text-lg md:text-xl font-bold hover:text-amber-500">
                       {item.patientDetail?.userName}
                     </h1>
-                    <p className="text-gray-600 text-sm">Patient Appointment</p>
+
+                    <p className="text-gray-600 text-sm">
+                      Patient Appointment
+                    </p>
 
                     <p className="text-gray-700 font-medium mt-1">
                       <strong>Appointment Date: </strong>
                       {formatDate(item.appointmentDate)} <br />
-                      <strong>Appoitment Time: </strong>
+                      <strong>Appointment Time: </strong>
                       {item.appointmentTime}
                     </p>
 
@@ -145,10 +143,9 @@ const Appointment = () => {
                       {item.status.toUpperCase()}
                     </span>
 
-                    
-                    <div className="mt-3 text-sm text-gray-700 grid grid-cols-2 gap-2">
+                    <div className="mt-3 text-sm text-gray-700 grid grid-cols-1 md:grid-cols-2 gap-2">
                       <p>
-                        <strong>Email: </strong>
+                        <strong>Email:</strong>{" "}
                         {item.patientDetail?.email || "N/A"}
                       </p>
                       <p>
@@ -165,15 +162,14 @@ const Appointment = () => {
                       </p>
                     </div>
 
-                
-                    <div className="flex gap-4 mt-4">
+                    <div className="flex flex-col sm:flex-row gap-3 mt-4">
                       <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
                         View Details
                       </button>
 
                       <NavLink
-                        className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
-                        to={`/doctor/dashboard/appointment/prescription/${item.patientDetail.userID}`} 
+                        className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition text-center"
+                        to={`/doctor/dashboard/appointment/prescription/${item.patientDetail.userID}`}
                       >
                         Start Consultation
                       </NavLink>

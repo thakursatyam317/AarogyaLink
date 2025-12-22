@@ -8,7 +8,11 @@ const Home = () => {
       <div>
         <div>
           <div className="mt-16">
-            <img src={homeImg} alt="" />
+            <img
+              src={homeImg}
+              alt="Aarogya Link Home"
+              className="w-full h-auto object-cover"
+            />
           </div>
         </div>
         <Footer />

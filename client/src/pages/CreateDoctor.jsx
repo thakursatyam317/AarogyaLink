@@ -18,18 +18,13 @@ const CreateDoctor = () => {
         email: authUser.email || "",
         phoneNumber: authUser.phoneNumber || "",
         dob: authUser.dob || "",
-        gender: authUser.gander||authUser.gender || "",
+        gender: authUser.gander || authUser.gender || "",
       });
     }
-    
-    console.log(authUser.gender )
     setAuthLoading(false);
   }, [authUser]);
 
-
-
-
-  const handleSave = async ()=>{
+  const handleSave = async () => {
     try {
       const formData = new FormData();
       formData.append("userName", userData.userName);
@@ -38,8 +33,6 @@ const CreateDoctor = () => {
       formData.append("dob", userData.dob);
       formData.append("gender", userData.gender);
 
-
-
       const response = await authAxios.post("/doctor/createdoctor", formData);
       if (response.status === 201) {
         toast.success("Doctor registered successfully");
@@ -47,88 +40,88 @@ const CreateDoctor = () => {
       }
     } catch (error) {
       console.log("Error for Register the Doctor", error);
-      <Toaster position="top-center" reverseOrder={false} />
-
-
     }
-  }
+  };
 
   return (
-      
-    
     <>
-      <div className="flex justify-center">
-         <Toaster position="top-center" reverseOrder={false} />
-        <div className=" grid justify-center   mt-48 h-[550px] w-[40%] shadow-[0_0_25px_rgba(59,130,246,0.25)] border border-blue-100 rounded-2xl bg-white p-6">
+      <div className="flex justify-center px-4">
+        <Toaster position="top-center" reverseOrder={false} />
+        <div className="grid justify-center mt-24 md:mt-48 min-h-[550px] h-auto w-full md:w-[40%] shadow-[0_0_25px_rgba(59,130,246,0.25)] border border-blue-100 rounded-2xl bg-white p-6">
           <div>
-            <h1 className="text-3xl font-bold">Doctor Registration</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-center md:text-left">
+              Doctor Registration
+            </h1>
           </div>
-          <div className="">
-            <div>
-              <div className="grid">
-                <label htmlFor="userName">User Name :-</label>
-                <input
-                  type="text"
-                  id="userName"
-                  name="userName"
-                  value={userData?.userName || ""}
-                  disabled={true}
-                  className="w-full px-4 py-2 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
-                />
-              </div>
-              <div className="grid">
-                <label htmlFor="email">Email :- </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={userData?.email || ""}
-                 disabled={true}
-                  className="w-full px-4 py-2 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
-                />
-              </div>
-              <div className="grid">
-                <label htmlFor="phoneNumber">Phone Number :- </label>
-                <input
-                  type="text"
-                  id="phoneNumber"
-                  name="phoneNumber"
-                  value={userData?.phoneNumber || ""}
-                  disabled={true}
-                  className="w-full px-4 py-2 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
-                />
-              </div>
-              <div className="grid">
-                <label htmlFor="dob">Date of Birth :- </label>
-                <input
-                  type="date"
-                  id="dob"
-                  name="dob"
-                  value={userData?.dob || ""}
-                  disabled={true}
-                  className="w-full px-4 py-2 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
-                />
-              </div>
-              <div className="grid">
-                <label htmlFor="gender">Gender :- </label>
-                <input
-                  type="text"
-                  
-                  name="gender"
-                  value={userData?.gender || ""}
-                  disabled={true}
-                  className="w-full px-4 py-2 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
-                />
-              </div>
-              <div>
-                <button
-                  type="sumbit"
-                  onClick={handleSave}
-                  className="h-12 w-80 mx-auto bg-blue-500 rounded-xl font-medium text-2xl mt-6 hover:bg-amber-500 hover:text-white"
-                >
-                  Register
-                </button>
-              </div>
+
+          <div>
+            <div className="grid">
+              <label htmlFor="userName">User Name :-</label>
+              <input
+                type="text"
+                id="userName"
+                name="userName"
+                value={userData?.userName || ""}
+                disabled={true}
+                className="w-full px-4 py-2 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
+              />
+            </div>
+
+            <div className="grid">
+              <label htmlFor="email">Email :- </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={userData?.email || ""}
+                disabled={true}
+                className="w-full px-4 py-2 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
+              />
+            </div>
+
+            <div className="grid">
+              <label htmlFor="phoneNumber">Phone Number :- </label>
+              <input
+                type="text"
+                id="phoneNumber"
+                name="phoneNumber"
+                value={userData?.phoneNumber || ""}
+                disabled={true}
+                className="w-full px-4 py-2 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
+              />
+            </div>
+
+            <div className="grid">
+              <label htmlFor="dob">Date of Birth :- </label>
+              <input
+                type="date"
+                id="dob"
+                name="dob"
+                value={userData?.dob || ""}
+                disabled={true}
+                className="w-full px-4 py-2 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
+              />
+            </div>
+
+            <div className="grid">
+              <label htmlFor="gender">Gender :- </label>
+              <input
+                type="text"
+                name="gender"
+                value={userData?.gender || ""}
+                disabled={true}
+                className="w-full px-4 py-2 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
+              />
+            </div>
+
+            <div className="flex justify-center">
+              <button
+                type="submit"
+                onClick={handleSave}
+                className="h-12 w-full md:w-80 bg-blue-500 rounded-xl font-medium text-xl md:text-2xl mt-6 hover:bg-amber-500 hover:text-white transition"
+              >
+                Register
+              </button>
             </div>
           </div>
         </div>

@@ -22,12 +22,8 @@ const Login = () => {
       );
 
       const data = res.data;
-      console.log("Response from backend:", data);
-
       const { user, token } = data;
-      console.log(user);
-      console.log(token);
-      console.log(user.role);
+
       if (!user || !user.role) {
         throw new Error("Invalid user data from server");
       }
@@ -60,37 +56,37 @@ const Login = () => {
         navigate(user.role === "admin" ? "/admin/dashboard" : "/");
       }, 1500);
     } catch (error) {
-      console.error("Login error:", error);
-
       if (error.response?.data?.message) {
-        toast.error(`${error.response.data.message}`);
+        toast.error(error.response.data.message);
       } else {
-        toast.error(" Something went wrong. Try again.");
+        toast.error("Something went wrong. Try again.");
       }
     }
   };
 
   return (
     <>
-      <div className="flex justify-center  bg-blue-50  h-[834px]">
-        <div className=" mt-48 h-[480px] w-[60%] shadow-[0_0_25px_rgba(59,130,246,0.25)] border border-blue-100 rounded-2xl bg-white p-6">
+      <div className="flex justify-center bg-blue-50 min-h-screen px-4">
+        <div className="mt-24 md:mt-48 h-auto md:h-[480px] w-full md:w-[60%] shadow-[0_0_25px_rgba(59,130,246,0.25)] border border-blue-100 rounded-2xl bg-white p-6">
           <Toaster position="top-center" reverseOrder={false} />
+
           <div className="">
-            <div>
-              {/* <img src="" alt="" /> */}
-            </div>
-            <div className="mt-0 ml-8 ">
+            <div>{/* image placeholder */}</div>
+
+            <div className="mt-0 md:ml-8">
               <form
                 action=""
-                className="grid justify-center  ml-96"
+                className="grid justify-center md:ml-96"
                 onSubmit={handleSubmit}
               >
-                <div className="mb-7">
-                  <h1 className="text-4xl mt-3 font-bold ml-32">Login</h1>
+                <div className="mb-7 text-center md:text-left">
+                  <h1 className="text-3xl md:text-4xl mt-3 font-bold md:ml-32">
+                    Login
+                  </h1>
                 </div>
 
-                <div className="grid justify-center">
-                  <div className="flex justify-center gap-10 my-4">
+                <div className="grid justify-center w-full">
+                  <div className="flex flex-wrap justify-center gap-6 my-4">
                     <label className="flex items-center space-x-2">
                       <input
                         type="radio"
@@ -127,56 +123,62 @@ const Login = () => {
                       <span>Admin</span>
                     </label>
                   </div>
+
                   <input
                     type="email"
                     name="email"
                     required
                     placeholder="Enter your Email"
-                    className="border  my-1.5 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2  w-[350px]"
+                    className="border my-1.5 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 w-full md:w-[350px]"
                   />
+
                   <input
                     type="password"
                     name="password"
                     required
                     placeholder="Enter your Password"
-                    className="border my-1.5 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2  w-[350px]"
+                    className="border my-1.5 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 w-full md:w-[350px]"
                   />
 
-                  <div className="flex mt-2 ">
+                  <div className="flex justify-between mt-2 w-full md:w-[350px]">
                     <NavLink
                       className={({ isActive }) =>
                         isActive
-                          ? "text-blue-500 font-semibold text-[14px] mx-2 hover:text-blue-800"
-                          : "text-blue-500 text-[14px] mx-2 hover:text-blue-800"
+                          ? "text-blue-500 font-semibold text-[14px] hover:text-blue-800"
+                          : "text-blue-500 text-[14px] hover:text-blue-800"
                       }
                     >
                       Forgot password
                     </NavLink>
+
                     <NavLink
                       to="/register"
                       className={({ isActive }) =>
                         isActive
-                          ? "text-blue-500 font-semibold ml-40 text-[14px] mx-2 hover:text-blue-800"
-                          : "text-blue-500 ml-40 text-[14px] mx-2 hover:text-blue-800"
+                          ? "text-blue-500 font-semibold text-[14px] hover:text-blue-800"
+                          : "text-blue-500 text-[14px] hover:text-blue-800"
                       }
                     >
                       Sign Up?
                     </NavLink>
                   </div>
+
                   <button
                     type="sumbit"
-                    className="h-12 w-80 mx-auto bg-blue-500 rounded-xl font-medium text-2xl mt-4 hover:bg-amber-500 hover:text-white"
+                    className="h-12 w-full md:w-80 mx-auto bg-blue-500 rounded-xl font-medium text-xl md:text-2xl mt-4 hover:bg-amber-500 hover:text-white"
                   >
                     Login
                   </button>
-                  <div className="flex items-center mt-3 ">
+
+                  <div className="flex items-center mt-3 w-full md:w-80 mx-auto">
                     <hr className="flex-grow border-gray-300" />
                     <span className="mx-3 text-gray-500 font-medium">Or</span>
                     <hr className="flex-grow border-gray-300" />
                   </div>
+
                   <button
                     type="sumbit"
-                    className="h-10 w-80 mx-auto bg-blue-500 rounded-xl font-medium text-2xl mt-3 hover:bg-amber-500 hover:text-white"
+                    className="h-10 w-full md:w-80 mx-auto bg-blue-500 rounded-xl font-medium text-xl md:text-2xl mt-3 hover:bg-amber-500 hover:text-white"
                   >
                     Google
                   </button>

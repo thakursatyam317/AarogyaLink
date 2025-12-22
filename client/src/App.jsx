@@ -14,7 +14,7 @@ import DoctorDetails from "./pages/dashboard/doctor/Details";
 import Appointment from "./pages/dashboard/doctor/Appointment";
 import CreateDoctor from "./pages/CreateDoctor";
 import DoctorDetailComplete from "./pages/DoctorDetailComplete";
-import HospitalDashboard from './pages/dashboard/admin/Dashboard'
+import HospitalDashboard from "./pages/dashboard/admin/Dashboard";
 import Appointments from "./pages/Appoinment";
 import DoctorNotification from "./pages/dashboard/doctor/Notifiation";
 import Prescription from "./pages/dashboard/doctor/Prescription";
@@ -25,6 +25,7 @@ function App() {
     <BrowserRouter>
       <Toaster position="top-center" reverseOrder={false} />
       <Navbar />
+
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/contact" element={<Contact />} />
@@ -37,23 +38,23 @@ function App() {
         <Route path="/doctor/:id" element={<DoctorDetailComplete />} />
         <Route path="/appointments" element={<Appointments />} />
 
-
-        //Doctor
+        {/* Doctor Routes */}
         <Route path="/doctor/dashboard" element={<Dashboard />} />
         <Route path="/doctor/dashboard/details" element={<DoctorDetails />} />
         <Route path="/doctor/dashboard/appointment" element={<Appointment />} />
-        <Route path="/doctor/dashboard/notifications" element={<DoctorNotification />} />
-        <Route path="/doctor/dashboard/appointment/prescription/:patientID" element={<Prescription />} />
+        <Route
+          path="/doctor/dashboard/notifications"
+          element={<DoctorNotification />}
+        />
+        <Route
+          path="/doctor/dashboard/appointment/prescription/:patientID"
+          element={<Prescription />}
+        />
 
+        {/* Admin Routes */}
+        <Route path="/dashboard/emr" element={<EMR />} />
 
-
-        //admin
-        <Route path="/dashboard/emr" element={<EMR/>}/>
-
-
-
-
-          {/* hospital */}
+        {/* Hospital Routes */}
         <Route path="/hospital/dashboard" element={<HospitalDashboard />} />
       </Routes>
     </BrowserRouter>
