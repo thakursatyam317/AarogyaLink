@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import genAuthToken from '../configs/jwt.js'
+import { sendVerificationCode } from "../middlewares/email.js";
 
 
 const userRegister = async (req, res) => {
@@ -13,6 +14,7 @@ const userRegister = async (req, res) => {
     }
     console.log("email : ", email);
     const existingUser = await User.findOne({ email });
+    console.log("existingUser : ",existingUser);
     if (existingUser) {
       throw new ApiError(409, "User is already  registered");
     }
@@ -28,6 +30,7 @@ const userRegister = async (req, res) => {
       .charAt(0)
       .toUpperCase()}`;
     console.log("profile pic : ", profilePic);
+    const varificationCode = Math.floor(100000 + (Math.random()*900000) ).toString();
 
     const newUser = await User.create({
       userName,
@@ -35,7 +38,11 @@ const userRegister = async (req, res) => {
       phoneNumber,
       password: hashPassword,
       profilePic: profilePic,
+      isVarified : false,
+      varificationCode : varificationCode
     });
+    await newUser.save();
+    sendVerificationCode(newUser.userName, newUser.email, varificationCode);
     // console.log(newUser.userID);
    
     console.log(newUser)
@@ -49,10 +56,40 @@ const userRegister = async (req, res) => {
       .status(200)
       .json(new ApiResponse(200, "User register sucessfully", newUser));
   } catch (error) {
-     console.error("Registration error:", error);
+    console.error("Registration error:", error);
     throw new ApiError(500, "Server error", false, error.message);
   }
 };
+
+export  const verificationOfEmail = async (req, res)=>{
+  try {
+    const {email, otp} = req.body;
+
+    const user = await User.findOne({email});
+
+    if(otp != user.varificationCode){
+      throw new ApiError(409, "Please enter correct OTP");
+    }
+
+    if(!user){
+       throw new ApiError(409, "User is not  registered");
+    }
+    if(user.isVarified == true){
+      throw new ApiError(400, "You are Varified");
+    }
+
+    user.isVarified = true;
+    await user.save();
+     res
+      .status(200)
+      .json(new ApiResponse(200, "User register sucessfully",user));
+
+    
+  } catch (error) {
+    console.error("Registration error:", error);
+    throw new ApiError(500, "Server error", false, error.message);
+  }
+} 
 
 const userLogin = async (req,res) =>{
     try {
@@ -65,6 +102,9 @@ const userLogin = async (req,res) =>{
       
         
         const user = await User.findOne({email} );
+        if(user.isVarified == false){
+          throw new ApiError(400, "Your Email is not verify");
+        }
 
         if(!user){
             throw new ApiError(404, 'User is not registered');
@@ -74,6 +114,7 @@ const userLogin = async (req,res) =>{
         if(!ispasswordMatch){
             throw new ApiError(400, 'Invalid credentials');
         }
+
         const token = genAuthToken(user._id, res);
         console.log(token);
         console.log('after password match');

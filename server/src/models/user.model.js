@@ -76,6 +76,16 @@ const userSchema = new mongoose.Schema(
       enum: ["user", "doctor", "admin"],
       default: "user",
     },
+
+    isVarified:{
+      type : Boolean,
+      default : false
+    },
+    varificationCode : {
+      type : String,
+    },
+
+
     address: { 
       type: addressSchema,
        default: {}
