@@ -2,9 +2,8 @@ import User from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
-import genAuthToken from '../configs/jwt.js'
+import genAuthToken from "../configs/jwt.js";
 import { sendVerificationCode } from "../middlewares/email.js";
-
 
 const userRegister = async (req, res) => {
   try {
@@ -14,7 +13,7 @@ const userRegister = async (req, res) => {
     }
     console.log("email : ", email);
     const existingUser = await User.findOne({ email });
-    console.log("existingUser : ",existingUser);
+    console.log("existingUser : ", existingUser);
     if (existingUser) {
       throw new ApiError(409, "User is already  registered");
     }
@@ -30,7 +29,9 @@ const userRegister = async (req, res) => {
       .charAt(0)
       .toUpperCase()}`;
     console.log("profile pic : ", profilePic);
-    const varificationCode = Math.floor(100000 + (Math.random()*900000) ).toString();
+    const varificationCode = Math.floor(
+      100000 + Math.random() * 900000
+    ).toString();
 
     const newUser = await User.create({
       userName,
@@ -38,20 +39,20 @@ const userRegister = async (req, res) => {
       phoneNumber,
       password: hashPassword,
       profilePic: profilePic,
-      isVarified : false,
-      varificationCode : varificationCode
+      isVarified: false,
+      varificationCode: varificationCode,
     });
     await newUser.save();
     sendVerificationCode(newUser.userName, newUser.email, varificationCode);
     // console.log(newUser.userID);
-   
-    console.log(newUser)
+
+    console.log(newUser);
     // console.log(newUser.userID);
     if (!newUser) {
       throw new ApiError(500, "Unable to create user");
     }
     console.log(newUser.userID);
-    console.log(newUser)
+    console.log(newUser);
     res
       .status(200)
       .json(new ApiResponse(200, "User register sucessfully", newUser));
@@ -61,86 +62,166 @@ const userRegister = async (req, res) => {
   }
 };
 
-export  const verificationOfEmail = async (req, res)=>{
+export const verificationOfEmail = async (req, res) => {
   try {
-    const {email, otp} = req.body;
+    const { email, otp } = req.body;
 
-    const user = await User.findOne({email});
+    const user = await User.findOne({ email });
 
-    if(otp != user.varificationCode){
+    if (otp != user.varificationCode) {
       throw new ApiError(409, "Please enter correct OTP");
     }
 
-    if(!user){
-       throw new ApiError(409, "User is not  registered");
+    if (!user) {
+      throw new ApiError(409, "User is not  registered");
     }
-    if(user.isVarified == true){
+    if (user.isVarified == true) {
       throw new ApiError(400, "You are Varified");
     }
 
     user.isVarified = true;
     await user.save();
-     res
+    res
       .status(200)
-      .json(new ApiResponse(200, "User register sucessfully",user));
-
-    
+      .json(new ApiResponse(200, "User register sucessfully", user));
   } catch (error) {
     console.error("Registration error:", error);
     throw new ApiError(500, "Server error", false, error.message);
   }
-} 
+};
 
-const userLogin = async (req,res) =>{
-    try {
-        const {email, password} = req.body;
-         console.log(email);
-        if(!email || !password ){
-            throw new ApiError(400, 'All fields are required');
-        }
-        console.log(email);
-      
-        
-        const user = await User.findOne({email} );
-        if(user.isVarified == false){
-          throw new ApiError(400, "Your Email is not verify");
-        }
+const userLogin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    console.log(email);
+    if (!email || !password) {
+      throw new ApiError(400, "All fields are required");
+    }
+    console.log(email);
 
-        if(!user){
-            throw new ApiError(404, 'User is not registered');
-        }
-        console.log('after existing user');
-        const ispasswordMatch = await bcrypt.compare(password, user.password);
-        if(!ispasswordMatch){
-            throw new ApiError(400, 'Invalid credentials');
-        }
+    const user = await User.findOne({ email });
+    if (user.isVarified == false) {
+      throw new ApiError(400, "Your Email is not verify");
+    }
+    console.log("User : ", user);
 
-        const token = genAuthToken(user._id, res);
-        console.log(token);
-        console.log('after password match');
-        res.status(200).json({
+    if (!user) {
+      throw new ApiError(404, "User is not registered");
+    }
+    console.log("after existing user", user.password , " ", password);
+    const ispasswordMatch = await bcrypt.compare(password, user.password);
+    if (!ispasswordMatch) {
+      throw new ApiError(400, "Invalid credentials");
+    }
+
+    const token = genAuthToken(user._id, res);
+    console.log(token);
+    console.log("after password match");
+    res.status(200).json({
       message: "Login successful",
       user,
       token,
     });
-    } catch (error) {
-        throw new ApiError(500, 'Server error', false, error.message);
+  } catch (error) {
+    throw new ApiError(500, "Server error", false, error.message);
+  }
+};
+
+const userLogout = async (req, res, next) => {
+  try {
+    console.log("I am goes to Logout");
+    res.cookie("token", "", { expires: new Date(0) });
+    res.status(200).json(new ApiResponse(200, "User logout sucessfully", null));
+
+    console.log("I am goes to Logout2");
+  } catch (error) {
+    throw new ApiError(500, "Server error", false, error.message);
+  }
+};
+
+const userForgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new ApiError(404, "Email is not found");
     }
-}
+    console.log("email : ", email);
 
+    const varificationCode = Math.floor(
+      100000 + Math.random() * 90000
+    ).toString();
+    console.log("varificationCode : ", varificationCode);
 
-const userLogout = async (req, res, next) =>{
-    try {
-      console.log("I am goes to Logout")
-        res.cookie('token', '', {expires : new Date(0)});
-        res.status(200).json(
-            new ApiResponse(200, 'User logout sucessfully', null)
-        )
-        
-        console.log("I am goes to Logout2")
-    } catch (error) {
-        throw new ApiError(500, 'Server error', false, error.message);
+    user.varificationCode = varificationCode;
+    await user.save();
+
+    console.log(
+      "varificationCode : ",
+      varificationCode,
+      " ",
+      user.varificationCode
+    );
+    sendVerificationCode(user.userName, user.email, user.varificationCode);
+
+    res.status(200).json(new ApiResponse(201, "Your OTP is send", user));
+  } catch (error) {
+    throw new ApiError(500, "Server error", false, error.message);
+  }
+};
+
+const userForgotPasswordOTP = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new ApiError(404, "Email is not found");
     }
-}
+    console.log("email : ", email);
 
-export { userRegister, userLogin, userLogout};
+    if (user.varificationCode != otp || user.varificationCode !== otp) {
+      throw new ApiError(400, "Enter correct OTP", false);
+    }
+    res.status(200).json(201, "OTP is varified");
+  } catch (error) {
+    throw new ApiError(500, "Server error", false, error.message);
+  }
+};
+
+const useChangePassword = async (req, res) => {
+  try {
+    const { email, otp, password } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new ApiError(404, "Email is not found");
+    }
+    console.log("email : ", email);
+    if (user.varificationCode != otp || user.varificationCode !== otp) {
+      throw new ApiError(400, "Enter correct OTP", false);
+    }
+    console.log();
+     const salt = await bcrypt.genSalt(10);
+    const hashPassword = await bcrypt.hash(password, salt);
+    if (!hashPassword) {
+      throw new ApiError(500, "Unable to hash the password");
+    }
+    console.log("hashPassword : ", hashPassword);
+
+    user.password = hashPassword;
+    await user.save();
+
+    res.status(200).json(201, "Password is chnage");
+  } catch (error) {
+    throw new ApiError(500, "Server error", false, error.message);
+  }
+};
+
+export {
+  userRegister,
+  userLogin,
+  userLogout,
+  userForgotPassword,
+  userForgotPasswordOTP,
+  useChangePassword,
+};

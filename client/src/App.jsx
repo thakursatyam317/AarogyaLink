@@ -19,6 +19,8 @@ import Appointments from "./pages/Appoinment";
 import DoctorNotification from "./pages/dashboard/doctor/Notifiation";
 import Prescription from "./pages/dashboard/doctor/Prescription";
 import EMR from "./pages/dashboard/admin/EMR";
+import ForgotPassword from "./components/ForgetPassword";
+
 
 function App() {
   return (
@@ -37,6 +39,7 @@ function App() {
         <Route path="/doctorregisteration" element={<CreateDoctor />} />
         <Route path="/doctor/:id" element={<DoctorDetailComplete />} />
         <Route path="/appointments" element={<Appointments />} />
+         <Route path="/login/forgetpassword" element={<ForgotPassword />} />
 
         {/* Doctor Routes */}
         <Route path="/doctor/dashboard" element={<Dashboard />} />

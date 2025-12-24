@@ -147,6 +147,7 @@ const Login = () => {
                           ? "text-blue-500 font-semibold text-[14px] hover:text-blue-800"
                           : "text-blue-500 text-[14px] hover:text-blue-800"
                       }
+                      to='/login/forgetpassword'
                     >
                       Forgot password
                     </NavLink>
