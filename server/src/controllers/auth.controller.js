@@ -100,6 +100,7 @@ const userLogin = async (req, res) => {
     console.log(email);
 
     const user = await User.findOne({ email });
+     console.log("User : ", user);
     if (user.isVarified == false) {
       throw new ApiError(400, "Your Email is not verify");
     }
