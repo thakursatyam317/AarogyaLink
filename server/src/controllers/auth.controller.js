@@ -93,38 +93,42 @@ export const verificationOfEmail = async (req, res) => {
 const userLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log(email);
+
     if (!email || !password) {
-      throw new ApiError(400, "All fields are required");
+      return res.status(400).json({ message: "All fields are required" });
     }
-    console.log(email);
 
     const user = await User.findOne({ email });
-     console.log("User : ", user);
-    if (user.isVarified == false) {
-      throw new ApiError(400, "Your Email is not verify");
-    }
-    console.log("User : ", user);
+    console.log("user :", user);
 
     if (!user) {
-      throw new ApiError(404, "User is not registered");
+      return res.status(404).json({ message: "User is not registered" });
     }
-    console.log("after existing user", user.password , " ", password);
-    const ispasswordMatch = await bcrypt.compare(password, user.password);
-    if (!ispasswordMatch) {
-      throw new ApiError(400, "Invalid credentials");
+
+    if (user.isVarified === false) {   // <- use your correct field name
+      return res.status(400).json({ message: "Your email is not verified" });
+    }
+
+    const isPasswordMatch = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordMatch) {
+      return res.status(400).json({ message: "Invalid credentials" });
     }
 
     const token = genAuthToken(user._id, res);
-    console.log(token);
-    console.log("after password match");
-    res.status(200).json({
+
+    return res.status(200).json({
       message: "Login successful",
       user,
       token,
     });
+
   } catch (error) {
-    throw new ApiError(500, "Server error", false, error.message);
+    console.error(error);
+    return res.status(500).json({
+      message: "Server error",
+      error: error.message,
+    });
   }
 };
 

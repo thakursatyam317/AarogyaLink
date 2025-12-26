@@ -8,6 +8,7 @@ router.patch('/emailverification', verificationOfEmail);
 router.patch('/forgotpassword', userForgotPassword);
 router.patch('/forgotpasswordotp', userForgotPasswordOTP);
 router.patch('/changepassword', useChangePassword);
+
 router.post('/login', userLogin);
 router.post('/logout',userLogout);
 

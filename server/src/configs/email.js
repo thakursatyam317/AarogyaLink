@@ -10,20 +10,3 @@ export const transporter = nodemailer.createTransport({
   },
 });
 
-// const sendMail = async (email, verificationCode) => {
-//   try {
-//     const info = await transporter.sendMail({
-//       from: '"Aarogya Link" <thakursatyam317@gmail.com>',
-//       to: email,
-//       subject: "Verifiy your email",
-//       text: "Verifiy your email", // Plain-text version of the message
-//       html: verificationCode, // HTML version of the message
-//     });
-
-//     console.log("Message sent:", info.messageId);
-//   } catch (error) {
-//     console.log("Error for sending email varification");
-//   }
-// };
-
-// sendMail();
