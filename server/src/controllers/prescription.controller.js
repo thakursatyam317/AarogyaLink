@@ -160,7 +160,7 @@ export const createPrescription = async (req, res) => {
     y = printTwoColumnSection(
       "DOCTOR DETAILS",
       {
-        Name: doctorDetail.fullName,
+        Name: doctorDetail.userName,
         Email: doctorDetail.email,
         Phone: doctorDetail.phoneNumber,
         Age: doctorDetail.age,
@@ -176,7 +176,7 @@ export const createPrescription = async (req, res) => {
     y = printTwoColumnSection(
       "PATIENT DETAILS",
       {
-        Name: patientDetail.fullName,
+        Name: patientDetail.userName,
         Email: patientDetail.email,
         Phone: patientDetail.phoneNumber,
         Age: patientDetail.age,
