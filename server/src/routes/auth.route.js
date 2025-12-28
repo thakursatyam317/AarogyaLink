@@ -4,10 +4,13 @@ import { userLogin, userLogout, userRegister,  verificationOfEmail, userForgotPa
 const router = express.Router();
 
 router.post('/register', userRegister);
+
+
 router.patch('/emailverification', verificationOfEmail);
 router.patch('/forgotpassword', userForgotPassword);
 router.patch('/forgotpasswordotp', userForgotPasswordOTP);
 router.patch('/changepassword', useChangePassword);
+
 
 router.post('/login', userLogin);
 router.post('/logout',userLogout);

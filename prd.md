@@ -102,11 +102,13 @@ Aarogya Link is a comprehensive health management system designed to streamline 
 ### **http://localhost:4500/api**
 #### 7.1 User Authentication 
 ##### **/auth**                            // auth.route
-- POST-  /register : Register a new user (patient/doctor).
-- POST-  /login : Authenticate user and provide JWT token.
-- POST-  /logout : Logout user and invalidate JWT token.
-- POST-  /forgot-password : Initiate password reset process.
-- POST-  /reset-password : Reset user password using token.
+- POST-    /register : Register a new user (patient/doctor).
+- POST-    /login : Authenticate user and provide JWT token.
+- POST-    /logout : Logout user and invalidate JWT token.
+- PATCH -  /emailverification : Email varification when user is register, the OTP is send to the email.
+- PATCH -  /forgotpassword : Forgot password, New Password is set.
+- PATCH -  /forgotpasswordotp : Email varification when user is register, the OTP is send to the email.
+- PATCH -  /changepassword : New password set.
 
 #### 7.2 User Management
 ##### **/user**                       // user.route
