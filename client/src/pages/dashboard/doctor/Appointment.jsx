@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import authAxios from "../../../utils/authAxios";
+import { useAuth } from "../../../contexts/authContext";
 
 const Appointment = () => {
   const [appointments, setAppointments] = useState([]);
   const [searchText, setSearchText] = useState("");
-
+  const { authUser, fetchProfile } = useAuth();
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
@@ -54,7 +55,7 @@ const Appointment = () => {
         <div className="w-full md:w-[20%] h-auto md:h-screen bg-gray-800 md:fixed text-white">
           <div className="mt-20 ms-5">
             <h1 className="text-xl md:text-2xl font-bold">
-              Welcome Satyam Thakur
+              Welcome {authUser.userName}
             </h1>
 
             <div className="grid mt-6 md:mt-10 space-y-3 md:space-y-4">
@@ -128,9 +129,7 @@ const Appointment = () => {
                       {item.patientDetail?.userName}
                     </h1>
 
-                    <p className="text-gray-600 text-sm">
-                      Patient Appointment
-                    </p>
+                    <p className="text-gray-600 text-sm">Patient Appointment</p>
 
                     <p className="text-gray-700 font-medium mt-1">
                       <strong>Appointment Date: </strong>

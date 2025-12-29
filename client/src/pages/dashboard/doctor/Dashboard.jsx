@@ -1,8 +1,10 @@
 import React from "react";
 import { useNavigate, NavLink, Link } from "react-router-dom";
+import { useAuth } from "../../../contexts/authContext";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { authUser, fetchProfile } = useAuth();
 
   const handleClick = () => {
     navigate("/dashboard");
@@ -13,42 +15,34 @@ const Dashboard = () => {
       <div>
         <div className="flex flex-col md:flex-row">
           {/* SIDEBAR */}
-          <div className="w-full md:w-[20%] md:h-screen bg-gray-600 md:fixed">
-            <div className="mt-20">
-              <h1 className="text-white text-xl md:text-2xl font-bold ms-3">
-                Welcome Satyam Thakur
+          <div className="w-full md:w-[20%] h-auto md:h-screen bg-gray-800 md:fixed text-white">
+            <div className="mt-20 ms-5">
+              <h1 className="text-xl md:text-2xl font-bold">
+                Welcome {authUser.userName}
               </h1>
 
-              <div className="grid gap-4 mt-6 md:mt-0">
+              <div className="grid mt-6 md:mt-10 space-y-3 md:space-y-4">
                 <NavLink
                   to="/doctor/dashboard"
-                  className="text-white text-lg md:text-xl hover:text-gray-300 h-12 w-full md:w-60 hover:bg-gray-700 rounded-2xl ms-0 md:ms-[10%] px-4 flex items-center"
+                  className="hover:bg-gray-700 p-3 rounded-xl text-lg"
                 >
                   Dashboard
                 </NavLink>
 
                 <NavLink
                   to="/doctor/dashboard/appointment"
-                  className="text-white text-lg md:text-xl hover:text-gray-300 h-12 w-full md:w-60 hover:bg-gray-700 rounded-2xl ms-0 md:ms-[10%] px-4 flex items-center"
+                  className="hover:bg-gray-700 p-3 rounded-xl text-lg"
                 >
                   Appointments
                 </NavLink>
 
-                <NavLink
-                  className="text-white text-lg md:text-xl hover:text-gray-300 h-12 w-full md:w-60 hover:bg-gray-700 rounded-2xl ms-0 md:ms-[10%] px-4 flex items-center"
-                >
-                  Today Appointment
-                </NavLink>
-
-                <NavLink
-                  className="text-white text-lg md:text-xl hover:text-gray-300 h-12 w-full md:w-60 hover:bg-gray-700 rounded-2xl ms-0 md:ms-[10%] px-4 flex items-center"
-                >
+                <NavLink className="hover:bg-gray-700 p-3 rounded-xl text-lg">
                   Today Appointment
                 </NavLink>
 
                 <NavLink
                   to="/doctor/dashboard/details"
-                  className="text-white text-lg md:text-xl hover:text-gray-300 h-12 w-full md:w-60 hover:bg-gray-700 rounded-2xl ms-0 md:ms-[10%] px-4 flex items-center"
+                  className="hover:bg-gray-700 p-3 rounded-xl text-lg"
                 >
                   Details
                 </NavLink>
@@ -110,16 +104,12 @@ const Dashboard = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="p-4 border rounded-xl text-center bg-green-50">
                     <h3 className="font-semibold">Today</h3>
-                    <p className="text-3xl font-bold text-green-600">
-                      ₹4,500
-                    </p>
+                    <p className="text-3xl font-bold text-green-600">₹4,500</p>
                   </div>
 
                   <div className="p-4 border rounded-xl text-center bg-blue-50">
                     <h3 className="font-semibold">This Week</h3>
-                    <p className="text-3xl font-bold text-blue-600">
-                      ₹25,000
-                    </p>
+                    <p className="text-3xl font-bold text-blue-600">₹25,000</p>
                   </div>
 
                   <div className="p-4 border rounded-xl text-center bg-yellow-50">
@@ -130,7 +120,6 @@ const Dashboard = () => {
                   </div>
                 </div>
               </div>
-
             </div>
           </div>
         </div>

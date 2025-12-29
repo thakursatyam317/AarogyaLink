@@ -101,34 +101,45 @@ const Dashboard = () => {
       <Toaster />
 
       {/* Sidebar */}
-      <aside className="w-full md:w-[20%] bg-gray-900 text-white md:fixed shadow-xl">
-        <div className="mt-16 px-5">
-          <h1 className="text-2xl font-bold tracking-wide">
-            Welcome {authUser?.userName || "Doctor"}
-          </h1>
-
-          <nav className="grid mt-8 gap-3">
-            {[
-              { label: "Dashboard", to: "/doctor/dashboard" },
-              { label: "Appointments", to: "/doctor/dashboard/appointment" },
-              { label: "Details", to: "/doctor/dashboard/details" },
-            ].map((item) => (
-              <NavLink
-                key={item.label}
-                to={item.to}
-                className="px-4 py-2 rounded-xl bg-gray-800/40 hover:bg-gray-700 transition shadow-sm"
-              >
-                {item.label}
-              </NavLink>
-            ))}
-          </nav>
-        </div>
-      </aside>
+      <div className="w-full md:w-[20%] h-auto md:h-screen bg-gray-800 md:fixed text-white">
+                <div className="mt-20 ms-5">
+                  <h1 className="text-xl md:text-2xl font-bold">
+                    Welcome {authUser.userName}
+                  </h1>
+      
+                  <div className="grid mt-6 md:mt-10 space-y-3 md:space-y-4">
+                    <NavLink
+                      to="/doctor/dashboard"
+                      className="hover:bg-gray-700 p-3 rounded-xl text-lg"
+                    >
+                      Dashboard
+                    </NavLink>
+      
+                    <NavLink
+                      to="/doctor/dashboard/appointment"
+                      className="hover:bg-gray-700 p-3 rounded-xl text-lg"
+                    >
+                      Appointments
+                    </NavLink>
+      
+                    <NavLink className="hover:bg-gray-700 p-3 rounded-xl text-lg">
+                      Today Appointment
+                    </NavLink>
+      
+                    <NavLink
+                      to="/doctor/dashboard/details"
+                      className="hover:bg-gray-700 p-3 rounded-xl text-lg"
+                    >
+                      Details
+                    </NavLink>
+                  </div>
+                </div>
+              </div>
 
       {/* MAIN */}
       <main className="w-full md:ms-[20%] md:w-[80%] px-6 mt-20 pb-12">
         {/* HEADER */}
-        <div className="bg-white rounded-2xl shadow-md p-5 flex justify-between items-center border">
+        <div className="bg-white rounded-2xl shadow-md p-5 flex justify-between items-center border ">
           <h1 className="text-3xl font-bold">Doctor Dashboard</h1>
 
           {!isEditing ? (
@@ -152,7 +163,7 @@ const Dashboard = () => {
         <div className="grid lg:grid-cols-3 gap-7 mt-3">
           {/* PROFILE CARD */}
           <div className="bg-white/90 backdrop-blur rounded-2xl shadow-lg border p-6 flex flex-col items-center transition hover:shadow-xl">
-            <div className="h-44 w-44 rounded-full overflow-hidden relative shadow">
+            <div className="h-44 w-44 rounded-full overflow-hidden relative shadow ">
               <img src={doctorPic} className="h-full w-full object-cover" />
 
               {isEditing && (
@@ -174,7 +185,9 @@ const Dashboard = () => {
               )}
             </div>
 
-            <h2 className="mt-4 text-2xl font-semibold text-center hover:text-amber-500">{userData?.userName}</h2>
+            <h2 className="mt-4 text-2xl font-semibold text-center hover:text-amber-500">
+              {userData?.userName}
+            </h2>
 
             <p className="text-gray-500 text-xl">{userData?.email}</p>
 
@@ -201,21 +214,13 @@ const Dashboard = () => {
               </div>
               <div className="flex justify-between text-gray-600 mt-4 text-xl">
                 <span>Date of Birth</span>
-                <span className="font-semibold">
-                  {userData?.dob || "-"}
-                </span>
+                <span className="font-semibold">{userData?.dob || "-"}</span>
               </div>
               <div className="flex justify-between text-gray-600 mt-4 text-xl">
                 <span>Gender</span>
-                <span className="font-semibold">  
-                  {userData?.gender || "-"}
-                </span>
-
+                <span className="font-semibold">{userData?.gender || "-"}</span>
               </div>
-              
-              
             </div>
-            
           </div>
 
           {/* RIGHT SIDE */}
