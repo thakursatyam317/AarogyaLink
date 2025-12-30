@@ -117,13 +117,13 @@ const Profile = () => {
     <>
       <Toaster position="top-center" />
       <div className="px-4">
-        <div className="min-h-screen md:h-[700px] grid rounded-2xl justify-center md:ms-15 mt-24 shadow-[0_0_25px_rgba(59,130,246,0.25)] w-full md:w-[1400px] bg-white p-4 md:p-6">
+        <div className="min-h-6/12 mb-8 md:h-[700px] grid rounded-2xl justify-center md:ms-15 mt-24 shadow-[0_0_25px_rgba(59,130,246,0.25)] w-full md:w-[1400px] bg-white p-4 md:p-6">
           <div className="flex flex-col md:flex-row justify-between relative">
             <h1 className="text-3xl md:text-5xl font-semibold md:absolute mt-6 md:mt-14 md:ms-3 text-center">
               Profile
             </h1>
 
-            <div className="md:ms-[35%] mt-6 md:mt-14 grid text-center md:text-left">
+            <div className="md:ms-[35%] mt-6 md:mt-8 grid text-center md:text-left">
               <div>
                 <label className="text-lg md:text-xl">Hospital ID :- </label>
                 {userData.hospitalID ? (
@@ -167,7 +167,7 @@ const Profile = () => {
               ) : (
                 <button
                   onClick={handleSave}
-                  className="md:ms-[95%] mt-6 md:mt-10 h-11 w-40 rounded-xl bg-green-500 hover:bg-amber-500 text-white text-xl"
+                  className="md:ms-[15%] mt-6 md:mt-10 h-11 w-40 rounded-xl bg-green-500 hover:bg-amber-500 text-white text-xl"
                 >
                   Save
                 </button>
@@ -175,7 +175,7 @@ const Profile = () => {
             </div>
           </div>
 
-          <div className="flex flex-col md:flex-row mt-10 gap-10">
+          <div className="flex flex-col md:flex-row mt-6 gap-10">
             <div className="flex justify-center">
               <div className="h-[220px] w-[220px] md:h-[300px] md:w-[300px] border rounded-full relative">
                 <img
@@ -196,11 +196,11 @@ const Profile = () => {
               </div>
             </div>
 
-            <div className="flex flex-col md:flex-row md:ms-20 gap-10">
+            <div className="flex flex-col md:flex-row md:ms-20 -gap-25">
               {/* PERSONAL & ADDRESS SECTIONS REMAIN EXACTLY SAME */}
               <div className="flex ms-20">
                 <div className="mx-10">
-                  <h1 className="mt-9 text-2xl">Personal Detail :</h1>
+                  <h1 className="-mt-9 text-2xl">Personal Detail :</h1>
 
                   <div className="grid my-5 w-80">
                     <label htmlFor="" className="my-1">
@@ -277,7 +277,7 @@ const Profile = () => {
                   </div>
                 </div>
 
-                <div className="mt-10">
+                <div className="-mt-10">
                   <h1 className="text-2xl">Address :</h1>
 
                   <div className="grid my-5 w-80">
