@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import authAxios from "../../../utils/authAxios";
+import { useAuth } from "../../../contexts/authContext";
 
 const Prescription = () => {
   const { patientID } = useParams();
   const navigate = useNavigate();
+  const {authUser} = useAuth();
 
   const [diagnosis, setDiagnosis] = useState([
     { name: "", icd: "", namaste: "" },
@@ -118,13 +120,38 @@ const Prescription = () => {
     <>
       <div className="flex bg-gray-200 min-h-screen">
         {/* DESKTOP SIDEBAR */}
-        <div className="hidden md:block w-[20%] h-screen bg-gray-800 fixed text-white p-5">
-          <h1 className="text-3xl font-bold mb-6">Prescription</h1>
-          <div className="grid gap-4">
-            <NavLink to="/doctor/dashboard">Dashboard</NavLink>
-            <NavLink to="/doctor/appointments">Appointment</NavLink>
-            <NavLink to="/doctor/today-appointment">Today Appointment</NavLink>
-            <NavLink to="/doctor/details">Details</NavLink>
+        <div className="w-full md:w-[20%] h-auto md:h-screen bg-gray-800 md:fixed text-white">
+          <div className="mt-20 ms-5">
+            <h1 className="text-xl md:text-2xl font-bold">
+              Welcome {authUser.userName}
+            </h1>
+
+            <div className="grid mt-6 md:mt-10 space-y-3 md:space-y-4">
+              <NavLink
+                to="/doctor/dashboard"
+                className="hover:bg-gray-700 p-3 rounded-xl text-lg"
+              >
+                Dashboard
+              </NavLink>
+
+              <NavLink
+                to="/doctor/dashboard/appointment"
+                className="hover:bg-gray-700 p-3 rounded-xl text-lg"
+              >
+                Appointments
+              </NavLink>
+
+              <NavLink className="hover:bg-gray-700 p-3 rounded-xl text-lg">
+                Today Appointment
+              </NavLink>
+
+              <NavLink
+                to="/doctor/dashboard/details"
+                className="hover:bg-gray-700 p-3 rounded-xl text-lg"
+              >
+                Details
+              </NavLink>
+            </div>
           </div>
         </div>
 
@@ -137,6 +164,12 @@ const Prescription = () => {
             {/* MOBILE TOP BAR */}
             <div className="md:hidden w-full bg-gray-800 text-white p-4 fixed top-0 z-50">
               <h1 className="text-lg font-bold text-center">Prescription</h1>
+            </div>
+
+            <div className="  text-white p-4  top-10">
+              <h1 className="text-4xl text-gray-800 font-bold text-center">
+                Prescription
+              </h1>
             </div>
 
             <hr className="border-t-2 border-gray-400 mb-8" />
