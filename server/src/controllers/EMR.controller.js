@@ -14,7 +14,7 @@ export const getDoctorPatientData =  async (req, res)=>{
         if(!user_id){
             throw new ApiError(400, "Doctor id is not there");
         }
-         console.log("Prescreption : ",user_id)
+         console.log("Doctor id : ",user_id)
         const doctor = await Doctor.findOne({
             user_id : user_id
         })
@@ -28,7 +28,7 @@ export const getDoctorPatientData =  async (req, res)=>{
         const prescreption = await Preception.aggregate([
             {
                 $match : {
-                    "doctorDetail.email": doctor._id.toString()
+                    "doctorDetail.doctorID": doctor.doctorID
                 }
 
             }

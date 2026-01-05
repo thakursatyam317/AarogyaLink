@@ -33,7 +33,7 @@ export const getThePrescriptionData = async (req, res) => {
     }
     console.log("Doctor _id", doctor._id)
     console.log("Doctor _id", user._id)
-    const appointment = await Appointment.aggregate([
+    const appointment = await Preception.aggregate([
       {
         $match: {
           doctor_id: doctor._id,
