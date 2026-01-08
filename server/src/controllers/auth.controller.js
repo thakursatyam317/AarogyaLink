@@ -138,7 +138,7 @@ const userLogout = async (req, res, next) => {
     res.cookie("token", "", { expires: new Date(0) });
     res.status(200).json(new ApiResponse(200, "User logout sucessfully", null));
 
-    console.log("I am goes to Logout2");
+   
   } catch (error) {
     throw new ApiError(500, "Server error", false, error.message);
   }

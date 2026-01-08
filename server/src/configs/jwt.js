@@ -12,6 +12,6 @@ const genAuthToken = (user_id, res) =>{
         sameSite : "strict",
         maxAge : 21 * 24 * 60 * 60 * 1000, 
     });
-    return token; 
+    
 }
 export default genAuthToken;

@@ -23,15 +23,12 @@ const getUserProfile = async (req, res, next) => {
     res
       .status(200)
       .json(new ApiResponse(200, "User profile fetched successfully", user));
-    next();
   } catch (error) {
-    next(
-      new ApiError(
-        500,
-        "Server error getting user profile",
-        false,
-        error.message
-      )
+    throw new ApiError(
+      500,
+      "Server error getting user profile",
+      false,
+      error.message
     );
   }
 };

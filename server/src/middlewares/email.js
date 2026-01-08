@@ -18,6 +18,6 @@ export const sendVerificationCode = async (name, email, verificationCode) => {
       html: emailBody, // HTML version of the message
     });
   } catch (error) {
-    console.log("the emilverification error", error);
+    console.log("the email verification error", error);
   }
 };

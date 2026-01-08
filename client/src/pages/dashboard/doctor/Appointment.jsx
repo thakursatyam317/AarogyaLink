@@ -55,7 +55,7 @@ const Appointment = () => {
         <div className="w-full md:w-[20%] h-auto md:h-screen bg-gray-800 md:fixed text-white">
           <div className="mt-20 ms-5">
             <h1 className="text-xl md:text-2xl font-bold">
-              Welcome {authUser.userName}
+              {/* Welcome {authUser.userName} */}
             </h1>
 
             <div className="grid mt-6 md:mt-10 space-y-3 md:space-y-4">

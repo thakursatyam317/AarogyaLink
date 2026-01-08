@@ -20,6 +20,7 @@ import DoctorNotification from "./pages/dashboard/doctor/Notifiation";
 import Prescription from "./pages/dashboard/doctor/Prescription";
 import EMR from "./pages/dashboard/admin/EMR";
 import ForgotPassword from "./components/ForgetPassword";
+import Chatting from "./pages/dashboard/admin/Chatting";
 
 
 function App() {
@@ -59,6 +60,7 @@ function App() {
 
         {/* Hospital Routes */}
         <Route path="/hospital/dashboard" element={<HospitalDashboard />} />
+        <Route path="/dashboard/emr/chatting" element={<Chatting />} />
       </Routes>
     </BrowserRouter>
   );
