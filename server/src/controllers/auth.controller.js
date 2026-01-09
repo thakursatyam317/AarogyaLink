@@ -93,6 +93,8 @@ export const verificationOfEmail = async (req, res) => {
 const userLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
+    console.log("email :", email);
+    console.log("password :", password);
 
     if (!email || !password) {
       return res.status(400).json({ message: "All fields are required" });
@@ -105,11 +107,14 @@ const userLogin = async (req, res) => {
       return res.status(404).json({ message: "User is not registered" });
     }
 
-    if (user.isVarified === false) {   // <- use your correct field name
+    if (user.isVarified === false) {
+      // <- use your correct field name
       return res.status(400).json({ message: "Your email is not verified" });
     }
 
+
     const isPasswordMatch = await bcrypt.compare(password, user.password);
+    console.log(password, user.password);
 
     if (!isPasswordMatch) {
       return res.status(400).json({ message: "Invalid credentials" });
@@ -122,7 +127,6 @@ const userLogin = async (req, res) => {
       user,
       token,
     });
-
   } catch (error) {
     console.error(error);
     return res.status(500).json({
@@ -137,8 +141,6 @@ const userLogout = async (req, res, next) => {
     console.log("I am goes to Logout");
     res.cookie("token", "", { expires: new Date(0) });
     res.status(200).json(new ApiResponse(200, "User logout sucessfully", null));
-
-   
   } catch (error) {
     throw new ApiError(500, "Server error", false, error.message);
   }
@@ -147,12 +149,15 @@ const userLogout = async (req, res, next) => {
 const userForgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
+    console.log("email : ", typeof email);
+    console.log("req.body : ", req.body);
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: email.toLowerCase() });
+    console.log("user : ", user);
     if (!user) {
       throw new ApiError(404, "Email is not found");
     }
-    console.log("email : ", email);
+    console.log("email : ", typeof email);
 
     const varificationCode = Math.floor(
       100000 + Math.random() * 90000
@@ -172,9 +177,19 @@ const userForgotPassword = async (req, res) => {
 
     res.status(200).json(new ApiResponse(201, "Your OTP is send", user));
   } catch (error) {
-    throw new ApiError(500, "Server error", false, error.message);
+    console.error(error);
+    return res
+      .status(error.statusCode || 500)
+      .json(
+        new ApiResponse(
+          error.statusCode || 500,
+          error.message || "Server error",
+          null,
+          false
+        )
+      );
   }
-};
+}
 
 const userForgotPasswordOTP = async (req, res) => {
   try {
@@ -206,7 +221,7 @@ const useChangePassword = async (req, res) => {
       throw new ApiError(400, "Enter correct OTP", false);
     }
     console.log();
-     const salt = await bcrypt.genSalt(10);
+    const salt = await bcrypt.genSalt(10);
     const hashPassword = await bcrypt.hash(password, salt);
     if (!hashPassword) {
       throw new ApiError(500, "Unable to hash the password");
@@ -220,7 +235,7 @@ const useChangePassword = async (req, res) => {
   } catch (error) {
     throw new ApiError(500, "Server error", false, error.message);
   }
-};
+}
 
 export {
   userRegister,
@@ -229,4 +244,4 @@ export {
   userForgotPassword,
   userForgotPasswordOTP,
   useChangePassword,
-};
+  }
