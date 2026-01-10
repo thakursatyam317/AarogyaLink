@@ -3,6 +3,7 @@ import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
+import doctImage from "../assets/doctorImg/doctorIMG.jpg";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -87,8 +88,17 @@ const Register = () => {
       <div className="flex justify-center bg-blue-50 min-h-screen px-4">
         <div className="mt-24 md:mt-36 h-auto md:h-[600px] w-full md:w-[60%] shadow-[0_0_25px_rgba(59,130,246,0.25)] border border-blue-100 rounded-2xl bg-white p-6">
           <Toaster position="top-center" />
+          <div className="flex  relative flex-col md:flex-row items-center md:items-start">
+            <div className=" ms-33  w-[480px] -left-40 hidden md:block absolute -mt-6 ">
+              <img
+                src={doctImage}
+                alt="Doctor"
+                className=" w-full h-[600px] object-cover rounded-l-2xl rounded-r-none"
+              />
+            </div>
+          
 
-          <div className="mt-0 md:ml-8">
+          <div className="mt-0 ms-28 ">
             <form
               className="grid justify-center md:ml-96"
               onSubmit={handleSubmit}
@@ -190,6 +200,7 @@ const Register = () => {
                 )}
               </div>
             </form>
+          </div>
           </div>
         </div>
       </div>

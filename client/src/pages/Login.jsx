@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
+import doctImage from "../assets/doctorImg/doctorIMG.jpg";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -70,10 +71,16 @@ const Login = () => {
         <div className="mt-24 md:mt-48 h-auto md:h-[480px] w-full md:w-[60%] shadow-[0_0_25px_rgba(59,130,246,0.25)] border border-blue-100 rounded-2xl bg-white p-6">
           <Toaster position="top-center" reverseOrder={false} />
 
-          <div className="">
-            <div>{/* image placeholder */}</div>
+          <div className="flex  relative flex-col md:flex-row items-center md:items-start">
+            <div className=" ms-33  w-[480px] -left-40 hidden md:block absolute -mt-6 ">
+              <img
+                src={doctImage}
+                alt="Doctor"
+                className=" w-full h-[480px] object-cover rounded-l-2xl rounded-r-none"
+              />
+            </div>
 
-            <div className="mt-0 md:ml-8">
+            <div className="mt-0 ms-30 ">
               <form
                 action=""
                 className="grid justify-center md:ml-96"
@@ -147,7 +154,7 @@ const Login = () => {
                           ? "text-blue-500 font-semibold text-[14px] hover:text-blue-800"
                           : "text-blue-500 text-[14px] hover:text-blue-800"
                       }
-                      to='/login/forgetpassword'
+                      to="/login/forgetpassword"
                     >
                       Forgot password
                     </NavLink>
