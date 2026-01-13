@@ -121,6 +121,8 @@ const userLogin = async (req, res) => {
     }
 
     const token = genAuthToken(user._id, res);
+    console.log("User ID :", user._id);
+    console.log("Generated Token :", token);
 
     return res.status(200).json({
       message: "Login successful",
