@@ -12,7 +12,7 @@ const router = express.Router();
 
 
 router.post("/getappointment/:id", userProtection, getDoctorAppointment);
-router.patch("/paymentappointment", userProtection,doctorProtection, razarpayIdUpdate );
+router.patch("/paymentappointment", userProtection, razarpayIdUpdate );
 
 router.get("/allappointments", userProtection,doctorProtection, getAllAppointmentsForDoctor);
 

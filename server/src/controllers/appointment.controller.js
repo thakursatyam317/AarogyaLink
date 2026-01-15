@@ -121,6 +121,7 @@ export const getDoctorAppointment = async (req, res) => {
 
 export const razarpayIdUpdate = async (req, res) => {
   try {
+    console.log("Updating Razorpay ID...");
     const { razorpay_payment_id } = req.body;
     console.log("razaray id :", razorpay_payment_id);
 
