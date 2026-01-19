@@ -15,7 +15,7 @@ export const sendVerificationCode = async (name, email, verificationCode) => {
       to: email,
       subject: "Verify your Email",
       text: "Verify your Email", // Plain-text version of the message
-      html: emailBody, // HTML version of the message
+      html: emailBody, //HTML version of the message
     });
   } catch (error) {
     console.log("the email verification error", error);
