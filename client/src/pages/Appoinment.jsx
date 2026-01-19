@@ -3,7 +3,7 @@ import { useAuth } from "../contexts/authContext";
 import authAxios from "../utils/authAxios";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Toaster, toast } from "react-hot-toast";
-import TimeSlots from "../components/TimeSlots";
+
 
 const Appointment = () => {
   const [patientName, setPatientName] = useState("");
