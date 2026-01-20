@@ -9,9 +9,9 @@ export const userProtection = async (req, res, next) => {
     const token = authHeader && authHeader.startsWith("Bearer ")
       ? authHeader.split(" ")[1]
       : null;
-      console.log("Token:", token);
-      console.log("Auth Header:", authHeader);
-      console.log("Request Headers:", req.headers);
+      // console.log("Token:", token);
+      // console.log("Auth Header:", authHeader);
+      // console.log("Request Headers:", req.headers);
       // console.log("Request Cookies:", req.config.headers.Authorization);
 
     if (!token) {

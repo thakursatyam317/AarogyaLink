@@ -4,7 +4,6 @@ import authAxios from "../utils/authAxios";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Toaster, toast } from "react-hot-toast";
 
-
 const Appointment = () => {
   const [patientName, setPatientName] = useState("");
   const [age, setAge] = useState("");
@@ -40,7 +39,7 @@ const Appointment = () => {
         if (!doctorID) return;
 
         const response = await authAxios.get(
-          `/doctor/appointments/${doctorID}`
+          `/doctor/appointments/${doctorID}`,
         );
 
         const data = response.data.data;
@@ -51,6 +50,8 @@ const Appointment = () => {
           specialist: data?.specialization || "",
           experience: data?.experience || "",
           fee: data?.consultationFee || "",
+          user_id: data?.user_id || "",
+          doctor_id: data?._id || "",
           profilePic: data?.userDetails?.profilePic || "",
         });
       } catch (error) {
@@ -65,7 +66,7 @@ const Appointment = () => {
       const amount = doctorData.fee || 50;
       const doctorID = location.search.replace("?", "");
 
-      if (!date || !time) {
+      if (!date || !selectedSlot) {
         toast.error("Please select appointment date and time");
         return;
       }
@@ -76,10 +77,10 @@ const Appointment = () => {
           doctorID,
           amount,
           appointmentDate: date,
-          appointmentTime: time,
-        }
+          appointmentTime: selectedSlot,
+        },
       );
-
+      console.log("Payment data:", data);
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
         amount: amount * 100,
@@ -110,48 +111,67 @@ const Appointment = () => {
     }
   };
 
+  const generateSlots = () => {
+    const slots = [];
 
+    let startTime = new Date();
+    startTime.setHours(9, 0, 0); // 9:00 AM
 
-    
-  
-    const generateSlots = () => {
-      const slots = [];
-  
-      let startTime = new Date();
-      startTime.setHours(9, 0, 0); // 9:00 AM
-  
-      const endTime = new Date();
-      endTime.setHours(18, 0, 0); // 6:00 PM
-  
-      while (startTime < endTime) {
-        const slotStart = new Date(startTime);
-  
-        // 10 min slot
-        startTime.setMinutes(startTime.getMinutes() + 10);
-        const slotEnd = new Date(startTime);
-  
-        slots.push({
-          type: "slot",
-          label: `${formatTime(slotStart)} - ${formatTime(slotEnd)}`,
-        });
-  
-        // 5 min break (logic only)
-        startTime.setMinutes(startTime.getMinutes() + 5);
-      }
-  
-      return slots;
-    };
-  
-    const formatTime = (date) =>
-      date.toLocaleTimeString("en-IN", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true,
+    const endTime = new Date();
+    endTime.setHours(18, 0, 0); // 6:00 PM
+
+    while (startTime < endTime) {
+      const slotStart = new Date(startTime);
+
+      // 10 min slot
+      startTime.setMinutes(startTime.getMinutes() + 10);
+      const slotEnd = new Date(startTime);
+
+      slots.push({
+        type: "slot",
+        label: `${formatTime(slotStart)} - ${formatTime(slotEnd)}`,
       });
+
+      // 5 min break (logic only)
+      startTime.setMinutes(startTime.getMinutes() + 5);
+    }
+
+    return slots;
+  };
+
+  const formatTime = (date) =>
+    date.toLocaleTimeString("en-IN", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
 
   const today = new Date();
   const todayDate = today.toISOString().split("T")[0];
   const currentTime = today.toTimeString().slice(0, 5);
+
+  const handleAppointmentDate = async (e) => {
+    try {
+     const selectedDate = e.target.value; // ✅ take value
+    setDate(selectedDate); 
+      //  console.log("Selected date:", appDate);
+      const doctor = doctorData;
+      console.log("Doctor data for booked dates:", doctor);
+      console.log("User data for booked dates:", doctorData);
+      const user = userData;
+      const alldatesResponse = await authAxios.get(
+        "/doctor/appointments/date",
+        {
+          params: {
+            doctor_id: doctor.doctor_id,
+            appointmentDate: selectedDate,
+          },
+        },
+      );
+
+      console.log("All booked dates response:", alldatesResponse.data);
+    } catch (error) {}
+  };
 
   return (
     <div className="min-h-screen flex justify-center p-4 md:p-6 bg-gray-100">
@@ -169,10 +189,18 @@ const Appointment = () => {
             />
           </div>
           <div className="text-center md:text-left">
-            <p><strong>Name:</strong> {doctorData?.name}</p>
-            <p><strong>Specialist:</strong> {doctorData?.specialist}</p>
-            <p><strong>Experience:</strong> {doctorData?.experience} Years</p>
-            <p><strong>Fee:</strong> ₹{doctorData?.fee}</p>
+            <p>
+              <strong>Name:</strong> {doctorData?.name}
+            </p>
+            <p>
+              <strong>Specialist:</strong> {doctorData?.specialist}
+            </p>
+            <p>
+              <strong>Experience:</strong> {doctorData?.experience} Years
+            </p>
+            <p>
+              <strong>Fee:</strong> ₹{doctorData?.fee}
+            </p>
           </div>
         </div>
 
@@ -186,12 +214,24 @@ const Appointment = () => {
             />
           </div>
           <div className="text-center md:text-left">
-            <p><strong>Name:</strong> {userData.userName}</p>
-            <p><strong>Email:</strong> {userData.email}</p>
-            <p><strong>Phone:</strong> {userData.phoneNumber}</p>
-            <p><strong>Gender:</strong> {userData.gender}</p>
-            <p><strong>Date of Birth:</strong> {userData.dob}</p>
-            <p><strong>Blood Group:</strong> {userData.bloodGroup}</p>
+            <p>
+              <strong>Name:</strong> {userData.userName}
+            </p>
+            <p>
+              <strong>Email:</strong> {userData.email}
+            </p>
+            <p>
+              <strong>Phone:</strong> {userData.phoneNumber}
+            </p>
+            <p>
+              <strong>Gender:</strong> {userData.gender}
+            </p>
+            <p>
+              <strong>Date of Birth:</strong> {userData.dob}
+            </p>
+            <p>
+              <strong>Blood Group:</strong> {userData.bloodGroup}
+            </p>
           </div>
         </div>
 
@@ -201,45 +241,56 @@ const Appointment = () => {
           className="w-full p-2 border rounded mb-3"
           value={date}
           min={todayDate}
-          onChange={(e) => setDate(e.target.value)}
+          onChange={handleAppointmentDate}
         />
 
         <strong>Appointment Time :</strong>
-       
-          <div style={{ maxWidth: "600px", margin: "20px auto" }}>
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          gap: "8px",
-        }}
-      >
-        {generateSlots().map((item, index) => {
-          const isSelected = selectedSlot === item.label;
 
-          return (
+        {date ? (
+          <div style={{ maxWidth: "600px", margin: "20px auto" }}>
             <div
-              key={index}
-              onClick={() => setSelectedSlot(item.label)}
-              className="rounded font-semibold hover:bg-blue-200 cursor-pointer"
               style={{
-                width: "30%",
-                padding: "6px",
-                textAlign: "center",
-                fontSize: "12px",
-                border: isSelected
-                  ? "2px solid #2563eb"
-                  : "1px solid #333",
-                background: isSelected ? "#dbeafe" : "transparent",
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "8px",
               }}
             >
-              {item.label}
+              {generateSlots().map((item, index) => {
+                const isSelected = selectedSlot === item.label;
+
+                return (
+                  <div
+                    key={index}
+                    onClick={() => setSelectedSlot(item.label)}
+                    className="rounded font-semibold hover:bg-blue-200 cursor-pointer"
+                    style={{
+                      width: "30%",
+                      padding: "6px",
+                      textAlign: "center",
+                      fontSize: "12px",
+                      border: isSelected
+                        ? "2px solid #2563eb"
+                        : "1px solid #333",
+                      background: isSelected ? "#dbeafe" : "transparent",
+                    }}
+                  >
+                    {item.label}
+                  </div>
+                );
+              })}
             </div>
-          );
-        })}
-      </div>
-    </div>
-        
+            {/* Show selected time */}
+            {selectedSlot && (
+              <p className="mt-4 font-semibold">
+                Selected Time: {selectedSlot}
+              </p>
+            )}
+          </div>
+        ) : (
+          <p className="mt-2 mb-4 text-red-500">
+            Please select a date to view available time slots.
+          </p>
+        )}
 
         <button
           onClick={handlePayment}

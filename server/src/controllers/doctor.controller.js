@@ -1,4 +1,5 @@
 import cloudinary from "../configs/cloudinary.js";
+import Appointment from "../models/appointment.model.js";
 import Doctor from "../models/doctor.model.js";
 import User from "../models/user.model.js";
 import ApiError from "../utils/ApiError.js";
@@ -110,7 +111,6 @@ export const updateDoctorProfile = async (req, res) => {
           gender,
           profilePic: user.profilePic,
           userID: user.userID,
-
         },
         startTime,
         endTime,
@@ -121,7 +121,7 @@ export const updateDoctorProfile = async (req, res) => {
         consultationFee,
         description,
       },
-      { new: true }
+      { new: true },
     );
 
     return res
@@ -130,8 +130,8 @@ export const updateDoctorProfile = async (req, res) => {
         new ApiResponse(
           true,
           "Doctor profile updated successfully",
-          updatedDoctorProfile
-        )
+          updatedDoctorProfile,
+        ),
       );
   } catch (error) {
     console.error("❌ Update Doctor Profile Error:", error);
@@ -162,7 +162,6 @@ export const getDoctorList = async (req, res) => {
 
     //there was use a pipeline for 2-3 days after
     const doctors = await Doctor.find();
-
 
     console.log("Found doctors:", doctors);
 
@@ -204,14 +203,14 @@ export const getDoctorDetailsByID = async (req, res) => {
     return res
       .status(200)
       .json(
-        new ApiResponse(200, "Doctor details fetched successfully", doctor)
+        new ApiResponse(200, "Doctor details fetched successfully", doctor),
       );
   } catch (error) {
     console.error("Error fetching doctor details by ID:", error);
     return res
       .status(500)
       .json(
-        new ApiError(500, "Server error while fetching doctor details by ID")
+        new ApiError(500, "Server error while fetching doctor details by ID"),
       );
   }
 };
@@ -220,7 +219,7 @@ export const getDoctorAppointmentDetails = async (req, res) => {
   try {
     const doctorID = req.params.id;
     console.log("Fetching appointment details for Doctor ID:", doctorID);
-    
+
     if (!doctorID) {
       throw new ApiError(400, "Doctor ID is required");
     }
@@ -237,8 +236,8 @@ export const getDoctorAppointmentDetails = async (req, res) => {
         new ApiResponse(
           200,
           "Doctor appointment details fetched successfully",
-          doctor
-        )
+          doctor,
+        ),
       );
   } catch (error) {
     console.error("Error fetching doctor appointment details:", error);
@@ -247,8 +246,8 @@ export const getDoctorAppointmentDetails = async (req, res) => {
       .json(
         new ApiError(
           500,
-          "Server error while fetching doctor appointment details"
-        )
+          "Server error while fetching doctor appointment details",
+        ),
       );
   }
 };
@@ -273,8 +272,8 @@ export const getPatientsAppointedToDoctor = async (req, res) => {
         new ApiResponse(
           200,
           "Patients appointed to doctor fetched successfully",
-          doctor.appointments
-        )
+          doctor.appointments,
+        ),
       );
   } catch (error) {
     console.error("Error fetching patients appointed to doctor:", error);
@@ -283,8 +282,59 @@ export const getPatientsAppointedToDoctor = async (req, res) => {
       .json(
         new ApiError(
           500,
-          "Server error while fetching patients appointed to doctor"
-        )
+          "Server error while fetching patients appointed to doctor",
+        ),
       );
+  }
+};
+
+export const getDoctorAppointmentDate = async (req, res) => {
+  try {
+    const { doctor_id, appointmentDate } = req.query;
+    console.log(
+      "Fetching appointment dates for Doctor ID:",
+      doctor_id,
+      "on date:",
+      appointmentDate,
+    );
+
+    if (!doctor_id) {
+      throw new ApiError(400, "Doctor ID is required");
+    }
+
+    const doctor = await Doctor.findOne({ _id: doctor_id });
+    if (!doctor) {
+      throw new ApiError(404, "Doctor not found");
+    }
+    console.log("Doctor found:", doctor);
+
+    const doctorAllAppointments = await Appointment.find({
+      doctor_id: doctor._id,
+      status: "accepted",
+    });
+    console.log("Doctor's all appointments:", doctorAllAppointments);
+    let bookedSlots = [];
+
+    doctorAllAppointments.forEach((appointment) => {
+      if (
+        new Date(appointment.appointmentDate).toISOString().split("T")[0] ===
+        appointmentDate
+      ) {
+        bookedSlots.push(appointment.appointmentTime);
+      }
+    });
+    console.log("Booked slots on", appointmentDate, ":", bookedSlots);
+
+    res.status(200).json(
+      new ApiResponse(200, "Appointment dates fetched successfully", {
+        startTime: doctor.startTime,
+        endingTime: doctor.endTime,
+        bookedSlots,
+      }),
+    );
+  } catch (error) {
+    res.status(error.statusCode || 500).json({
+      message: error.message || "Server error",
+    });
   }
 };
