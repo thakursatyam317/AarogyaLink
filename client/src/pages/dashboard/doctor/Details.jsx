@@ -82,6 +82,7 @@ const Dashboard = () => {
       const res = await authAxios.put("/doctor/details/update", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
+      console.log(res);
 
       if (res.data?.data) {
         setUserData(res.data.data);
