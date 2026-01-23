@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import { useAuth } from "../contexts/authContext";
 import authAxios from "../utils/authAxios";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -13,6 +13,7 @@ const Appointment = () => {
   const { authUser } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+  const [bookedSlots, setBookedSlots] = useState([]);
 
   const [userData, setUserData] = useState({});
   const [doctorData, setDoctorData] = useState({});
@@ -152,8 +153,8 @@ const Appointment = () => {
 
   const handleAppointmentDate = async (e) => {
     try {
-     const selectedDate = e.target.value; // ✅ take value
-    setDate(selectedDate); 
+      const selectedDate = e.target.value; // ✅ take value
+      setDate(selectedDate);
       //  console.log("Selected date:", appDate);
       const doctor = doctorData;
       console.log("Doctor data for booked dates:", doctor);
@@ -170,6 +171,9 @@ const Appointment = () => {
       );
 
       console.log("All booked dates response:", alldatesResponse.data);
+      const bookedSlots = alldatesResponse.data.data.bookedSlots;
+      console.log("Booked slots:", bookedSlots);
+      setBookedSlots(bookedSlots);
     } catch (error) {}
   };
 
@@ -247,50 +251,69 @@ const Appointment = () => {
         <strong>Appointment Time :</strong>
 
         {date ? (
-          <div style={{ maxWidth: "600px", margin: "20px auto" }}>
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: "8px",
-              }}
-            >
-              {generateSlots().map((item, index) => {
-                const isSelected = selectedSlot === item.label;
+  <div style={{ maxWidth: "600px", margin: "20px auto" }}>
+    <div
+      style={{
+        display: "flex",
+        flexWrap: "wrap",
+        gap: "8px",
+      }}
+    >
+      {generateSlots().map((item, index) => {
+        const isSelected = selectedSlot === item.label;
+        const isBooked = bookedSlots.includes(item.label); // ✅ CHECK
 
-                return (
-                  <div
-                    key={index}
-                    onClick={() => setSelectedSlot(item.label)}
-                    className="rounded font-semibold hover:bg-blue-200 cursor-pointer"
-                    style={{
-                      width: "30%",
-                      padding: "6px",
-                      textAlign: "center",
-                      fontSize: "12px",
-                      border: isSelected
-                        ? "2px solid #2563eb"
-                        : "1px solid #333",
-                      background: isSelected ? "#dbeafe" : "transparent",
-                    }}
-                  >
-                    {item.label}
-                  </div>
-                );
-              })}
-            </div>
-            {/* Show selected time */}
-            {selectedSlot && (
-              <p className="mt-4 font-semibold">
-                Selected Time: {selectedSlot}
-              </p>
+        return (
+          <div
+            key={index}
+            onClick={() => {
+              if (!isBooked) {
+                setSelectedSlot(item.label); // ✅ only if not booked
+              }
+            }}
+            className={`rounded font-semibold ${
+              isBooked
+                ? "bg-gray-300 cursor-not-allowed text-gray-600"
+                : "hover:bg-blue-200 cursor-pointer"
+            }`}
+            style={{
+              width: "30%",
+              padding: "6px",
+              textAlign: "center",
+              fontSize: "12px",
+              border: isSelected
+                ? "2px solid #2563eb"
+                : "1px solid #333",
+              background: isBooked
+                ? "#e5e7eb"
+                : isSelected
+                ? "#dbeafe"
+                : "transparent",
+            }}
+          >
+            {item.label}
+            {isBooked && (
+              <div className="text-[10px] text-red-500 mt-1">
+                Booked
+              </div>
             )}
           </div>
-        ) : (
-          <p className="mt-2 mb-4 text-red-500">
-            Please select a date to view available time slots.
-          </p>
-        )}
+        );
+      })}
+    </div>
+
+    {/* Show selected time */}
+    {selectedSlot && (
+      <p className="mt-4 font-semibold">
+        Selected Time: {selectedSlot}
+      </p>
+    )}
+  </div>
+) : (
+  <p className="mt-2 mb-4 text-red-500">
+    Please select a date to view available time slots.
+  </p>
+)}
 
         <button
           onClick={handlePayment}
