@@ -22,6 +22,8 @@ import EMR from "./pages/dashboard/admin/EMR";
 import ForgotPassword from "./components/ForgetPassword";
 import Chatting from "./pages/dashboard/admin/Chatting";
 
+import DoctorRoute from "./components/DoctorRoute";
+import Unauthorized from "./components/Unauthorized";
 
 function App() {
   return (
@@ -30,6 +32,8 @@ function App() {
       <Navbar />
 
       <Routes>
+        <Route path="/unauthorized" element={<Unauthorized />} />
+
         <Route path="/" element={<Home />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/about" element={<About />} />
@@ -43,13 +47,13 @@ function App() {
          <Route path="/login/forgetpassword" element={<ForgotPassword />} />
 
         {/* Doctor Routes */}
-        <Route path="/doctor/dashboard" element={<Dashboard />} />
-        <Route path="/doctor/dashboard/details" element={<DoctorDetails />} />
-        <Route path="/doctor/dashboard/appointment" element={<Appointment />} />
+        <Route path="/doctor/dashboard" element={<DoctorRoute><Dashboard /></DoctorRoute>} />
+        <Route path="/doctor/dashboard/details" element={<DoctorRoute><DoctorDetails /></DoctorRoute>} />
+        <Route path="/doctor/dashboard/appointment" element={<DoctorRoute><Appointment /></DoctorRoute>} />
         <Route
           path="/doctor/dashboard/notifications"
-          element={<DoctorNotification />}
-        />
+          element={<DoctorRoute><DoctorNotification /></DoctorRoute>} />
+        
         <Route
           path="/doctor/dashboard/appointment/prescription/:patientID"
           element={<Prescription />}

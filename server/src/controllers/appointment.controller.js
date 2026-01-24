@@ -270,7 +270,14 @@ export const getAllAcceptedAppointmentsForDoctor = async (req, res) => {
     if (!user_id) {
       throw new ApiError(400, "Doctor ID is required");
     }
-    const doctor = await Doctor.findOne({ user_id: user_id });
+    const user = await User.find({_id: user_id});
+    console.log(user)
+    
+    const doctor = await Doctor.findOne({ user_id });
+    console.log("Doctor Found:", doctor);
+    if (!doctor) {
+      throw new ApiError(404, "Doctor not found");
+    }
     const appointments = await Appointment.aggregate([
       {
         $match: {

@@ -120,6 +120,11 @@ const userLogin = async (req, res) => {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
+    const role = user.role;
+    console.log("User Role :", role);
+    if(!role)
+      throw new ApiError(400, "User role is missing");
+   
     const token = genAuthToken(user._id, res);
     console.log("User ID :", user._id);
     console.log("Generated Token :", token);

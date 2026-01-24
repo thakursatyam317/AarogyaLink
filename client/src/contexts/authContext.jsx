@@ -33,6 +33,7 @@ export const AuthProvider = ({ children }) => {
 
       const user = res.data?.user || res.data?.data || res.data || null;
       console.log("Fetched user:", user);
+      console.log("Response data:", user.role);
 
       if (user) {
         setAuthUser(user);
