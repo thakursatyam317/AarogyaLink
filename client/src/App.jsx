@@ -24,6 +24,7 @@ import Chatting from "./pages/dashboard/admin/Chatting";
 
 import DoctorRoute from "./components/DoctorRoute";
 import Unauthorized from "./components/Unauthorized";
+import Preception from "./pages/Preception";
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
         <Route path="/doctor/:id" element={<DoctorDetailComplete />} />
         <Route path="/appointments" element={<Appointments />} />
          <Route path="/login/forgetpassword" element={<ForgotPassword />} />
+         <Route path="/user/preception" element={<Preception />} />
 
         {/* Doctor Routes */}
         <Route path="/doctor/dashboard" element={<DoctorRoute><Dashboard /></DoctorRoute>} />

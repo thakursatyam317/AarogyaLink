@@ -336,3 +336,34 @@ export const createPrescription = async (req, res) => {
       });
   }
 };
+
+
+
+export const getPreceptionDataForUser = async (req, res) => {
+  try {
+    const user_id = req.user?._id || req.user?.id;
+    console.log("Logged-in userId:", user_id);
+    const user = await User.findOne({ _id: user_id });
+    if (!user) {
+     throw new ApiError(404, "User not found");
+    }
+    console.log("Found user for prescription retrieval:", user);
+    const preceptionData = await Preception.find({
+      "patientDetail.email": user.email,
+    });
+    console.log("Found preception data:", preceptionData);
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          "Prescription data fetched successfully",
+          preceptionData
+        )
+      );
+    
+  } catch (error) {
+    console.error("❌ Get Prescription Data Error:", error);
+    new ApiError(500, "Server error while fetching prescription data");
+  }
+}

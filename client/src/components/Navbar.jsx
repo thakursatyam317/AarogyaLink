@@ -110,12 +110,16 @@ const Navbar = () => {
                       className="absolute right-0 mt-3 w-52 bg-blue-200 rounded-lg shadow-lg p-3"
                     >
                       <ul className="space-y-2 text-gray-700">
-                        <li><Link to="/profile"><UserRound /> Profile</Link></li>
-                        <li><Link to="/dashboard/emr"><Folder /> EMR</Link></li>
-                        <li><Link to="/ehr"><Folder /> EHR</Link></li>
-                        <li><Link to="/cliniclab"><Stethoscope /> Prescription</Link></li>
-                        <li><Link to="/doctorregisteration">Doctor Registration</Link></li>
-                        <li><Link to="/language"><Languages /> Language</Link></li>
+                        <li className=""><Link to="/profile"><div className="flex hover:text-amber-400"><div><UserRound /> </div><div className="mx-2.5 text-l">Profile</div></div></Link></li>
+                        <li><Link to="/dashboard/emr"><div className="flex hover:text-amber-400"><div><Folder /> </div><div className="mx-2.5 text-l">EMR</div></div> </Link></li>
+                        <li><Link to="/ehr"><div className="flex hover:text-amber-400"><div><Folder /> </div><div className="mx-2.5 text-l">EHR</div></div></Link></li>
+                        <li><Link to="/user/preception"><div className="flex hover:text-amber-400"><div><Stethoscope />  </div><div className="mx-2.5 text-l">Prescription</div></div></Link></li>
+                        {
+                          authUser.role === "user" && (
+                            <li><Link to="/doctorregisteration"><div className="flex hover:text-amber-400"><div><UserRound /> </div><div className="mx-2.5 text-l">Doctor Registration</div></div></Link></li>
+                          )
+                        }
+                        <li><Link to="/language"><div className="flex hover:text-amber-400"><div><Languages /> </div><div className="mx-2.5 text-l"> Language</div></div></Link></li>
                       </ul>
                     </motion.div>
                   )}

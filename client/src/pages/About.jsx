@@ -1,4 +1,5 @@
 import React from "react";
+import doctImage from "../assets/doctorImg/doctorIMG.jpg";
 
 const About = () => {
   return (
@@ -20,7 +21,9 @@ const About = () => {
 
         {/* Image + Content */}
         <div className="flex flex-col md:flex-row items-center gap-8 md:gap-16">
-          <div className="md:w-1/2"></div>
+          <div className="md:w-1/2">
+          <img src={doctImage} alt="Doctor" className="h-[380px] border border-blue-500 rounded-lg  ms-3"/>
+          </div>
 
           <div className="md:w-1/2 space-y-4 text-center md:text-left">
             <h2 className="text-2xl font-semibold text-blue-700">
