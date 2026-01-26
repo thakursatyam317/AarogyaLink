@@ -9,6 +9,7 @@ import doctorAuth from './src/routes/doctor.route.js'
 import appointmentRoute from './src/routes/appointment.route.js';
 import prescriptionRoute from './src/routes/prescription.route.js';
 import emr from '../server/src/routes/EMR.route.js';
+import doctorDashboardRoute from './src/routes/doctorDashboard.route.js';
 
 dotenv.config();
 const app = express();
@@ -29,6 +30,7 @@ app.use('/api/doctor',doctorAuth);
 app.use('/api/appointments', appointmentRoute);
 app.use('/api/prescription', prescriptionRoute);
 app.use('/api/emr', emr);
+app.use('/api/doctordashboard', doctorDashboardRoute); // Serve admin dashboard static files
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, ()=>{
