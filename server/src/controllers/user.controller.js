@@ -46,6 +46,15 @@ const updateUserProfile = async (req, res, next) => {
     } = req.body;
     let address = req.body.address;
 
+    userName?.trim();
+    email?.trim();
+    phoneNumber?.trim();
+    dob?.trim
+    gender?.trim();
+    bloodGroup?.trim();
+    hospitalID?.trim();
+
+   
     // If address comes as a JSON string (from FormData)
     if (typeof address === "string") {
       try {
@@ -55,6 +64,15 @@ const updateUserProfile = async (req, res, next) => {
       }
     }
     console.log("address", address);
+    address.houseNumber.trim();
+    address.street.trim();
+    address.city.trim();
+    address.state.trim();
+    address.pincode.trim();
+    address.country.trim();
+
+
+    
 
     const photo = req.file;
     const userId = req.user?._id || req.user?.id;

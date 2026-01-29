@@ -11,6 +11,13 @@ const userRegister = async (req, res) => {
     if (!userName || !email || !phoneNumber || !password) {
       throw new ApiError(400, "All fields are required");
     }
+    console.log("Phone number type:- ", typeof phoneNumber);
+
+    userName.trim();
+    email.trim();
+    phoneNumber.trim();
+    password.trim();
+
     console.log("email : ", email);
     const existingUser = await User.findOne({ email });
     console.log("existingUser : ", existingUser);
@@ -65,6 +72,11 @@ const userRegister = async (req, res) => {
 export const verificationOfEmail = async (req, res) => {
   try {
     const { email, otp } = req.body;
+    email.trim();
+    otp.trim();
+
+    console.log("email : ", email);
+    console.log("otp : ", otp);
 
     const user = await User.findOne({ email });
 
@@ -95,6 +107,9 @@ const userLogin = async (req, res) => {
     const { email, password } = req.body;
     console.log("email :", email);
     console.log("password :", password);
+
+    email.trim();
+    password.trim();
 
     if (!email || !password) {
       return res.status(400).json({ message: "All fields are required" });
@@ -143,7 +158,7 @@ const userLogin = async (req, res) => {
   }
 };
 
-const userLogout = async (req, res, next) => {
+const userLogout = async (req, res) => {
   try {
     console.log("I am goes to Logout");
     res.cookie("token", "", { expires: new Date(0) });
@@ -156,6 +171,7 @@ const userLogout = async (req, res, next) => {
 const userForgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
+    email.trim();
     console.log("email : ", typeof email);
     console.log("req.body : ", req.body);
 
@@ -201,6 +217,9 @@ const userForgotPassword = async (req, res) => {
 const userForgotPasswordOTP = async (req, res) => {
   try {
     const { email, otp } = req.body;
+    email.trim();
+    otp.trim();
+    console.log("otp : ", otp);
     const user = await User.findOne({ email });
     if (!user) {
       throw new ApiError(404, "Email is not found");
@@ -219,6 +238,11 @@ const userForgotPasswordOTP = async (req, res) => {
 const useChangePassword = async (req, res) => {
   try {
     const { email, otp, password } = req.body;
+    email.trim();
+    otp.trim();
+    password.trim();
+    console.log("otp : ", otp);
+
     const user = await User.findOne({ email });
     if (!user) {
       throw new ApiError(404, "Email is not found");
