@@ -14,6 +14,13 @@ export const createDoctor = async (req, res) => {
       user_id: user_id,
     });
 
+    const user = await User.findById(user_id);
+    if (!user) {
+      throw new ApiError(404, "User not found");
+    }
+    user.role = "doctor";
+    await user.save();
+
     return res
       .status(201)
       .json(new ApiResponse(true, "Doctor created successfully", newDoctor));

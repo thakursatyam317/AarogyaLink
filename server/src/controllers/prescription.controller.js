@@ -67,9 +67,9 @@ export const createPrescription = async (req, res) => {
       req.body;
     console.log("Received prescription data:", req.body);
 
-    // -------------------------------------------------------------
+   
     // Create Folder
-    // -------------------------------------------------------------
+
     const folder = path.join(process.cwd(), "prescription");
     if (!fs.existsSync(folder)) fs.mkdirSync(folder);
 
@@ -156,6 +156,9 @@ export const createPrescription = async (req, res) => {
     // -------------------------------------------------------------
     // DOCTOR DETAILS
     // -------------------------------------------------------------
+
+    let doctorAge = doctorDetail.dob || "N/A";
+    console.log("Doctor Age:", doctorAge);
     let y = 150;
     y = printTwoColumnSection(
       "DOCTOR DETAILS",
@@ -173,6 +176,8 @@ export const createPrescription = async (req, res) => {
     // -------------------------------------------------------------
     // PATIENT DETAILS
     // -------------------------------------------------------------
+    let patientAge = patientDetail.dob || "N/A";
+    console.log("Patient Age:", patientAge);  
     y = printTwoColumnSection(
       "PATIENT DETAILS",
       {
@@ -223,7 +228,7 @@ export const createPrescription = async (req, res) => {
         }
       });
 
-      return y + 20;
+      return y + 30;
     }
 
     // -------------------------------------------------------------
@@ -305,7 +310,7 @@ export const createPrescription = async (req, res) => {
         email: patientDetail.email,
         user_id: patientDetail.user_id,
         userID: patientDetail.userID,
-
+        age: patientDetail.age,
         phoneNumber: patientDetail.phoneNumber,
       },
       doctorDetail: {
@@ -313,6 +318,7 @@ export const createPrescription = async (req, res) => {
         email: doctorDetail.email,
         specialization: doctorDetail.specialization,
         doctor_id: doctorDetail.doctor_id,
+        doctorAge : doctorDetail.age,
         doctorID: doctorDetail.doctorID,
         phoneNumber: doctorDetail.phoneNumber,
       },

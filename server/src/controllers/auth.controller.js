@@ -105,6 +105,7 @@ export const verificationOfEmail = async (req, res) => {
 const userLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
+    console.log("email :", req.body.role);
     console.log("email :", email);
     console.log("password :", password);
 
@@ -134,9 +135,15 @@ const userLogin = async (req, res) => {
     if (!isPasswordMatch) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
-
-    const role = user.role;
+    const role = req.body.role;
+    role.toLowerCase();
     console.log("User Role :", role);
+    if(!(user.role == role)){
+      return res.status(400).json({ message: "Please select correct role" });
+    }
+
+    const userRole = user.role;
+    console.log("User Role :", userRole);
     if(!role)
       throw new ApiError(400, "User role is missing");
    

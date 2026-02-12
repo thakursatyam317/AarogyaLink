@@ -47,7 +47,7 @@ const doctorDetailsSchema = new mongoose.Schema({
     ref : "User"
   },
   dob: {
-    type: Number,
+    type: String,
   },
   gender: {
     type: String,

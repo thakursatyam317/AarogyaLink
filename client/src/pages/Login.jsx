@@ -14,11 +14,12 @@ const Login = () => {
     const formData = new FormData(e.target);
     const email = formData.get("email");
     const password = formData.get("password");
+    const selectedRole = formData.get("role");
 
     try {
       const res = await axios.post(
         "http://localhost:4500/api/auth/login",
-        { email, password },
+        { email, password, role: selectedRole },
         { withCredentials: true }
       );
 
