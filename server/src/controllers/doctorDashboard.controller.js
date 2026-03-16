@@ -40,8 +40,12 @@ export const getDoctorDashboard = async (req, res) => {
 
         ]);
 
-        console.log("Doctor Appointments Aggregation Result:", doctorAppointments);
-
+        // console.log("Doctor Appointments Aggregation Result:", doctorAppointments);
+        console.log("Doctor Appointments Summary:", doctorAppointments);
+        console.log("Doctor Dashboard Data:", {
+            doctor: doctor,
+            appointmentsSummary: doctorAppointments
+        });
         return res.
         status(200).
         json(
@@ -54,6 +58,47 @@ export const getDoctorDashboard = async (req, res) => {
         
     } catch (error) {
         console.error("Error fetching doctor dashboard:", error);
+        throw new ApiError(500, "Server Error");
+    }
+}
+
+export const notificationsCount = async (req, res) => {
+    try {
+        const user_id = req.user?._id || req.user?.id;
+        console.log("User ID for Notifications Count:", user_id);
+        const doctor = await Doctor.findOne({ user_id: user_id });
+        console.log("Doctor ID for Notifications Count:", doctor._id);
+        if (!doctor) {
+            throw new ApiError(404, "Doctor not found");
+        }
+        // const notifications = await Appointment.find({ doctor_id: doctor._id, status: "pending" });
+         const notifications = await Appointment.aggregate([
+            {
+                $match: {
+                    doctor_id: doctor._id,
+                    status: "Scheduled"
+                }
+            },
+            {
+                $group: {
+                    _id: "$status",
+                    count: { $sum: 1 }
+                }
+            }   
+        ])
+
+        console.log("Notifications Count:", notifications);
+        return res.
+        status(200).json(
+            new ApiResponse(200, "Notifications count fetched successfully", {
+                 count: notifications
+                }
+            )
+        );
+
+
+    } catch (error) {
+        console.error("Error fetching notifications count:", error);
         throw new ApiError(500, "Server Error");
     }
 }

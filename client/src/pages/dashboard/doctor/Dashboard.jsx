@@ -1,130 +1,164 @@
-import React from "react";
-import { useNavigate, NavLink, Link } from "react-router-dom";
+import React, { use } from "react";
+import { Users, DollarSign, CheckCircle, Clock } from "lucide-react";
+import { NavLink } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { useAuth } from "../../../contexts/authContext";
+import authAxios from "../../../utils/authAxios";
 
 const Dashboard = () => {
-  const navigate = useNavigate();
-  const { authUser, fetchProfile } = useAuth();
+  const { user } = useAuth();
+  const [counter, setCounter] = useState(0);    
 
-  const handleClick = () => {
-    navigate("/dashboard");
+  
+  const dashboardData = {
+    totalPayment: 150000,
+    totalRevenue: 95000,
+    totalPatients: 320,
+    todayPatients: 25,
+    completedToday: 18,
+    remainingToday: 7,
   };
+  useEffect(() => {
+    try {
+      const featchCount = async () => {
+        const response = await authAxios.get("/doctordashboard/notifications");
+        
+        console.log("Response Data:- ", response.data);
+        setCounter(response.data.data.count[0]?.count || 0);
+        console.log("Notifications Count:", counter);
+      };
+      featchCount();
+    } catch (error) {
+      console.error("Error fetching notifications count:", error);
+    }
+  }, [counter]);
+
+  const todayPatientList = [
+    { id: 1, name: "Rohit Sharma", status: "Completed" },
+    { id: 2, name: "Aman Verma", status: "Remaining" },
+    { id: 3, name: "Priya Singh", status: "Completed" },
+    { id: 4, name: "Neha Gupta", status: "Remaining" },
+  ];
 
   return (
-    <>
-      <div>
-        <div className="flex flex-col md:flex-row">
-          {/* SIDEBAR */}
-          <div className="w-full md:w-[20%] h-auto md:h-screen bg-gray-800 md:fixed text-white">
-            <div className="mt-20 ms-5">
-              <h1 className="text-xl md:text-2xl font-bold">
-                Welcome {authUser.userName}
-              </h1>
+    <div className="flex min-h-screen bg-gray-100">
 
-              <div className="grid mt-6 md:mt-10 space-y-3 md:space-y-4">
-                <NavLink
-                  to="/doctor/dashboard"
-                  className="hover:bg-gray-700 p-3 rounded-xl text-lg"
-                >
-                  Dashboard
-                </NavLink>
+      {/* Sidebar */}
+      <div className="w-[20%] bg-gray-800 text-white p-6 hidden md:block">
+        <h1 className="text-2xl font-bold mb-8">Doctor Panel</h1>
 
-                <NavLink
-                  to="/doctor/dashboard/appointment"
-                  className="hover:bg-gray-700 p-3 rounded-xl text-lg"
-                >
-                  Appointments
-                </NavLink>
+        <div className="space-y-4">
+          <NavLink
+            to="/doctor/dashboard"
+            className="block hover:bg-gray-700 p-3 rounded-xl"
+          >
+            Dashboard
+          </NavLink>
 
-                <NavLink className="hover:bg-gray-700 p-3 rounded-xl text-lg">
-                  Today Appointment
-                </NavLink>
+          <NavLink
+            to="/doctor/dashboard/appointment"
+            className="block hover:bg-gray-700 p-3 rounded-xl"
+          >
+            Appointments
+          </NavLink>
 
-                <NavLink
-                  to="/doctor/dashboard/details"
-                  className="hover:bg-gray-700 p-3 rounded-xl text-lg"
-                >
-                  Details
-                </NavLink>
-              </div>
-            </div>
-          </div>
+          <NavLink
+            to="/doctor/dashboard/today"
+            className="block hover:bg-gray-700 p-3 rounded-xl"
+          >
+            Today Appointment
+          </NavLink>
 
-          {/* MAIN CONTENT */}
-          <div className="w-full md:ms-[20%] md:w-[80%]">
-            <div className="mt-20 px-4 md:px-10">
-              <h1 className="text-2xl md:text-3xl font-bold mb-6">
-                Doctor Dashboard
-              </h1>
-
-              {/* Top Stats */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div className="p-6 bg-blue-500 text-white rounded-xl shadow-md">
-                  <h2 className="text-xl font-semibold">Total Patients</h2>
-                  <p className="text-4xl font-bold mt-2">120</p>
-                </div>
-
-                <div className="p-6 bg-yellow-500 text-white rounded-xl shadow-md">
-                  <h2 className="text-xl font-semibold">
-                    Pending Appointments
-                  </h2>
-                  <p className="text-4xl font-bold mt-2">08</p>
-                </div>
-
-                <div className="p-6 bg-green-500 text-white rounded-xl shadow-md">
-                  <h2 className="text-xl font-semibold">Completed Today</h2>
-                  <p className="text-4xl font-bold mt-2">15</p>
-                </div>
-              </div>
-
-              {/* Quick Actions */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <Link
-                  className="p-5 bg-purple-600 text-white rounded-xl shadow hover:bg-purple-700 text-center"
-                  to="/doctor/dashboard/notifications"
-                >
-                  Notification
-                </Link>
-
-                <button className="p-5 bg-blue-600 text-white rounded-xl shadow hover:bg-blue-700">
-                  Schedule Appointment
-                </button>
-
-                <button className="p-5 bg-red-600 text-white rounded-xl shadow hover:bg-red-700">
-                  Emergency Requests
-                </button>
-              </div>
-
-              {/* Earnings */}
-              <div className="bg-white rounded-xl shadow-md p-6 mt-10 mb-20">
-                <h2 className="text-2xl font-semibold mb-4">
-                  Earnings Summary
-                </h2>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="p-4 border rounded-xl text-center bg-green-50">
-                    <h3 className="font-semibold">Today</h3>
-                    <p className="text-3xl font-bold text-green-600">₹4,500</p>
-                  </div>
-
-                  <div className="p-4 border rounded-xl text-center bg-blue-50">
-                    <h3 className="font-semibold">This Week</h3>
-                    <p className="text-3xl font-bold text-blue-600">₹25,000</p>
-                  </div>
-
-                  <div className="p-4 border rounded-xl text-center bg-yellow-50">
-                    <h3 className="font-semibold">This Month</h3>
-                    <p className="text-3xl font-bold text-yellow-600">
-                      ₹92,000
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <NavLink
+            to="/doctor/dashboard/details"
+            className="block hover:bg-gray-700 p-3 rounded-xl"
+          >
+            Details
+          </NavLink>
         </div>
       </div>
-    </>
+
+      {/* Main Content */}
+      <div className="flex-1 p-6">
+
+        <h1 className="text-3xl font-bold mb-6 text-gray-700">
+          Doctor Dashboard
+        </h1>
+
+        {/* Summary Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+
+          <Card title="Total Payment" value={`₹${dashboardData.totalPayment}`} icon={<DollarSign />} />
+          <Card title="Total Revenue (Profit)" value={`₹${dashboardData.totalRevenue}`} icon={<DollarSign />} />
+          <Card title="Total Patients" value={dashboardData.totalPatients} icon={<Users />} />
+          <Card title="Today Patients" value={dashboardData.todayPatients} icon={<Users />} />
+          <Card title="Completed Today" value={dashboardData.completedToday} icon={<CheckCircle />} />
+          <Card title="Remaining Today" value={counter} icon={<Clock />} />
+          <NavLink to="/doctor/dashboard/notifications" className="relative">
+  
+  {counter > 0 && (
+    <span className="absolute top-2 right-2 w-3 h-3 bg-red-500 rounded-full"></span>
+  )}
+
+  <Card
+    title="New Notifications"
+    value={counter}
+    icon={<Clock />}
+  />
+
+</NavLink>
+         
+        </div>
+
+        {/* Today Patient Table */}
+        <div className="bg-white p-6 rounded-2xl shadow-md">
+          <h2 className="text-xl font-semibold mb-4">
+            Today's Patients
+          </h2>
+
+          <table className="w-full text-left">
+            <thead>
+              <tr className="border-b">
+                <th className="py-2">ID</th>
+                <th className="py-2">Patient Name</th>
+                <th className="py-2">Status</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {todayPatientList.map((patient) => (
+                <tr key={patient.id} className="border-b hover:bg-gray-50">
+                  <td className="py-2">{patient.id}</td>
+                  <td className="py-2">{patient.name}</td>
+                  <td
+                    className={`py-2 font-semibold ${
+                      patient.status === "Completed"
+                        ? "text-green-600"
+                        : "text-red-500"
+                    }`}
+                  >
+                    {patient.status}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  );
+};
+
+const Card = ({ title, value, icon }) => {
+  return (
+    <div className="bg-white p-5 rounded-2xl shadow-md flex items-center justify-between hover:shadow-lg transition">
+      <div>
+        <h3 className="text-gray-500 text-sm">{title}</h3>
+        <p className="text-2xl font-bold text-gray-700">{value}</p>
+      </div>
+      <div className="text-blue-500">{icon}</div>
+    </div>
   );
 };
 

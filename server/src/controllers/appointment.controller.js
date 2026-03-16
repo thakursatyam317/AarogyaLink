@@ -94,7 +94,7 @@ export const getDoctorAppointment = async (req, res) => {
       date: new Date(order.created_at * 1000),
     };
     await appointment.save();
-
+    console.log("Save appointment")
     // ----------------------------
     // Response
     // ----------------------------
