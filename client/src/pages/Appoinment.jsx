@@ -96,6 +96,7 @@ const Appointment = () => {
             doctorEmail: doctorData.email,
             userEmail: userData.email,
           });
+          console.log("Payment success response:", response);
           navigate("/");
         },
         prefill: {

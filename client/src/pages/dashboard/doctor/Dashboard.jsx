@@ -7,9 +7,9 @@ import authAxios from "../../../utils/authAxios";
 
 const Dashboard = () => {
   const { user } = useAuth();
-  const [counter, setCounter] = useState(0);    
+  const [counter, setCounter] = useState(0);
+  const [todayTotalPatients, setTodayTotalPatients] = useState(0);
 
-  
   const dashboardData = {
     totalPayment: 150000,
     totalRevenue: 95000,
@@ -18,13 +18,31 @@ const Dashboard = () => {
     completedToday: 18,
     remainingToday: 7,
   };
+
+  useEffect(() => {
+    try {
+      const featchTodayAppointments = async () => {
+        const response = await authAxios.get("/doctordashboard/todayappointments");
+
+        console.log("Response Data:--- ", response.data);
+        setTodayTotalPatients(response.data.data.todayAppointments[0]?.count || 0);
+        console.log("Today's Appointments Count:", todayTotalPatients);
+      };
+      featchTodayAppointments();
+    } catch (error) {
+      console.error("Error fetching today's appointments count:", error);
+    }
+  }, [todayTotalPatients]);
+
+
+
   useEffect(() => {
     try {
       const featchCount = async () => {
         const response = await authAxios.get("/doctordashboard/notifications");
-        
+
         console.log("Response Data:- ", response.data);
-        setCounter(response.data.data.count[0]?.count || 0);
+        setCounter(response.data.data?.count[0].count || 0);
         console.log("Notifications Count:", counter);
       };
       featchCount();
@@ -42,7 +60,6 @@ const Dashboard = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-100">
-
       {/* Sidebar */}
       <div className="w-[20%] bg-gray-800 text-white p-6 hidden md:block">
         <h1 className="text-2xl font-bold mb-8">Doctor Panel</h1>
@@ -80,41 +97,50 @@ const Dashboard = () => {
 
       {/* Main Content */}
       <div className="flex-1 p-6">
-
         <h1 className="text-3xl font-bold mb-6 text-gray-700">
           Doctor Dashboard
         </h1>
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-
-          <Card title="Total Payment" value={`₹${dashboardData.totalPayment}`} icon={<DollarSign />} />
-          <Card title="Total Revenue (Profit)" value={`₹${dashboardData.totalRevenue}`} icon={<DollarSign />} />
-          <Card title="Total Patients" value={dashboardData.totalPatients} icon={<Users />} />
-          <Card title="Today Patients" value={dashboardData.todayPatients} icon={<Users />} />
-          <Card title="Completed Today" value={dashboardData.completedToday} icon={<CheckCircle />} />
+          <Card
+            title="Total Payment"
+            value={`₹${dashboardData.totalPayment}`}
+            icon={<DollarSign />}
+          />
+          <Card
+            title="Total Revenue (Profit)"
+            value={`₹${dashboardData.totalRevenue}`}
+            icon={<DollarSign />}
+          />
+          <Card
+            title="Total Patients"
+            value={todayTotalPatients}
+            icon={<Users />}
+          />
+          <Card
+            title="Today Patients"
+            value={todayTotalPatients}
+            icon={<Users />}
+          />
+          <Card
+            title="Completed Today"
+            value={dashboardData.completedToday}
+            icon={<CheckCircle />}
+          />
           <Card title="Remaining Today" value={counter} icon={<Clock />} />
           <NavLink to="/doctor/dashboard/notifications" className="relative">
-  
-  {counter > 0 && (
-    <span className="absolute top-2 right-2 w-3 h-3 bg-red-500 rounded-full"></span>
-  )}
+            {counter > 0 && (
+              <span className="absolute top-2 right-2 w-3 h-3 bg-red-500 rounded-full"></span>
+            )}
 
-  <Card
-    title="New Notifications"
-    value={counter}
-    icon={<Clock />}
-  />
-
-</NavLink>
-         
+            <Card title="New Notifications" value={counter} icon={<Clock />} />
+          </NavLink>
         </div>
 
         {/* Today Patient Table */}
         <div className="bg-white p-6 rounded-2xl shadow-md">
-          <h2 className="text-xl font-semibold mb-4">
-            Today's Patients
-          </h2>
+          <h2 className="text-xl font-semibold mb-4">Today's Patients</h2>
 
           <table className="w-full text-left">
             <thead>
@@ -144,7 +170,6 @@ const Dashboard = () => {
             </tbody>
           </table>
         </div>
-
       </div>
     </div>
   );
