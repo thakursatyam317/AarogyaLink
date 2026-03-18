@@ -105,18 +105,18 @@ export const todayTotalAppointments = async (req, res) => {
       throw new ApiError(404, "Doctor not found");
     }
     // const notifications = await Appointment.find({ doctor_id: doctor._id, status: "pending" });
-    const start = new Date();
-    start.setHours(0, 0, 0, 0);
+    // const start = new Date();
+    // start.setHours(0, 0, 0, 0);
 
-    const end = new Date();
-    end.setHours(23, 59, 59, 999);
-
+    // const end = new Date();
+    // end.setHours(23, 59, 59, 999);
+const today = new Date().toISOString().split("T")[0];
     const todayAppointments = await Appointment.aggregate([
       {
         $match: {
           doctor_id: doctor._id,
-          status: "Scheduled",
-          appointmentDate: { $gte: start, $lte: end },
+          status: { $in: ["accepted", "Scheduled"] },
+          appointmentDate: today,
         },
       },
       {
