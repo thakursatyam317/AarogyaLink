@@ -373,3 +373,39 @@ export const getPreceptionDataForUser = async (req, res) => {
     new ApiError(500, "Server error while fetching prescription data");
   }
 }
+
+export const updateAppointmentStatus = async (req, res) => {
+  try {
+    const { appointmentId, status } = req.body;
+    const user_id = req.user?._id || req.user?.id;
+    const patientId = req.body.patientId;
+    console.log("Logged-in doctorId:", user_id);
+    console.log("Received data for updating appointment status:", req.body);
+    
+    const doctor = await Doctor.findOne({ user_id: user_id });
+    if (!doctor) {
+      throw new ApiError(404, "Doctor not found");
+    }
+    const appointment = await Appointment.findOne({user_id: patientId, doctor_id: doctor._id});
+    if (!appointment) {
+      throw new ApiError(404, "Appointment not found");
+    }
+    appointment.status = status;
+    await appointment.save();
+    console.log("Updated appointment status:", appointment);
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          "Appointment status updated successfully",
+          appointment
+        )
+      );
+
+  } catch (error) {
+    console.error("❌ Update Appointment Status Error:", error);
+    new ApiError(500, "Server error while updating appointment status");
+  }
+}

@@ -122,8 +122,8 @@ const appointmentSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: ["Scheduled", "Completed", "Cancelled"],
-      default: "Scheduled",
+      enum: ["scheduled", "completed", "cancelled", "pending", "accepted"],
+      default: "scheduled",
     },
 
     paymentStatus: {

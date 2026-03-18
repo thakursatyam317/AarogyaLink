@@ -7,7 +7,7 @@ const Prescription = () => {
   const { patientID } = useParams();
   const navigate = useNavigate();
   const {authUser} = useAuth();
-
+  const [status, setStatus] = useState("");
   const [diagnosis, setDiagnosis] = useState([
     { name: "", icd: "", namaste: "" },
   ]);
@@ -102,7 +102,15 @@ const Prescription = () => {
         `/prescription/createprescription`,
         body
       );
-
+      const statusChangeResponse = await authAxios.post(
+        `/prescription/updateappointmentstatus`,
+        {
+          appointmentId: prescriptionData?.appointmentId,
+          status: "completed",
+          body : body,
+        }
+      );
+      console.log("Status Change Response:", statusChangeResponse);
       console.log("PDF:", response.data);
       console.log("Full Response:", response);
       setTimeout(() => {

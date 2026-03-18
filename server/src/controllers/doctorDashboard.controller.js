@@ -110,12 +110,13 @@ export const todayTotalAppointments = async (req, res) => {
 
     // const end = new Date();
     // end.setHours(23, 59, 59, 999);
+
 const today = new Date().toISOString().split("T")[0];
     const todayAppointments = await Appointment.aggregate([
       {
         $match: {
           doctor_id: doctor._id,
-          status: { $in: ["accepted", "Scheduled"] },
+          status: { $in: ["accepted", "scheduled", "completed", "cancelled", "pending"] },
           appointmentDate: today,
         },
       },
@@ -127,13 +128,31 @@ const today = new Date().toISOString().split("T")[0];
       },
     ]);
     console.log("Today's Appointments Count:", todayAppointments);
+    const completedTodayAppointments = await Appointment.aggregate([
+      {
+        $match: {
+          doctor_id: doctor._id,
+          status: "completed",
+          appointmentDate: today,
+        },
+      },
+      {
+        $group: {
+          _id: "completedTodayAppointments",
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+    console.log("Today's Completed Appointments Count:", completedTodayAppointments);
+    
     return res
       .status(200)
       .json(
         new ApiResponse(
           200,
           "Today's appointments count fetched successfully",
-          {todayAppointments: todayAppointments},
+          {todayAppointments: todayAppointments, completedTodayAppointments: completedTodayAppointments},
+       
         ),
       );
   } catch (error) {
@@ -141,3 +160,5 @@ const today = new Date().toISOString().split("T")[0];
     throw new ApiError(500, "Server Error");
   }
 };
+
+

@@ -9,7 +9,7 @@ const Dashboard = () => {
   const { user } = useAuth();
   const [counter, setCounter] = useState(0);
   const [todayTotalPatients, setTodayTotalPatients] = useState(0);
-
+  const [todayCompletedPatients, setTodayCompletedPatients] = useState(0);  
   const dashboardData = {
     totalPayment: 150000,
     totalRevenue: 95000,
@@ -26,6 +26,7 @@ const Dashboard = () => {
 
         console.log("Response Data:--- ", response.data);
         setTodayTotalPatients(response.data.data.todayAppointments[0]?.count || 0);
+        setTodayCompletedPatients(response.data.data.completedTodayAppointments[0]?.count || 0);
         console.log("Today's Appointments Count:", todayTotalPatients);
       };
       featchTodayAppointments();
@@ -125,7 +126,7 @@ const Dashboard = () => {
           />
           <Card
             title="Completed Today"
-            value={dashboardData.completedToday}
+            value={todayCompletedPatients}
             icon={<CheckCircle />}
           />
           <Card title="Remaining Today" value={counter} icon={<Clock />} />

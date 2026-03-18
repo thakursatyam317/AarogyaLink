@@ -1,5 +1,5 @@
 import express from 'express';
-import { getThePrescriptionData, createPrescription, getPreceptionDataForUser } from '../controllers/prescription.controller.js';
+import { getThePrescriptionData, createPrescription, getPreceptionDataForUser, updateAppointmentStatus } from '../controllers/prescription.controller.js';
 import { userProtection } from '../middlewares/user.middleware.js';
 import { doctorProtection } from '../middlewares/doctor.middleware.js';
 
@@ -9,6 +9,6 @@ router.get('/getprescription/:id', userProtection,doctorProtection, getThePrescr
 router.post('/createprescription', userProtection, doctorProtection,createPrescription);
 
 router.get('/preceptionUser',userProtection, getPreceptionDataForUser);
-
+router.post('/updateappointmentstatus', userProtection, doctorProtection, updateAppointmentStatus);
 
 export default router;
