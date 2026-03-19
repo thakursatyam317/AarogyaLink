@@ -1,5 +1,5 @@
 import React, { use } from "react";
-import { Users, DollarSign, CheckCircle, Clock } from "lucide-react";
+import { Users, DollarSign, CheckCircle, Clock, IndianRupee } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useAuth } from "../../../contexts/authContext";
@@ -10,6 +10,9 @@ const Dashboard = () => {
   const [counter, setCounter] = useState(0);
   const [todayTotalPatients, setTodayTotalPatients] = useState(0);
   const [todayCompletedPatients, setTodayCompletedPatients] = useState(0);  
+  const [todayRemainingPatients, setTodayRemainingPatients] = useState(0);
+  const [totalPayment, setTotalPayment] = useState(0);
+  const [totalRevenue, setTotalRevenue] = useState(0);
   const dashboardData = {
     totalPayment: 150000,
     totalRevenue: 95000,
@@ -27,6 +30,7 @@ const Dashboard = () => {
         console.log("Response Data:--- ", response.data);
         setTodayTotalPatients(response.data.data.todayAppointments[0]?.count || 0);
         setTodayCompletedPatients(response.data.data.completedTodayAppointments[0]?.count || 0);
+        setTodayRemainingPatients(response.data.data.todayRemainingAppointments[0]?.count || 0);
         console.log("Today's Appointments Count:", todayTotalPatients);
       };
       featchTodayAppointments();
@@ -51,6 +55,21 @@ const Dashboard = () => {
       console.error("Error fetching notifications count:", error);
     }
   }, [counter]);
+
+  useEffect(() => {
+    try {
+      const fetchPaymentOrRevenue = async () => {
+        const response = await authAxios.get("/doctordashboard/paymentOrRevenue");
+
+        console.log("Response Data:--- ", response.data);
+        setTotalPayment(response.data.data.totalPayment || 0);
+        setTotalRevenue(response.data.data.totalRevenue || 0);
+      };
+      fetchPaymentOrRevenue();
+    } catch (error) {
+      
+    }
+  }, [totalPayment, totalRevenue]);
 
   const todayPatientList = [
     { id: 1, name: "Rohit Sharma", status: "Completed" },
@@ -106,13 +125,13 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Card
             title="Total Payment"
-            value={`₹${dashboardData.totalPayment}`}
-            icon={<DollarSign />}
+            value={`₹${totalPayment}`}
+            icon={<IndianRupee />}
           />
           <Card
             title="Total Revenue (Profit)"
-            value={`₹${dashboardData.totalRevenue}`}
-            icon={<DollarSign />}
+            value={`₹${totalRevenue}`}
+            icon={<IndianRupee />}
           />
           <Card
             title="Total Patients"
@@ -129,7 +148,7 @@ const Dashboard = () => {
             value={todayCompletedPatients}
             icon={<CheckCircle />}
           />
-          <Card title="Remaining Today" value={counter} icon={<Clock />} />
+          <Card title="Remaining Today" value={todayRemainingPatients} icon={<Clock />} />
           <NavLink to="/doctor/dashboard/notifications" className="relative">
             {counter > 0 && (
               <span className="absolute top-2 right-2 w-3 h-3 bg-red-500 rounded-full"></span>

@@ -59,9 +59,9 @@ export const getDoctorDashboard = async (req, res) => {
 export const notificationsCount = async (req, res) => {
   try {
     const user_id = req.user?._id || req.user?.id;
-    console.log("User ID for Notifications Count:", user_id);
+    // console.log("User ID for Notifications Count:", user_id);
     const doctor = await Doctor.findOne({ user_id: user_id });
-    console.log("Doctor ID for Notifications Count:", doctor._id);
+    // console.log("Doctor ID for Notifications Count:", doctor._id);
     if (!doctor) {
       throw new ApiError(404, "Doctor not found");
     }
@@ -70,7 +70,7 @@ export const notificationsCount = async (req, res) => {
       {
         $match: {
           doctor_id: doctor._id,
-          status: "Scheduled",
+          status: "scheduled",
         },
       },
       {
@@ -81,7 +81,7 @@ export const notificationsCount = async (req, res) => {
       },
     ]);
 
-    console.log("Notifications Count:", notifications);
+    // console.log("Notifications Count:", notifications);
     return res.status(200).json(
       new ApiResponse(200, "Notifications count fetched successfully", {
         count: notifications,
@@ -93,30 +93,26 @@ export const notificationsCount = async (req, res) => {
   }
 };
 
-export const todayTotalAppointments = async (req, res) => {
+export const todayAppointments = async (req, res) => {
   try {
     const user_id = req.user?._id || req.user?.id;
-    console.log("User ID for Notifications Count:", user_id);
+    // console.log("User ID for Notifications Count:", user_id);
     const doctor = await Doctor.findOne({ user_id: user_id });
 
-    console.log("Doctor ID for Notifications Count:", doctor._id);
+    // console.log("Doctor ID for Notifications Count:", doctor._id);
 
     if (!doctor) {
       throw new ApiError(404, "Doctor not found");
     }
-    // const notifications = await Appointment.find({ doctor_id: doctor._id, status: "pending" });
-    // const start = new Date();
-    // start.setHours(0, 0, 0, 0);
 
-    // const end = new Date();
-    // end.setHours(23, 59, 59, 999);
-
-const today = new Date().toISOString().split("T")[0];
+    const today = new Date().toISOString().split("T")[0];
     const todayAppointments = await Appointment.aggregate([
       {
         $match: {
           doctor_id: doctor._id,
-          status: { $in: ["accepted", "scheduled", "completed", "cancelled", "pending"] },
+          status: {
+            $in: ["accepted", "scheduled", "completed", "cancelled", "pending"],
+          },
           appointmentDate: today,
         },
       },
@@ -127,7 +123,7 @@ const today = new Date().toISOString().split("T")[0];
         },
       },
     ]);
-    console.log("Today's Appointments Count:", todayAppointments);
+    // console.log("Today's Appointments Count:", todayAppointments);
     const completedTodayAppointments = await Appointment.aggregate([
       {
         $match: {
@@ -143,22 +139,87 @@ const today = new Date().toISOString().split("T")[0];
         },
       },
     ]);
-    console.log("Today's Completed Appointments Count:", completedTodayAppointments);
-    
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(
-          200,
-          "Today's appointments count fetched successfully",
-          {todayAppointments: todayAppointments, completedTodayAppointments: completedTodayAppointments},
-       
-        ),
-      );
+    // console.log(
+    //   "Today's Completed Appointments Count:",
+    //   completedTodayAppointments,
+    // );
+
+    const todayRemainingAppointments = await Appointment.aggregate([
+      {
+        $match: {
+          doctor_id: doctor._id,
+          status: { $in: ["accepted", "scheduled", "pending"] },
+          appointmentDate: today,
+        },
+      },
+      {
+        $group: {
+          _id: "todayRemainingAppointments",
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    return res.status(200).json(
+      new ApiResponse(200, "Today's appointments count fetched successfully", {
+        todayAppointments: todayAppointments,
+        completedTodayAppointments: completedTodayAppointments,
+        todayRemainingAppointments: todayRemainingAppointments,
+      }),
+    );
   } catch (error) {
     console.error("Error fetching notifications count:", error);
     throw new ApiError(500, "Server Error");
   }
 };
+
+export const paymentOrRevenue = async (req, res) => {
+  try {
+    const user_id = req.user?._id || req.user?.id;
+    console.log("User ID for Payment/Revenue:", user_id);
+    const doctor = await Doctor.findOne({ user_id: user_id });
+    console.log("Doctor ID for Payment/Revenue:", doctor._id);
+    if (!doctor) {
+      throw new ApiError(404, "Doctor not found");
+    }
+
+    const payments = await Appointment.aggregate([
+      {
+        $match: {
+          doctor_id: doctor._id,
+          status: "completed",
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalPayment: {
+            $sum: {
+              $toDouble: {
+                $ifNull: ["$paymentDetails.amount", 0],
+              },
+            },
+          },
+        },
+      },
+    ]);
+    console.log("Total Payments:", payments);
+
+    const totalPayment = payments[0]?.totalPayment || 0;
+    totalPayment = totalPayment/100; // Convert from paise to rupees
+    const totalRevenue = totalPayment * 0.7; // Assuming doctor gets 70% of the payment
+
+    return res.status(200).json(
+      new ApiResponse(200, "Payment and revenue data fetched successfully", {
+        totalPayment: totalPayment,
+        totalRevenue: totalRevenue,
+      }),
+    );
+  } catch (error) {
+    console.error("Error fetching payment/revenue data:", error);
+    throw new ApiError(500, "Server Error");
+  }
+};
+
 
 
