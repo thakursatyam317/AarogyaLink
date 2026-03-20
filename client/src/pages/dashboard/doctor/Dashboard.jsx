@@ -1,5 +1,11 @@
 import React, { use } from "react";
-import { Users, DollarSign, CheckCircle, Clock, IndianRupee } from "lucide-react";
+import {
+  Users,
+  DollarSign,
+  CheckCircle,
+  Clock,
+  IndianRupee,
+} from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useAuth } from "../../../contexts/authContext";
@@ -9,10 +15,12 @@ const Dashboard = () => {
   const { user } = useAuth();
   const [counter, setCounter] = useState(0);
   const [todayTotalPatients, setTodayTotalPatients] = useState(0);
-  const [todayCompletedPatients, setTodayCompletedPatients] = useState(0);  
+  const [todayCompletedPatients, setTodayCompletedPatients] = useState(0);
   const [todayRemainingPatients, setTodayRemainingPatients] = useState(0);
   const [totalPayment, setTotalPayment] = useState(0);
   const [totalRevenue, setTotalRevenue] = useState(0);
+  const [allTodayAppointments, setAllTodayAppointments] = useState([]);
+
   const dashboardData = {
     totalPayment: 150000,
     totalRevenue: 95000,
@@ -25,12 +33,20 @@ const Dashboard = () => {
   useEffect(() => {
     try {
       const featchTodayAppointments = async () => {
-        const response = await authAxios.get("/doctordashboard/todayappointments");
+        const response = await authAxios.get(
+          "/doctordashboard/todayappointments",
+        );
 
         console.log("Response Data:--- ", response.data);
-        setTodayTotalPatients(response.data.data.todayAppointments[0]?.count || 0);
-        setTodayCompletedPatients(response.data.data.completedTodayAppointments[0]?.count || 0);
-        setTodayRemainingPatients(response.data.data.todayRemainingAppointments[0]?.count || 0);
+        setTodayTotalPatients(
+          response.data.data.todayAppointments[0]?.count || 0,
+        );
+        setTodayCompletedPatients(
+          response.data.data.completedTodayAppointments[0]?.count || 0,
+        );
+        setTodayRemainingPatients(
+          response.data.data.todayRemainingAppointments[0]?.count || 0,
+        );
         console.log("Today's Appointments Count:", todayTotalPatients);
       };
       featchTodayAppointments();
@@ -38,8 +54,6 @@ const Dashboard = () => {
       console.error("Error fetching today's appointments count:", error);
     }
   }, [todayTotalPatients]);
-
-
 
   useEffect(() => {
     try {
@@ -59,24 +73,34 @@ const Dashboard = () => {
   useEffect(() => {
     try {
       const fetchPaymentOrRevenue = async () => {
-        const response = await authAxios.get("/doctordashboard/paymentOrRevenue");
+        const response = await authAxios.get(
+          "/doctordashboard/paymentOrRevenue",
+        );
 
         console.log("Response Data:--- ", response.data);
         setTotalPayment(response.data.data.totalPayment || 0);
         setTotalRevenue(response.data.data.totalRevenue || 0);
       };
       fetchPaymentOrRevenue();
-    } catch (error) {
-      
-    }
+    } catch (error) {}
   }, [totalPayment, totalRevenue]);
 
-  const todayPatientList = [
-    { id: 1, name: "Rohit Sharma", status: "Completed" },
-    { id: 2, name: "Aman Verma", status: "Remaining" },
-    { id: 3, name: "Priya Singh", status: "Completed" },
-    { id: 4, name: "Neha Gupta", status: "Remaining" },
-  ];
+  useEffect(() => {
+    const fetchAllTodayAppointments = async () => {
+      try {
+        const response = await authAxios.get(
+          "/doctordashboard/alltodayappointments",
+        );
+
+        console.log("Response Data:---: ", response.data);
+        setAllTodayAppointments(response.data.data || []);
+      } catch (error) {
+        console.error("Error fetching all today's appointments:", error);
+      }
+    };
+
+    fetchAllTodayAppointments();
+  }, []);
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -148,7 +172,11 @@ const Dashboard = () => {
             value={todayCompletedPatients}
             icon={<CheckCircle />}
           />
-          <Card title="Remaining Today" value={todayRemainingPatients} icon={<Clock />} />
+          <Card
+            title="Remaining Today"
+            value={todayRemainingPatients}
+            icon={<Clock />}
+          />
           <NavLink to="/doctor/dashboard/notifications" className="relative">
             {counter > 0 && (
               <span className="absolute top-2 right-2 w-3 h-3 bg-red-500 rounded-full"></span>
@@ -172,15 +200,23 @@ const Dashboard = () => {
             </thead>
 
             <tbody>
-              {todayPatientList.map((patient) => (
-                <tr key={patient.id} className="border-b hover:bg-gray-50">
-                  <td className="py-2">{patient.id}</td>
-                  <td className="py-2">{patient.name}</td>
+              {allTodayAppointments.map((patient) => (
+                <tr
+                  key={patient.patientId}
+                  className="border-b hover:bg-gray-50"
+                >
+                  <td className="py-2">{patient.patientId}</td>
+                  <td className="py-2">{patient.name}</td> {/* ✅ fixed */}
                   <td
                     className={`py-2 font-semibold ${
-                      patient.status === "Completed"
+                      patient.status === "completed"
                         ? "text-green-600"
-                        : "text-red-500"
+                        : patient.status === "accepted"
+                          ? "text-blue-600"
+                          : patient.status === "scheduled" ||
+                              patient.status === "remaining"
+                            ? "text-yellow-500"
+                            : "text-red-500"
                     }`}
                   >
                     {patient.status}

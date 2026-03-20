@@ -2,25 +2,25 @@ import React, { useState, useEffect } from "react";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import authAxios from "../../../utils/authAxios";
 import { useAuth } from "../../../contexts/authContext";
+import { allDiagnoses } from "../../../utils/allPresciption";
+import { allMedicines } from "../../../utils/allPresciption";
 
 const Prescription = () => {
   const { patientID } = useParams();
   const navigate = useNavigate();
-  const {authUser} = useAuth();
+  const { authUser } = useAuth();
   const [status, setStatus] = useState("");
-  const [diagnosis, setDiagnosis] = useState([
-    { name: "", icd: "", namaste: "" },
-  ]);
+  const [diagnosis, setDiagnosis] = useState([{ name: "" }]);
   const [medicines, setMedicines] = useState([
     { name: "", meal: "", dosage: "" },
   ]);
   const [checkups, setCheckups] = useState([""]);
   const [prescriptionData, setPrescriptionData] = useState(null);
   const [loading, setLoading] = useState(false);
-
+  const [suggestions, setSuggestions] = useState([]);
+  const [medicineSuggestions, setMedicineSuggestions] = useState({});
   // add / remove helpers (unchanged)
-  const addDiagnosis = () =>
-    setDiagnosis([...diagnosis, { name: "", icd: "", namaste: "" }]);
+  const addDiagnosis = () => setDiagnosis([...diagnosis, { name: "" }]);
   const addMedicine = () =>
     setMedicines([...medicines, { name: "", meal: "", dosage: "" }]);
   const addCheckup = () => setCheckups([...checkups, ""]);
@@ -32,16 +32,52 @@ const Prescription = () => {
     setCheckups(checkups.filter((_, i) => i !== index));
 
   // field change handlers
-  const handleDiagnosisChange = (i, field, value) => {
+  // const handleDiagnosisChange = (i, field, value) => {
+  //   const updated = [...diagnosis];
+  //   updated[i][field] = value;
+  //   setDiagnosis(updated);
+  // };
+
+  const handleDiagnosisChange = (idx, field, value) => {
     const updated = [...diagnosis];
-    updated[i][field] = value;
+    updated[idx][field] = value;
     setDiagnosis(updated);
+
+    // 🔥 Frontend filtering
+    if (field === "name" && value.length > 0) {
+      const filtered = allDiagnoses.filter((item) =>
+        item.toLowerCase().includes(value.toLowerCase()),
+      );
+
+      setSuggestions(filtered);
+    } else {
+      setSuggestions([]);
+    }
   };
 
   const handleMedicineChange = (i, field, value) => {
     const updated = [...medicines];
     updated[i][field] = value;
     setMedicines(updated);
+
+    // 🔥 suggestions only for name
+    if (field === "name") {
+      if (value.length > 0) {
+        const filtered = allMedicines
+          .filter((m) => m.toLowerCase().includes(value.toLowerCase()))
+          .slice(0, 5);
+
+        setMedicineSuggestions((prev) => ({
+          ...prev,
+          [i]: filtered,
+        }));
+      } else {
+        setMedicineSuggestions((prev) => ({
+          ...prev,
+          [i]: [],
+        }));
+      }
+    }
   };
 
   const handleCheckupChange = (i, value) => {
@@ -54,7 +90,7 @@ const Prescription = () => {
     const fetchPrescriptionData = async () => {
       try {
         const response = await authAxios.get(
-          `/prescription/getprescription/:${patientID}`
+          `/prescription/getprescription/:${patientID}`,
         );
         console.log("patientID  ", patientID);
         const fetched = response.data?.data?.[0] ?? null;
@@ -100,15 +136,15 @@ const Prescription = () => {
 
       const response = await authAxios.post(
         `/prescription/createprescription`,
-        body
+        body,
       );
       const statusChangeResponse = await authAxios.post(
         `/prescription/updateappointmentstatus`,
         {
           appointmentId: prescriptionData?.appointmentId,
           status: "completed",
-          body : body,
-        }
+          body: body,
+        },
       );
       console.log("Status Change Response:", statusChangeResponse);
       console.log("PDF:", response.data);
@@ -238,37 +274,42 @@ const Prescription = () => {
             {/* DIAGNOSIS, MEDICINES, CHECKUPS (form UI unchanged) */}
             <Section title="Diagnosis">
               {diagnosis.map((item, idx) => (
-                <div key={idx} className="grid grid-cols-4 w-full gap-5 mb-4">
-                  <Input
-                    placeholder="Diagnosis"
-                    value={item.name}
-                    onChange={(e) =>
-                      handleDiagnosisChange(idx, "name", e.target.value)
-                    }
-                    className="w-72"
-                  />
-                  <Input
-                    placeholder="ICD Code"
-                    value={item.icd}
-                    onChange={(e) =>
-                      handleDiagnosisChange(idx, "icd", e.target.value)
-                    }
-                    className="w-36 ms-32"
-                  />
-                  <Input
-                    placeholder="NAMASTE Code"
-                    value={item.namaste}
-                    onChange={(e) =>
-                      handleDiagnosisChange(idx, "namaste", e.target.value)
-                    }
-                    className="w-36 ms-26"
-                  />
-                  <button
-                    className="bg-red-500 text-white ms-20 w-10 h-10 flex items-center justify-center rounded-full mt-1"
-                    onClick={() => removeDiagnosis(idx)}
-                  >
-                    –
-                  </button>
+                <div key={idx} className="w-full mb-4 relative">
+                  <div className="flex">
+                    <Input
+                      placeholder="Diagnosis"
+                      value={item.name}
+                      onChange={(e) =>
+                        handleDiagnosisChange(idx, "name", e.target.value)
+                      }
+                      className="w-[80%]"
+                    />
+
+                    <button
+                      className="bg-red-500 text-white ms-4 w-10 h-10 rounded-full"
+                      onClick={() => removeDiagnosis(idx)}
+                    >
+                      –
+                    </button>
+                  </div>
+
+                  {/* 🔥 Suggestions */}
+                  {suggestions.length > 0 && (
+                    <div className="absolute bg-white border w-[80%] mt-1 rounded shadow z-10 max-h-40 overflow-y-auto">
+                      {suggestions.map((s, i) => (
+                        <div
+                          key={i}
+                          className="p-2 hover:bg-gray-100 cursor-pointer"
+                          onClick={() => {
+                            handleDiagnosisChange(idx, "name", s);
+                            setSuggestions([]);
+                          }}
+                        >
+                          {s}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               ))}
 
@@ -278,27 +319,59 @@ const Prescription = () => {
             <Section title="Medicines">
               {medicines.map((item, idx) => (
                 <div key={idx} className="grid grid-cols-4 gap-5 mb-4">
-                  <Input
-                    placeholder="Medicine Name"
-                    value={item.name}
-                    onChange={(e) =>
-                      handleMedicineChange(idx, "name", e.target.value)
-                    }
-                  />
-                  <Input
-                    placeholder="Meal (Before/After)"
+                  {/* 🔥 Wrap with relative */}
+                  <div className="relative">
+                    <Input
+                      placeholder="Medicine Name"
+                      value={item.name}
+                      onChange={(e) =>
+                        handleMedicineChange(idx, "name", e.target.value)
+                      }
+                    />
+
+                    {/* 🔥 Suggestions dropdown */}
+                    {medicineSuggestions[idx]?.length > 0 && (
+                      <div className="absolute bg-white border w-full mt-1 rounded shadow z-10 max-h-40 overflow-y-auto">
+                        {medicineSuggestions[idx].map((m, i) => (
+                          <div
+                            key={i}
+                            className="p-2 hover:bg-gray-100 cursor-pointer"
+                            onClick={() => {
+                              handleMedicineChange(idx, "name", m);
+                              setMedicineSuggestions((prev) => ({
+                                ...prev,
+                                [idx]: [],
+                              }));
+                            }}
+                          >
+                            {m}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <select
                     value={item.meal}
                     onChange={(e) =>
                       handleMedicineChange(idx, "meal", e.target.value)
                     }
-                  />
+                    className="border rounded mx-5 px-3 py-2 w-full"
+                  >
+                    <option value="">Select Meal</option>
+                    <option value="Before Meal">Before Meal</option>
+                    <option value="After Meal">After Meal</option>
+                  </select>
+
                   <Input
                     placeholder="Dosage"
                     value={item.dosage}
                     onChange={(e) =>
                       handleMedicineChange(idx, "dosage", e.target.value)
                     }
+                    className="mx-5"
                   />
+
                   <button
                     className="bg-red-500 text-white w-10 h-10 flex items-center justify-center rounded-full mt-1"
                     onClick={() => removeMedicine(idx)}
@@ -335,7 +408,11 @@ const Prescription = () => {
             </Section>
 
             <Section title="Next Appointment">
-              <input type="date" className="border p-2 rounded w-60" />
+              <input
+                type="date"
+                className="border p-2 rounded w-60"
+                min={new Date().toISOString().split("T")[0]}
+              />
             </Section>
 
             <div className="text-center mt-8">

@@ -1,4 +1,5 @@
 import User from "../models/user.model.js";
+import mongoose from "mongoose";
 import Appointment from "../models/appointment.model.js";
 import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
@@ -176,9 +177,9 @@ export const todayAppointments = async (req, res) => {
 export const paymentOrRevenue = async (req, res) => {
   try {
     const user_id = req.user?._id || req.user?.id;
-    console.log("User ID for Payment/Revenue:", user_id);
+    // console.log("User ID for Payment/Revenue:", user_id);
     const doctor = await Doctor.findOne({ user_id: user_id });
-    console.log("Doctor ID for Payment/Revenue:", doctor._id);
+    // console.log("Doctor ID for Payment/Revenue:", doctor._id);
     if (!doctor) {
       throw new ApiError(404, "Doctor not found");
     }
@@ -195,20 +196,22 @@ export const paymentOrRevenue = async (req, res) => {
           _id: null,
           totalPayment: {
             $sum: {
-              $toDouble: {
-                $ifNull: ["$paymentDetails.amount", 0],
-              },
+              $cond: [
+                { $ifNull: ["$paymentDetails.amount", false] },
+                { $toDouble: "$paymentDetails.amount" },
+                0,
+              ],
             },
           },
         },
       },
     ]);
-    console.log("Total Payments:", payments);
+    // console.log("Total Payments:", payments);
 
-    const totalPayment = payments[0]?.totalPayment || 0;
-    totalPayment = totalPayment/100; // Convert from paise to rupees
-    const totalRevenue = totalPayment * 0.7; // Assuming doctor gets 70% of the payment
-
+    const totalPayment = (payments[0]?.totalPayment || 0) / 100;
+    const totalRevenue = totalPayment * 0.7;
+    // console.log("Total Payment (in rupees):", totalPayment);
+    // console.log("Total Revenue (70% of payment):", totalRevenue);
     return res.status(200).json(
       new ApiResponse(200, "Payment and revenue data fetched successfully", {
         totalPayment: totalPayment,
@@ -221,5 +224,54 @@ export const paymentOrRevenue = async (req, res) => {
   }
 };
 
+export const getAllAppointmentsForDoctor = async (req, res) => {
+  try {
+    const user_id = req.user?._id || req.user?.id;
+    // console.log("Doctor User ID from Token:", user_id);
+    const doctor = await Doctor.findOne({
+      user_id: user_id,
+    });
+    // console.log("Doctor Found:", doctor);
+    if (!doctor) {
+      throw new ApiError(404, "Doctor not found");
+    }
 
-
+    const today = new Date().toISOString().split("T")[0];
+    // console.log("✅ before aggregate");
+    const allTodayAppointments = await Appointment.aggregate([
+      {
+        $match: {
+          doctor_id: new mongoose.Types.ObjectId(doctor._id),
+          appointmentDate: today,
+          // status: { $ne: "accepted" },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          patientId: "$patientDetail.userID",
+          name: "$patientDetail.userName",
+          status: "$status",
+        },
+      },
+    ]);
+    // console.log("✅ After aggregate");
+    // console.log("Today's Appointments :", allTodayAppointments);
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          "Today's appointments fetched successfully",
+          allTodayAppointments,
+        ),
+      );
+  } catch (error) {
+    console.error("❌ Get Today's Appointments Error:", error);
+    return res
+      .status(500)
+      .json(
+        new ApiError(500, "Server error while fetching today's appointments"),
+      );
+  }
+};
