@@ -1,27 +1,32 @@
-import axios from "axios";
+import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv";
 
 dotenv.config({ path: "../../.env" });
 
-async function main() {
-  try {
-    const res = await axios.post(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
-      {
-        contents: [
-          {
-            parts: [{ text: "Explain AI simply" }],
-          },
-        ],
-      }
-    );
+const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY,
+});
 
-    console.log(
-      res.data.candidates[0].content.parts[0].text
-    );
+export const chatBot = async ()=> {
+  try {
+    const {text} = req.body;
+    console.log(text);
+
+    const response = await ai.models.generateContent({
+      model: "models/gemini-2.5-flash",
+      contents: [
+        {
+          parts: [
+            { text: "Explain how AI works in simple words" }
+          ],
+        },
+      ],
+    });
+
+    console.log(response.text);
   } catch (err) {
-    console.error("ERROR:", err.response?.data || err.message);
+    console.error("ERROR:", err.message);
   }
 }
 
-main();
+chatBot();
