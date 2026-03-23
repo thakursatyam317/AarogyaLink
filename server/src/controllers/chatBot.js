@@ -1,13 +1,15 @@
 import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv";
 
+import ApiResponse from "../utils/ApiResponse.js";
+
 dotenv.config({ path: "../../.env" });
 
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
 });
 
-export const chatBot = async ()=> {
+export const chatBot = async (req, res) => {
   try {
     const {text} = req.body;
     console.log(text);
@@ -17,16 +19,19 @@ export const chatBot = async ()=> {
       contents: [
         {
           parts: [
-            { text: "Explain how AI works in simple words" }
+            { text: text}
           ],
         },
       ],
     });
 
-    console.log(response.text);
+    console.log("Response chatbot:-" + response.text);
+    res.json(
+      new ApiResponse(true, "Chatbot response", { reply: response.text })
+    )
+    
   } catch (err) {
     console.error("ERROR:", err.message);
   }
 }
 
-chatBot();

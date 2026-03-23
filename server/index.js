@@ -10,6 +10,7 @@ import appointmentRoute from './src/routes/appointment.route.js';
 import prescriptionRoute from './src/routes/prescription.route.js';
 import emr from '../server/src/routes/EMR.route.js';
 import doctorDashboardRoute from './src/routes/doctorDashboard.route.js';
+import chatBot from './src/routes/chatBot.route.js';
 
 dotenv.config();
 const app = express();
@@ -31,6 +32,7 @@ app.use('/api/appointments', appointmentRoute);
 app.use('/api/prescription', prescriptionRoute);
 app.use('/api/emr', emr);
 app.use('/api/doctordashboard', doctorDashboardRoute); // Serve admin dashboard static files
+app.use('/api/chatbot', chatBot); // Endpoint for chatbot
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, ()=>{

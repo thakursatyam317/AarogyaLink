@@ -25,10 +25,12 @@ import Chatting from "./pages/dashboard/admin/Chatting";
 import DoctorRoute from "./components/DoctorRoute";
 import Unauthorized from "./components/Unauthorized";
 import Preception from "./pages/Preception";
-
+import ChatBot from "./components/ChatBot";
+import ChatIcon from "./components/ChatIcon";
 function App() {
   return (
     <BrowserRouter>
+    <ChatIcon />
       <Toaster position="top-center" reverseOrder={false} />
       <Navbar />
 
@@ -67,6 +69,8 @@ function App() {
         {/* Hospital Routes */}
         <Route path="/hospital/dashboard" element={<HospitalDashboard />} />
         <Route path="/dashboard/emr/chatting" element={<Chatting />} />
+
+        <Route path="/chatbot" element={<ChatBot />} />
       </Routes>
     </BrowserRouter>
   );
