@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import authAxios from "../utils/authAxios";
+import ReactMarkdown from "react-markdown";
 
 const ChatBot = () => {
   const [messages, setMessages] = useState([]);
@@ -8,96 +9,110 @@ const ChatBot = () => {
 
   const messagesEndRef = useRef(null);
 
-  // Fetch old messages
-//   useEffect(() => {
-//     const fetchMessages = async () => {
-//       try {
-//         const res = await authAxios.get("/chatbot/chatbotMessages");
-//         const data = await res.data;
-//         setMessages(data.messages || []);
-//       } catch (err) {
-//         console.log("Error:", err);
-//       }
-//     };
-
-//     fetchMessages();
-//   }, []);
-
   // Auto scroll
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages, loading]);
 
   // Send message
- const sendMessage = async () => {
-  if (!input.trim()) return;
+  const sendMessage = async () => {
+    if (!input.trim()) return;
 
-  const userMessage = {
-    sender: "user",
-    text: input,
-  };
-
-  setMessages((prev) => [...prev, userMessage]);
-  setInput("");
-  setLoading(true);
-
-  try {
-    const res = await authAxios.post("/chatbot/chatbotMessages", {
+    const userMessage = {
+      sender: "user",
       text: input,
-    });
-
-    const data = res.data.data;
-
-    const botMessage = {
-      sender: "bot",
-      text: data.reply || "Sorry, no response",
     };
 
-    setMessages((prev) => [...prev, botMessage]);
-  } catch (error) {
-    console.error(error);
+    setMessages((prev) => [...prev, userMessage]);
+    setInput("");
+    setLoading(true);
 
-    // Optional: error message
-    setMessages((prev) => [
-      ...prev,
-      { sender: "bot", text: "Server error, try again" },
-    ]);
-  }
+    try {
+      const res = await authAxios.post("/chatbot/chatbotMessages", {
+        text: input,
+      });
 
-  setLoading(false);
-};
+      const data = res.data.data;
+
+      const botMessage = {
+        sender: "bot",
+        text: data.reply || "Sorry, no response",
+      };
+
+      setMessages((prev) => [...prev, botMessage]);
+    } catch (error) {
+      setMessages((prev) => [
+        ...prev,
+        { sender: "bot", text: "⚠️ Server error, try again" },
+      ]);
+    }
+
+    setLoading(false);
+  };
 
   return (
-    <div className="w-full h-full flex flex-col bg-white">
+    <div className="w-full h-full flex flex-col bg-white rounded-xl shadow-lg overflow-hidden">
+      
       {/* Header */}
-      <div className="bg-blue-600 text-white p-3 text-center font-semibold">
-        Chat Support 🤖
+      <div className="bg-blue-600 text-white p-3 text-center font-semibold text-sm">
+        🤖 Chat Support
       </div>
 
       {/* Messages */}
-      <div className="flex-1 p-3 overflow-y-auto space-y-2">
+      <div className="flex-1 p-3 overflow-y-auto space-y-3 bg-gray-50">
         {messages.map((msg, i) => (
           <div
             key={i}
-            className={`max-w-[75%] px-3 py-2 rounded-xl text-sm ${
-              msg.sender === "user"
-                ? "bg-blue-500 text-white ml-auto"
-                : "bg-gray-200 text-black"
+            className={`flex ${
+              msg.sender === "user" ? "justify-end" : "justify-start"
             }`}
           >
-            {msg.text}
+            <div
+              className={`max-w-[75%] px-4 py-2 rounded-2xl text-sm leading-relaxed shadow ${
+                msg.sender === "user"
+                  ? "bg-blue-600 text-white rounded-br-sm"
+                  : "bg-white text-gray-800 rounded-bl-sm border"
+              }`}
+            >
+              {msg.sender === "bot" ? (
+                <ReactMarkdown
+                  components={{
+                    p: ({ children }) => <p className="mb-1">{children}</p>,
+                    li: ({ children }) => (
+                      <li className="ml-4 list-disc">{children}</li>
+                    ),
+                    strong: ({ children }) => (
+                      <strong className="font-semibold">
+                        {children}
+                      </strong>
+                    ),
+                  }}
+                >
+                  {msg.text}
+                </ReactMarkdown>
+              ) : (
+                msg.text
+              )}
+            </div>
           </div>
         ))}
 
-        {loading && <div className="text-gray-400 text-xs">Typing...</div>}
+        {/* Typing Loader */}
+        {loading && (
+          <div className="flex justify-start">
+            <div className="bg-white px-4 py-2 rounded-2xl text-sm border shadow text-gray-500 animate-pulse">
+              Typing...
+            </div>
+          </div>
+        )}
 
         <div ref={messagesEndRef}></div>
       </div>
 
       {/* Input */}
-      <div className="p-2 border-t flex gap-2">
+      <div className="p-2 border-t flex gap-2 bg-white">
         <input
-          className="flex-1 border rounded-lg px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-blue-400"
+          className="flex-1 border rounded-full px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-400"
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
@@ -107,7 +122,7 @@ const ChatBot = () => {
 
         <button
           onClick={sendMessage}
-          className="bg-blue-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-blue-700"
+          className="bg-blue-600 text-white px-4 py-2 rounded-full text-sm hover:bg-blue-700 transition"
         >
           Send
         </button>
