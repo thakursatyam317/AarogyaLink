@@ -27,6 +27,9 @@ import Unauthorized from "./components/Unauthorized";
 import Preception from "./pages/Preception";
 import ChatBot from "./components/ChatBot";
 import ChatIcon from "./components/ChatIcon";
+
+import AdminDashboard from "./pages/dashboard/admin/Dashboard";
+
 function App() {
   return (
     <BrowserRouter>
@@ -65,6 +68,7 @@ function App() {
 
         {/* Admin Routes */}
         <Route path="/dashboard/emr" element={<EMR />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
 
         {/* Hospital Routes */}
         <Route path="/hospital/dashboard" element={<HospitalDashboard />} />

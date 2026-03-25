@@ -12,6 +12,9 @@ import emr from '../server/src/routes/EMR.route.js';
 import doctorDashboardRoute from './src/routes/doctorDashboard.route.js';
 import chatBot from './src/routes/chatBot.route.js';
 
+
+
+
 dotenv.config();
 const app = express();
 app.use(express.urlencoded({ extended: true })); 
@@ -22,8 +25,10 @@ app.use(cors({
 }));
 
 
+
 app.use(express.json());
 app.use(cookieParser());
+
 
 app.use('/api/auth',authRoute);
 app.use('/api/user', userRoute);
@@ -32,10 +37,14 @@ app.use('/api/appointments', appointmentRoute);
 app.use('/api/prescription', prescriptionRoute);
 app.use('/api/emr', emr);
 app.use('/api/doctordashboard', doctorDashboardRoute); // Serve admin dashboard static files
-app.use('/api/chatbot', chatBot); // Endpoint for chatbot
+app.use('/api/chatbot', chatBot); 
+
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, ()=>{
     console.log(`server is running on port ${PORT}`);
     connectDB();
+   
+
 });

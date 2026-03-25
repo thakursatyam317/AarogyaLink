@@ -1,55 +1,117 @@
 import React from 'react'
-import { useNavigate, NavLink } from 'react-router-dom'
-
+import { NavLink } from 'react-router-dom'
 
 const HospitalDashboard = () => {
-    const navigate = useNavigate();
 
+  const linkStyle =
+    "text-white text-lg hover:text-gray-300 h-12 w-60 hover:bg-gray-700 rounded-xl ms-5 mt-4 flex items-center ps-4 transition";
 
-    const handleClick = ()=>{
-        navigate("/hospital/dashboard")
-    }
-
+  const activeStyle = "bg-gray-800";
 
   return (
-    <>
-        <div>
-            <div className='flex'>
-                <div className='w-[20%] h-screen bg-gray-600 fixed '>
-                    <div className='mt-20'>
-                        <h1 className='text-white text-2xl font-bold ms-3'>Welcome Satyam Thakur</h1>
+    <div className='flex'>
+      
+      {/* Sidebar */}
+      <div className='w-64 h-screen bg-gray-600 fixed'>
+        <div className='mt-20'>
+          
+          <h1 className='text-white text-2xl font-bold ms-5'>
+            Welcome Satyam
+          </h1>
 
-                         <div className='grid'>
-                        <NavLink className='text-white -my-10 text-xl hover:text-gray-300 h-12 w-60 hover:bg-gray-700 rounded-2xl ms-[10%] mt-12' onClick={handleClick} >Dashboard</NavLink>
-                        <NavLink className='text-white -my-10 text-xl hover:text-gray-300 h-12 w-60 hover:bg-gray-700 rounded-2xl ms-[10%] mt-12'  >Today Appointment</NavLink>
-                         <NavLink className='text-white -my-10 text-xl hover:text-gray-300 h-12 w-60 hover:bg-gray-700 rounded-2xl ms-[10%] mt-12'  >Appointment</NavLink>
-                         <NavLink className='text-white -my-10 text-xl hover:text-gray-300 h-12 w-60 hover:bg-gray-700 rounded-2xl ms-[10%] mt-12'  >Doctors</NavLink>
-                         
-                         <NavLink className='text-white -my-10 text-xl hover:text-gray-300 h-12 w-60 hover:bg-gray-700 rounded-2xl ms-[10%] mt-12'  >EMR</NavLink>
-                         <NavLink className='text-white -my-10 text-xl hover:text-gray-300 h-12 w-60 hover:bg-gray-700 rounded-2xl ms-[10%] mt-12'  >EHR</NavLink>
-                         <NavLink to='/doctor/dashboard/details' className='text-white -my-10 text-xl hover:text-gray-300 h-12 w-60 hover:bg-gray-700 rounded-2xl ms-[10%] mt-12'  >Hospitals</NavLink>
-                         </div>
-                        
-                    </div>
-                </div>
-                <div className='ms-[20%] w-[80%]'>
-                    <div className='mt-20'>
-                        <h1 className='text-3xl ms-10 font-bold'>Doctor Dashboard</h1>
-                        <div>
-                            <h1>Today Appointment</h1>
-                            <div>
+          <div className='flex flex-col mt-6'>
 
-                            </div>
+            <NavLink
+              to="/hospital/dashboard"
+              className={({ isActive }) =>
+                `${linkStyle} ${isActive ? activeStyle : ""}`
+              }
+            >
+              Dashboard
+            </NavLink>
 
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <NavLink
+              to="/hospital/today"
+              className={({ isActive }) =>
+                `${linkStyle} ${isActive ? activeStyle : ""}`
+              }
+            >
+              Today Appointment
+            </NavLink>
+
+            <NavLink
+              to="/hospital/appointments"
+              className={({ isActive }) =>
+                `${linkStyle} ${isActive ? activeStyle : ""}`
+              }
+            >
+              Appointment
+            </NavLink>
+
+            <NavLink
+              to="/hospital/doctors"
+              className={({ isActive }) =>
+                `${linkStyle} ${isActive ? activeStyle : ""}`
+              }
+            >
+              Doctors
+            </NavLink>
+
+            <NavLink
+              to="/hospital/emr"
+              className={({ isActive }) =>
+                `${linkStyle} ${isActive ? activeStyle : ""}`
+              }
+            >
+              EMR
+            </NavLink>
+
+            <NavLink
+              to="/hospital/ehr"
+              className={({ isActive }) =>
+                `${linkStyle} ${isActive ? activeStyle : ""}`
+              }
+            >
+              EHR
+            </NavLink>
+
+            <NavLink
+              to="/hospital/list"
+              className={({ isActive }) =>
+                `${linkStyle} ${isActive ? activeStyle : ""}`
+              }
+            >
+              Hospitals
+            </NavLink>
+
+          </div>
         </div>
-    
-    
-    </>
+      </div>
+
+      {/* Main Content */}
+      <div className='ml-64 w-full'>
+        <div className='mt-20 px-10'>
+          
+          <h1 className='text-3xl font-bold'>
+            Hospital Dashboard
+          </h1>
+
+          <div className='mt-6'>
+            <h2 className='text-xl font-semibold'>
+              Today Appointment
+            </h2>
+
+            {/* Future dynamic data */}
+            <div className='mt-4 p-4 bg-gray-100 rounded-lg'>
+              <p>No appointments yet</p>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
   )
 }
 
-export default HospitalDashboard ;
+export default HospitalDashboard;
