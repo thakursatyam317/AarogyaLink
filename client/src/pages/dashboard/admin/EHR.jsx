@@ -1,7 +1,7 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
 
-const EMR = () => {
+const EHR = () => {
 
   const linkStyle =
     "text-white text-lg flex items-center h-12 w-full px-6 hover:bg-gray-700 transition";
@@ -133,4 +133,4 @@ const EMR = () => {
   )
 }
 
-export default EMR
+export default EHR

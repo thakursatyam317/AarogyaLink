@@ -61,6 +61,12 @@ const Navbar = () => {
                 isActive ? "text-amber-500 font-semibold" : "text-white"
               }>Dashboard</NavLink>
             ) : null
+          }{
+            authUser && authUser.role === "admin" ? (
+              <NavLink to="/admin/dashboard" className={({ isActive }) =>
+                isActive ? "text-amber-500 font-semibold" : "text-white"
+              }>Dashboard</NavLink>
+            ) : null
           }
 
           <NavLink to="/doctorlist">Doctors</NavLink>

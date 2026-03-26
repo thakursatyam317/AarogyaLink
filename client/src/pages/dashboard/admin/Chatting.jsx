@@ -1,120 +1,136 @@
-import React, { useEffect, useRef, useState } from "react";
-import { NavLink } from "react-router-dom";
+import React from 'react'
+import { NavLink } from 'react-router-dom'
 
-const Chatting = () => {
-  const [messages, setMessages] = useState([
-    { id: 1, sender: "doctor", text: "Hello 👋 How can I help you today?" },
-    { id: 2, sender: "user", text: "Hi Doctor, I have a headache." },
-  ]);
+const Chat = () => {
 
-  const [input, setInput] = useState("");
-  const bottomRef = useRef(null);
+  const linkStyle =
+    "text-white text-lg flex items-center h-12 w-full px-6 hover:bg-gray-700 transition";
 
-  // Auto scroll to bottom
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
-
-  const sendMessage = () => {
-    if (!input.trim()) return;
-
-    setMessages((prev) => [
-      ...prev,
-      { id: Date.now(), sender: "user", text: input },
-    ]);
-
-    setInput("");
-
-    // Fake doctor reply (can replace with API/socket)
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: Date.now() + 1,
-          sender: "doctor",
-          text: "Please take rest and drink plenty of water 💊",
-        },
-      ]);
-    }, 800);
-  };
+  const activeStyle = "bg-gray-900";
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className='flex bg-gray-100 min-h-screen'>
+
       {/* Sidebar */}
-      <aside className="hidden md:block w-[20%] bg-gray-900 text-white fixed h-full">
-        <div className="mt-20 px-6">
-          <h1 className="text-2xl font-bold mb-8">Doctor Panel</h1>
+      <div className='w-64 bg-gray-800 fixed h-full shadow-lg'>
+        <div className='mt-10 px-6'>
+          <h1 className='text-white text-2xl font-bold'>
+            🏥 Hospital Panel
+          </h1>
 
-          <nav className="space-y-3">
-            <NavLink to="/doctor/dashboard" className="block p-3 rounded-lg hover:bg-gray-700">
-              Dashboard
-            </NavLink>
-            <NavLink to="/doctor/dashboard/appointment" className="block p-3 rounded-lg hover:bg-gray-700">
-              Appointments
-            </NavLink>
-            <NavLink to="/doctor/dashboard/details" className="block p-3 rounded-lg hover:bg-gray-700">
-              Details
-            </NavLink>
-          </nav>
+          <p className='text-gray-400 mt-2 text-sm'>
+            Welcome Satyam
+          </p>
         </div>
-      </aside>
 
-      {/* Main Chat */}
-      <main className="md:ml-[20%] w-full flex flex-col mt-[4%]">
-        {/* Header */}
-        <header className="sticky top-0 bg-white shadow-md p-4 flex items-center gap-4">
-          <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">
-            U
+        <div className='mt-10 flex flex-col'>
+
+          <NavLink to="/hospital/dashboard"
+            className={({ isActive }) =>
+              `${linkStyle} ${isActive ? activeStyle : ""}`
+            }>
+            📊 Dashboard
+          </NavLink>
+
+          <NavLink to="/hospital/today"
+            className={({ isActive }) =>
+              `${linkStyle} ${isActive ? activeStyle : ""}`
+            }>
+            📅 Today Appointment
+          </NavLink>
+
+          <NavLink to="/hospital/doctors"
+            className={({ isActive }) =>
+              `${linkStyle} ${isActive ? activeStyle : ""}`
+            }>
+            👨‍⚕️ Doctors
+          </NavLink>
+
+          <NavLink to="/hospital/patients"
+            className={({ isActive }) =>
+              `${linkStyle} ${isActive ? activeStyle : ""}`
+            }>
+            🧑 Patients
+          </NavLink>
+
+          <NavLink to="/hospital/emr"
+            className={({ isActive }) =>
+              `${linkStyle} ${isActive ? activeStyle : ""}`
+            }>
+            📁 EMR
+          </NavLink>
+
+          <NavLink to="/hospital/ehr"
+            className={({ isActive }) =>
+              `${linkStyle} ${isActive ? activeStyle : ""}`
+            }>
+            🗂 EHR
+          </NavLink>
+
+          <NavLink to="/hospital/chat"
+            className={({ isActive }) =>
+              `${linkStyle} ${isActive ? activeStyle : ""}`
+            }>
+            💬 Chat
+          </NavLink>
+
+          <NavLink to="/hospital/details"
+            className={({ isActive }) =>
+              `${linkStyle} ${isActive ? activeStyle : ""}`
+            }>
+            ⚙️ Details
+          </NavLink>
+
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className='ml-64 flex-1 p-10'>
+
+        <h1 className='text-3xl font-bold'>
+          Dashboard Overview
+        </h1>
+
+        {/* 🔥 Cards */}
+        <div className='grid grid-cols-4 gap-6 mt-8'>
+
+          <div className='bg-white p-6 rounded-xl shadow hover:shadow-md transition'>
+            <p className='text-gray-500'>Total Doctors</p>
+            <h2 className='text-2xl font-bold mt-2'>12</h2>
           </div>
-          <div>
-            <h1 className="text-lg font-semibold">Patient Name</h1>
-            <p className="text-sm text-green-600">Online</p>
+
+          <div className='bg-white p-6 rounded-xl shadow hover:shadow-md transition'>
+            <p className='text-gray-500'>Today Appointments</p>
+            <h2 className='text-2xl font-bold mt-2'>8</h2>
           </div>
-        </header>
 
-        {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-4">
-          {messages.map((msg) => (
-            <div
-              key={msg.id}
-              className={`flex ${
-                msg.sender === "user" ? "justify-end" : "justify-start"
-              }`}
-            >
-              <div
-                className={`max-w-[70%] px-4 py-2 rounded-2xl text-sm shadow ${
-                  msg.sender === "user"
-                    ? "bg-blue-600 text-white rounded-br-none"
-                    : "bg-white text-gray-800 rounded-bl-none"
-                }`}
-              >
-                {msg.text}
-              </div>
-            </div>
-          ))}
-          <div ref={bottomRef} />
+          <div className='bg-white p-6 rounded-xl shadow hover:shadow-md transition'>
+            <p className='text-gray-500'>Total Patients</p>
+            <h2 className='text-2xl font-bold mt-2'>45</h2>
+          </div>
+
+          <div className='bg-white p-6 rounded-xl shadow hover:shadow-md transition'>
+            <p className='text-gray-500'>Revenue</p>
+            <h2 className='text-2xl font-bold mt-2'>₹12,000</h2>
+          </div>
+
         </div>
 
-        {/* Input */}
-        <div className="p-4 bg-white border-t flex gap-2">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-            placeholder="Type your message..."
-            className="flex-1 border rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <button
-            onClick={sendMessage}
-            className="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition"
-          >
-            Send
-          </button>
+        {/* 🔥 Appointments Section */}
+        <div className='mt-10 bg-white p-6 rounded-xl shadow'>
+          <h2 className='text-xl font-semibold mb-4'>
+            Today Appointments
+          </h2>
+
+          <div className='text-gray-500'>
+            No appointments yet
+          </div>
         </div>
-      </main>
+
+      </div>
+
     </div>
-  );
-};
+  )
+}
 
-export default Chatting;
+export default Chat

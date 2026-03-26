@@ -1,117 +1,136 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
 
-const HospitalDashboard = () => {
+const Dashboard = () => {
 
   const linkStyle =
-    "text-white text-lg hover:text-gray-300 h-12 w-60 hover:bg-gray-700 rounded-xl ms-5 mt-4 flex items-center ps-4 transition";
+    "text-white text-lg flex items-center h-12 w-full px-6 hover:bg-gray-700 transition";
 
-  const activeStyle = "bg-gray-800";
+  const activeStyle = "bg-gray-900";
 
   return (
-    <div className='flex'>
-      
+    <div className='flex bg-gray-100 min-h-screen'>
+
       {/* Sidebar */}
-      <div className='w-64 h-screen bg-gray-600 fixed'>
-        <div className='mt-20'>
-          
-          <h1 className='text-white text-2xl font-bold ms-5'>
-            Welcome Satyam
+      <div className='w-64 bg-gray-800 fixed h-full shadow-lg'>
+        <div className='mt-10 px-6'>
+          <h1 className='text-white text-2xl font-bold'>
+            🏥 Hospital Panel
           </h1>
 
-          <div className='flex flex-col mt-6'>
+          <p className='text-gray-400 mt-2 text-sm'>
+            Welcome Satyam
+          </p>
+        </div>
 
-            <NavLink
-              to="/hospital/dashboard"
-              className={({ isActive }) =>
-                `${linkStyle} ${isActive ? activeStyle : ""}`
-              }
-            >
-              Dashboard
-            </NavLink>
+        <div className='mt-10 flex flex-col'>
 
-            <NavLink
-              to="/hospital/today"
-              className={({ isActive }) =>
-                `${linkStyle} ${isActive ? activeStyle : ""}`
-              }
-            >
-              Today Appointment
-            </NavLink>
+          <NavLink to="/hospital/dashboard"
+            className={({ isActive }) =>
+              `${linkStyle} ${isActive ? activeStyle : ""}`
+            }>
+            📊 Dashboard
+          </NavLink>
 
-            <NavLink
-              to="/hospital/appointments"
-              className={({ isActive }) =>
-                `${linkStyle} ${isActive ? activeStyle : ""}`
-              }
-            >
-              Appointment
-            </NavLink>
+          <NavLink to="/hospital/today"
+            className={({ isActive }) =>
+              `${linkStyle} ${isActive ? activeStyle : ""}`
+            }>
+            📅 Today Appointment
+          </NavLink>
 
-            <NavLink
-              to="/hospital/doctors"
-              className={({ isActive }) =>
-                `${linkStyle} ${isActive ? activeStyle : ""}`
-              }
-            >
-              Doctors
-            </NavLink>
+          <NavLink to="/hospital/doctors"
+            className={({ isActive }) =>
+              `${linkStyle} ${isActive ? activeStyle : ""}`
+            }>
+            👨‍⚕️ Doctors
+          </NavLink>
 
-            <NavLink
-              to="/hospital/emr"
-              className={({ isActive }) =>
-                `${linkStyle} ${isActive ? activeStyle : ""}`
-              }
-            >
-              EMR
-            </NavLink>
+          <NavLink to="/hospital/patients"
+            className={({ isActive }) =>
+              `${linkStyle} ${isActive ? activeStyle : ""}`
+            }>
+            🧑 Patients
+          </NavLink>
 
-            <NavLink
-              to="/hospital/ehr"
-              className={({ isActive }) =>
-                `${linkStyle} ${isActive ? activeStyle : ""}`
-              }
-            >
-              EHR
-            </NavLink>
+          <NavLink to="/hospital/emr"
+            className={({ isActive }) =>
+              `${linkStyle} ${isActive ? activeStyle : ""}`
+            }>
+            📁 EMR
+          </NavLink>
 
-            <NavLink
-              to="/hospital/list"
-              className={({ isActive }) =>
-                `${linkStyle} ${isActive ? activeStyle : ""}`
-              }
-            >
-              Hospitals
-            </NavLink>
+          <NavLink to="/hospital/ehr"
+            className={({ isActive }) =>
+              `${linkStyle} ${isActive ? activeStyle : ""}`
+            }>
+            🗂 EHR
+          </NavLink>
 
-          </div>
+          <NavLink to="/hospital/chat"
+            className={({ isActive }) =>
+              `${linkStyle} ${isActive ? activeStyle : ""}`
+            }>
+            💬 Chat
+          </NavLink>
+
+          <NavLink to="/hospital/details"
+            className={({ isActive }) =>
+              `${linkStyle} ${isActive ? activeStyle : ""}`
+            }>
+            ⚙️ Details
+          </NavLink>
+
         </div>
       </div>
 
       {/* Main Content */}
-      <div className='ml-64 w-full'>
-        <div className='mt-20 px-10'>
-          
-          <h1 className='text-3xl font-bold'>
-            Hospital Dashboard
-          </h1>
+      <div className='ml-64 flex-1 p-10'>
 
-          <div className='mt-6'>
-            <h2 className='text-xl font-semibold'>
-              Today Appointment
-            </h2>
+        <h1 className='text-3xl font-bold'>
+          Dashboard Overview
+        </h1>
 
-            {/* Future dynamic data */}
-            <div className='mt-4 p-4 bg-gray-100 rounded-lg'>
-              <p>No appointments yet</p>
-            </div>
+        {/* 🔥 Cards */}
+        <div className='grid grid-cols-4 gap-6 mt-8'>
 
+          <div className='bg-white p-6 rounded-xl shadow hover:shadow-md transition'>
+            <p className='text-gray-500'>Total Doctors</p>
+            <h2 className='text-2xl font-bold mt-2'>12</h2>
+          </div>
+
+          <div className='bg-white p-6 rounded-xl shadow hover:shadow-md transition'>
+            <p className='text-gray-500'>Today Appointments</p>
+            <h2 className='text-2xl font-bold mt-2'>8</h2>
+          </div>
+
+          <div className='bg-white p-6 rounded-xl shadow hover:shadow-md transition'>
+            <p className='text-gray-500'>Total Patients</p>
+            <h2 className='text-2xl font-bold mt-2'>45</h2>
+          </div>
+
+          <div className='bg-white p-6 rounded-xl shadow hover:shadow-md transition'>
+            <p className='text-gray-500'>Revenue</p>
+            <h2 className='text-2xl font-bold mt-2'>₹12,000</h2>
+          </div>
+
+        </div>
+
+        {/* 🔥 Appointments Section */}
+        <div className='mt-10 bg-white p-6 rounded-xl shadow'>
+          <h2 className='text-xl font-semibold mb-4'>
+            Today Appointments
+          </h2>
+
+          <div className='text-gray-500'>
+            No appointments yet
           </div>
         </div>
+
       </div>
 
     </div>
   )
 }
 
-export default HospitalDashboard;
+export default Dashboard
