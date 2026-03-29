@@ -12,7 +12,7 @@ const Doctor = () => {
     <div className='flex bg-gray-100 min-h-screen'>
 
       {/* Sidebar */}
-      <div className='w-64 bg-gray-800 fixed h-full shadow-lg'>
+      <div className='w-64 bg-gray-700 fixed h-full shadow-lg'>
         <div className='mt-10 px-6'>
           <h1 className='text-white text-2xl font-bold'>
             🏥 Hospital Panel
